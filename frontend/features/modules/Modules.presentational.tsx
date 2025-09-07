@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { ModuleData } from "@/types/backend-data";
 import CardView from "@/shared/CardView";
 import ListView from "@/shared/ListView";
-
+import { Plus } from "lucide-react";
+import { useRedirectLink } from "@/hooks/useRedirectLink";
 interface ModulesPresentationalProps {
   modules: ModuleData[];
 }
@@ -16,25 +17,33 @@ interface ModulesHeaderProps {
   setView: (view: "card" | "list") => void;
 }
 
-const ModulesHeader: React.FC<ModulesHeaderProps> = ({ view, setView }) => (
-  <div className="flex items-center justify-between mb-4">
-    <h2 className="text-2xl font-bold">Modules</h2>
-    <div className="flex gap-2">
-      <Button
-        variant={view === "card" ? "default" : "outline"}
-        onClick={() => setView("card")}
-      >
-        Card view
-      </Button>
-      <Button
-        variant={view === "list" ? "default" : "outline"}
-        onClick={() => setView("list")}
-      >
-        List view
-      </Button>
+const ModulesHeader: React.FC<ModulesHeaderProps> = ({ view, setView }) => {
+    const redirect = useRedirectLink();
+
+  return (
+    <div className="flex items-center justify-between mb-4">
+      <h2 className="text-2xl font-bold">Modules</h2>
+      <div className="flex gap-2">
+        <Button variant="default" onClick={() => redirect("/create-module")}>
+          <Plus className="w-4 h-4 mr-2" />
+          Create New Module
+        </Button>
+        <Button
+          variant={view === "card" ? "default" : "outline"}
+          onClick={() => setView("card")}
+        >
+          Card view
+        </Button>
+        <Button
+          variant={view === "list" ? "default" : "outline"}
+          onClick={() => setView("list")}
+        >
+          List view
+        </Button>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const ModulesPresentational: React.FC<ModulesPresentationalProps> = ({
   modules,
