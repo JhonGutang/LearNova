@@ -1,8 +1,9 @@
-import { Home, User, Settings } from "lucide-react";
+import { User, Settings, Book, LayoutDashboard } from "lucide-react";
 
 export const navItems = [
-    { label: "Home", icon: Home, href: "/dashboard" },
+    { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
     { label: "Profile", icon: User, href: "/profile" },
+    { label: "Modules", icon: Book, href: "/modules" },
     { label: "Settings", icon: Settings, href: "/settings" },
   ];
 

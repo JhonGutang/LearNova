@@ -15,6 +15,7 @@ import {
     SidebarProvider,
     SidebarTrigger,
   } from '@/components/ui/sidebar';
+import { Bell } from "lucide-react";
 
 interface CustomSidebarProps {
   navItems: {
@@ -70,7 +71,14 @@ const CustomSidebar: React.FC<CustomSidebarProps> = ({ navItems, pageTitle, chil
         <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ml-1" />
           <div className="h-4 w-px bg-border" />
-          <h1 className="text-lg font-semibold">{ pageTitle }</h1>
+          <h1 className="text-lg font-semibold flex-1">{ pageTitle }</h1>
+          <button
+            type="button"
+            className="ml-auto rounded-full p-2 hover:bg-muted transition-colors cursor-pointer"
+            aria-label="Notifications"
+          >
+            <Bell className="h-5 w-5 text-muted-foreground" />
+          </button>
         </header>
         { children }
       </SidebarInset>
