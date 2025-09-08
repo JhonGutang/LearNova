@@ -168,3 +168,12 @@ export const dummyModules: ModuleData[] = [
     ],
   },
 ];
+
+export const CATEGORIES = [
+  "Mathematics",
+  "Science",
+  "History",
+  "Language",
+  "Technology",
+  "Other",
+];
