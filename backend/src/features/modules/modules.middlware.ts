@@ -18,11 +18,14 @@ export class ModulesValidation {
     if (typeof module.description !== 'string') {
       errors.push('description must be a text');
     }
-    if (typeof module.category !== 'string') {
-      errors.push('category must be a text');
+    // category must be an array of strings
+    if (!Array.isArray(module.category)) {
+      errors.push('It must contain at least one category');
+    } else if (!module.category.every((cat: any) => typeof cat === 'string')) {
+      errors.push('every category must be a text');
     }
     if (errors.length > 0) {
-      return res.status(400).json({ error: 'All fields must be strings.', details: errors });
+      return res.status(400).json({ error: 'Invalid field types.', details: errors });
     }
 
     // If validation passes, call next() to pass control to the next middleware or route handler

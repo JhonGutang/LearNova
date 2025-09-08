@@ -1,14 +1,14 @@
 'use client'
 import React from "react";
 import CreateModulePresentational from "./create-module.presentational";
-import { useModuleData } from "@/hooks/useModuleData";
 import useProgressBarTrack from "@/hooks/useProgressBarTrack";
+import { useCreateModules } from "../modules/hooks/useCreateModules";
 const CreateModuleContainer: React.FC = () => {
     const {
         createModuleformData,
         setCreateModuleFormData,
-        categories,
-    } = useModuleData();
+        CATEGORIES,
+    } = useCreateModules();
     const { currentStep,
         totalSteps,
         progressPercent,
@@ -19,7 +19,7 @@ const CreateModuleContainer: React.FC = () => {
         <CreateModulePresentational
             createModuleFormData={createModuleformData}
             setCreateModuleFormData={setCreateModuleFormData}
-            categories={categories}
+            categories={CATEGORIES}
             currentStep={currentStep}
             totalSteps={totalSteps}
             progressPercent={progressPercent}

@@ -1,4 +1,5 @@
 import createError from 'http-errors';
+import cors from 'cors';
 import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
@@ -16,6 +17,7 @@ app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 

@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';  // Import express types
 import { ModuleService } from './modules.service';
-import { ModulesValidation } from './modules.middlware';
 
 
 export class ModulesController {

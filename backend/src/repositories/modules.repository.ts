@@ -19,6 +19,7 @@ export class ModuleRepository implements ModuleRepositoryInterface {
         });
         return newModule
     }
+    
     async getAll(): Promise<object> {
         const modules = await prisma.module.findMany();
         return modules;
