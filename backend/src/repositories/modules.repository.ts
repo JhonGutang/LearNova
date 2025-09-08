@@ -4,6 +4,7 @@ import prisma from "../config/prisma";
 
 interface ModuleRepositoryInterface {
     create(module: Object): Promise<object>;
+    getAll(): Promise<object>;
 }
 
 
@@ -17,5 +18,9 @@ export class ModuleRepository implements ModuleRepositoryInterface {
             },
         });
         return newModule
+    }
+    async getAll(): Promise<object> {
+        const modules = await prisma.module.findMany();
+        return modules;
     }
 }

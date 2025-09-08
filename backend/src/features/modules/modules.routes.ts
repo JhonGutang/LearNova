@@ -6,7 +6,7 @@ const router: Router = express.Router();
 const moduleController = new ModulesController();
 
 // Sample route for modules
+router.get('/modules', moduleController.getAllModules);
 router.post('/create-module', ModulesValidation.validateCreateModulePayload, moduleController.createModule);
-router.post('/create-module', moduleController.createModule);
 
 export default router;
