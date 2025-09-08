@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import http, { Server } from 'http';
-import app from '../src/app';  // Ensure the path to `app.ts` is correct
+import app from '../app';  // Ensure the path to `app.ts` is correct
 import debug from 'debug';
 import dotenv from 'dotenv';
 

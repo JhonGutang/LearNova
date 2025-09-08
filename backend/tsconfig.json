@@ -8,11 +8,11 @@
     "skipLibCheck": true,                       // Skip checking declaration files
     "forceConsistentCasingInFileNames": true,   // Ensure consistent case in imports
     "outDir": "./dist",                         // Output directory for compiled JS
-    "rootDir": "./src",                         // Root directory of TypeScript files
+    "rootDir": "./src",                         // Set rootDir to src since bin is now inside src
     "resolveJsonModule": true                   // Allow importing .json files
   },
   "include": [
-    "src/**/*.ts"                               // Only include TS files in src folder
+    "src/**/*.ts"                               // Include all TypeScript files in src
   ],
   "exclude": [
     "node_modules"                              // Exclude node_modules
