@@ -33,7 +33,7 @@ const CreateModulePresentational: React.FC<CreateModulePresentationalProps> = ({
   prevStep,
   saveModule
 }) => {
-  const redirect = useRedirectLink();
+  const {redirect} = useRedirectLink();
 
   return (
     <div className="w-full mt-8">

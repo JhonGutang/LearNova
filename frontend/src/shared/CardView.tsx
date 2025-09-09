@@ -3,12 +3,13 @@ import { ModuleData } from "@/src/types/backend-data";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/src/shadcn/components/ui/card";
 import { Button } from "@/src/shadcn/components/ui/button";
 import { Users } from "lucide-react";
-
+import { useRedirectLink } from "../shadcn/hooks/useRedirectLink";
 interface CardViewProps {
     data: ModuleData[];
 }
 
 const CardView: React.FC<CardViewProps> = ({ data }) => {
+  const {redirect, toSlug} = useRedirectLink();
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
       {data.map((module, idx) => {
@@ -48,7 +49,7 @@ const CardView: React.FC<CardViewProps> = ({ data }) => {
               </div>
             </CardContent>
             <CardFooter>
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="w-full" onClick={() => redirect('/modules/' + toSlug(module.title))}>
                 View
               </Button>
             </CardFooter>
