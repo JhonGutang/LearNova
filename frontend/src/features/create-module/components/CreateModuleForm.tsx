@@ -1,61 +1,74 @@
-import { Alert, AlertDescription } from "@/src/shadcn/components/ui/alert";
 import { Button } from "@/src/shadcn/components/ui/button";
 import { Input } from "@/src/shadcn/components/ui/input";
 import { Label } from "@/src/shadcn/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/shadcn/components/ui/select";
 import { Textarea } from "@/src/shadcn/components/ui/textarea";
+import ChipToggle from "@/src/shared/ChipToggle";
+import ErrorMessage from "@/src/shared/ErrorMessage";
 import { CreateModuleFormData } from "@/src/types/backend-data";
 import React from "react";
 
 type CreateModuleFormProps = {
     createModuleFormData: CreateModuleFormData;
     setCreateModuleFormData: React.Dispatch<React.SetStateAction<CreateModuleFormData>>;
+    saveModule: () => void;
     categories: string[],
+    handleSelectCategories: (category: string) => void;
 };
 
 const CreateModuleForm: React.FC<CreateModuleFormProps> = ({
     createModuleFormData,
     setCreateModuleFormData,
+    saveModule,
     categories,
+    handleSelectCategories,
 }) => {
+
+    // Category is always an array
+    const selectedCategories: string[] = createModuleFormData.category;
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        saveModule();
+    }
+
     return (
         <div className="w-full">
             <h2 className="text-2xl font-semibold mb-6">Create Module</h2>
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={handleSubmit}>
                 <div>
-                    <Label htmlFor="moduleName">
+                    <Label htmlFor="title">
                         Module Name <span className="text-red-500">*</span>
                     </Label>
                     <Input
-                        id="moduleName"
+                        id="title"
                         type="text"
-                        value={createModuleFormData.moduleName}
+                        value={createModuleFormData.title}
                         onChange={(e) =>
                             setCreateModuleFormData((prev) => ({
                                 ...prev,
-                                moduleName: e.target.value,
+                                title: e.target.value,
                             }))
                         }
                         required
-                        placeholder="Enter module name"
+                        placeholder="Enter Module Title"
                         className="mt-1"
                     />
                 </div>
                 <div>
-                    <Label htmlFor="moduleDescription">
+                    <Label htmlFor="description">
                         Description
                     </Label>
                     <Textarea
-                        id="moduleDescription"
-                        value={createModuleFormData.moduleDescription}
+                        id="description"
+                        value={createModuleFormData.description}
                         onChange={(e) =>
                             setCreateModuleFormData((prev) => ({
                                 ...prev,
-                                moduleDescription: e.target.value,
+                                description: e.target.value,
                             }))
                         }
                         placeholder="Enter module description"
-                        rows={8} // Increased from 4 to 8
+                        rows={8}
                         className="mt-1"
                     />
                 </div>
@@ -63,30 +76,19 @@ const CreateModuleForm: React.FC<CreateModuleFormProps> = ({
                     <Label htmlFor="category">
                         Category <span className="text-red-500">*</span>
                     </Label>
-                    <Select
-                        value={createModuleFormData.category}
-                        onValueChange={(value) =>
-                            setCreateModuleFormData((prev) => ({
-                                ...prev,
-                                category: value,
-                            }))
-                        }
-                        required
-                    >
-                        <SelectTrigger id="category" className="mt-1">
-                            <SelectValue placeholder="Select a category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {categories.map((cat) => (
-                                <SelectItem key={cat} value={cat}>
-                                    {cat}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-
+                    <div className="flex flex-wrap gap-2 mt-2" id="category">
+                        {categories.map((category) => {
+                            const isSelected = selectedCategories.includes(category);
+                            return (
+                                <ChipToggle key={category} option={category} isSelected={isSelected} onToggle={() =>handleSelectCategories(category)} />
+                            );
+                        })}
+                    </div>
+                    {selectedCategories.length === 0 && (
+                        <ErrorMessage>Please select at least one category</ErrorMessage>
+                    )}
                 </div>
-                <Button type="submit" className="w-full">
+                <Button type="submit" className="w-full" disabled={selectedCategories.length === 0}>
                     Create Module
                 </Button>
             </form>
