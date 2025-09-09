@@ -10,6 +10,7 @@ export function useCreateModules() {
     const [modules, setModules] = useState<ModuleData[]>(dummyModules);
     const [createModuleformData, setCreateModuleFormData] = useState<CreateModuleFormData>({
         title: "",
+        tagline: "",
         description: "",
         category: [],
     });

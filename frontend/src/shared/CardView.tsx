@@ -38,7 +38,7 @@ const CardView: React.FC<CardViewProps> = ({ data }) => {
               </div>
             </CardHeader>
             <CardContent className="flex-1 flex flex-col gap-4">
-              <p className="text-gray-600">{module.description}</p>
+              <p className="text-gray-600">{module.tagline}</p>
               <div className="flex-1" />
               <div className="flex items-center gap-2 text-gray-600 text-sm min-h-[28px]">
                 <Users className="w-5 h-5 text-gray-500" />
@@ -49,7 +49,7 @@ const CardView: React.FC<CardViewProps> = ({ data }) => {
               </div>
             </CardContent>
             <CardFooter>
-              <Button variant="outline" className="w-full" onClick={() => redirect('/modules/' + toSlug(module.title))}>
+              <Button variant="outline" className="w-full" onClick={() => redirect('/modules/' + toSlug(module.id, module.title))}>
                 View
               </Button>
             </CardFooter>
