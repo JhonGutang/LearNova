@@ -1,10 +1,10 @@
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { CreateModuleFormData } from "@/types/backend-data";
+import { Alert, AlertDescription } from "@/src/shadcn/components/ui/alert";
+import { Button } from "@/src/shadcn/components/ui/button";
+import { Input } from "@/src/shadcn/components/ui/input";
+import { Label } from "@/src/shadcn/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/shadcn/components/ui/select";
+import { Textarea } from "@/src/shadcn/components/ui/textarea";
+import { CreateModuleFormData } from "@/src/types/backend-data";
 import React from "react";
 
 type CreateModuleFormProps = {

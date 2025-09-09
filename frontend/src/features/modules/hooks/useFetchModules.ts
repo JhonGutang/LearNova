@@ -1,4 +1,4 @@
-import { ModuleData } from "@/types/backend-data";
+import { ModuleData } from "@/src/types/backend-data";
 import { useEffect, useState } from "react";
 import { ModuleService } from "../Modules.service";
 

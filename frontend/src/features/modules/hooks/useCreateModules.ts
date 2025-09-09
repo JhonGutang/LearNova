@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ModuleData, CreateModuleFormData } from "@/types/backend-data";
+import { ModuleData, CreateModuleFormData } from "@/src/types/backend-data";
 import { dummyModules } from "@/constants/moduleDummyData";
 import { ModuleService } from "../Modules.service";
 import { CATEGORIES } from "@/constants/moduleDummyData";

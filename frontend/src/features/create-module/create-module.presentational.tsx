@@ -2,10 +2,10 @@
 import React from "react";
 import ModulePreview from "./components/ModulePreview";
 import CreateModuleForm from "./components/CreateModuleForm";
-import { Progress } from "@/components/ui/progress";
-import { Button } from "@/components/ui/button";
-import { CreateModuleFormData } from "@/types/backend-data";
-import { useRedirectLink } from "@/hooks/useRedirectLink";
+import { Progress } from "@/src/shadcn/components/ui/progress";
+import { Button } from "@/src/shadcn/components/ui/button";
+import { CreateModuleFormData } from "@/src/types/backend-data";
+import { useRedirectLink } from "@/src/shadcn/hooks/useRedirectLink";
 import { ArrowLeft } from "lucide-react";
 
 type CreateModulePresentationalProps = {

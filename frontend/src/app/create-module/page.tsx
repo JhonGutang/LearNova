@@ -1,4 +1,4 @@
-import CreateModuleContainer from "@/features/create-module/create-module.container";
+import CreateModuleContainer from "@/src/features/create-module/create-module.container";
 import React from "react";
 
 const CreateModulePage = () => {

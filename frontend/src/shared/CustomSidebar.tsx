@@ -14,7 +14,7 @@ import {
     SidebarMenuItem,
     SidebarProvider,
     SidebarTrigger,
-  } from '@/components/ui/sidebar';
+  } from '@/src/shadcn/components/ui/sidebar';
 import { Bell } from "lucide-react";
 
 interface CustomSidebarProps {

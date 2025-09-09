@@ -1,13 +1,13 @@
 
 import { navItems } from "@/constants/navigationItems";
-import TeacherHomeLayout from "@/layout/TeacherHomeLayout";
+import TeacherHomeLayout from "@/src/layout/TeacherHomeLayout";
 import React from "react";
-import { Button } from "@/components/ui/button";
-import { ModuleData } from "@/types/backend-data";
-import CardView from "@/shared/CardView";
-import ListView from "@/shared/ListView";
+import { Button } from "@/src/shadcn/components/ui/button";
+import { ModuleData } from "@/src/types/backend-data";
+import CardView from "@/src/shared/CardView";
+import ListView from "@/src/shared/ListView";
 import { Plus } from "lucide-react";
-import { useRedirectLink } from "@/hooks/useRedirectLink";
+import { useRedirectLink } from "@/src/shadcn/hooks/useRedirectLink";
 interface ModulesPresentationalProps {
   modules: ModuleData[];
 }

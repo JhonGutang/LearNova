@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { navItems } from '@/constants/navigationItems';
-import TeacherHomeLayout from '@/layout/TeacherHomeLayout';
+import TeacherHomeLayout from '@/src/layout/TeacherHomeLayout';
 
 interface DashboardProps {}
 

@@ -1,7 +1,7 @@
 'use client'
 import React from "react";
 import CreateModulePresentational from "./create-module.presentational";
-import useProgressBarTrack from "@/hooks/useProgressBarTrack";
+import useProgressBarTrack from "@/src/shadcn/hooks/useProgressBarTrack";
 import { useCreateModules } from "../modules/hooks/useCreateModules";
 const CreateModuleContainer: React.FC = () => {
     const {

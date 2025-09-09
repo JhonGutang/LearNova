@@ -1,4 +1,4 @@
-import CustomSidebar from "@/shared/CustomSidebar";
+import CustomSidebar from "@/src/shared/CustomSidebar";
 import React from "react";
 
 interface TeacherHomeLayoutProps {

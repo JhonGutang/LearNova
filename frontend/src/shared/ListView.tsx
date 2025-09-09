@@ -1,6 +1,6 @@
 import React from "react";
-import { ModuleData } from "@/types/backend-data";
-import { Button } from "@/components/ui/button";
+import { ModuleData } from "@/src/types/backend-data";
+import { Button } from "@/src/shadcn/components/ui/button";
 import { Users } from "lucide-react";
 
 interface ListViewProps {

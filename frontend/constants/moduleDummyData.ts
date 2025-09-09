@@ -1,4 +1,4 @@
-import { ModuleData } from "@/types/backend-data";
+import { ModuleData } from "@/src/types/backend-data";
 
 export const dummyModules: ModuleData[] = [
   {

@@ -1,7 +1,7 @@
 import React from "react";
-import { ModuleData } from "@/types/backend-data";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { ModuleData } from "@/src/types/backend-data";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/src/shadcn/components/ui/card";
+import { Button } from "@/src/shadcn/components/ui/button";
 import { Users } from "lucide-react";
 
 interface CardViewProps {
