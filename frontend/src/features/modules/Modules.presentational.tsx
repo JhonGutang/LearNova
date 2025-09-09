@@ -18,7 +18,7 @@ interface ModulesHeaderProps {
 }
 
 const ModulesHeader: React.FC<ModulesHeaderProps> = ({ view, setView }) => {
-    const redirect = useRedirectLink();
+    const {redirect} = useRedirectLink();
 
   return (
     <div className="flex items-center justify-between mb-4">
