@@ -4,6 +4,24 @@ import { ModuleRepository } from "../../repositories/modules.repository";
 interface ModuleServiceInterface {
     create(module: ModulePayload): Promise<object>;
     getAll(): Promise<object>;
+    getSpecificModule(moduleId: number): Promise<object>
+}
+
+function convertCategoryStringToArray(data: any): any {
+    if (Array.isArray(data)) {
+        return data.map((module) => ({
+            ...module,
+            category: typeof module.category === 'string'
+                ? module.category.split(',').map((cat: string) => cat.trim())
+                : module.category
+        }));
+    } else if (data && typeof data === 'object' && typeof data.category === 'string') {
+        return {
+            ...data,
+            category: data.category.split(',').map((cat: string) => cat.trim())
+        };
+    }
+    return data;
 }
 
 export class ModuleService implements ModuleServiceInterface {
@@ -14,9 +32,7 @@ export class ModuleService implements ModuleServiceInterface {
     }
 
     async create(module: ModulePayload): Promise<object> {
-        // Combine the category array into a single string
         const categoryString = Array.isArray(module.category) ? module.category.join(', ') : '';
-        // Replace the category value with the new string
         const moduleWithCategoryString = {
             ...module,
             category: categoryString,
@@ -27,15 +43,11 @@ export class ModuleService implements ModuleServiceInterface {
     
     async getAll(): Promise<object> {
         const modules: any = await this.moduleRepository.getAll();
-        // Transform category string to array for each module
-        const transformedModules = Array.isArray(modules)
-            ? modules.map((module: any) => ({
-                ...module,
-                category: typeof module.category === 'string'
-                    ? module.category.split(',').map((cat: string) => cat.trim())
-                    : module.category
-            }))
-            : modules;
-        return transformedModules;
+        return convertCategoryStringToArray(modules);
+    }
+
+    async getSpecificModule(moduleId: number): Promise<object> {
+        const module: any = await this.moduleRepository.getSpecificModule(moduleId);
+        return convertCategoryStringToArray(module);
     }
 }

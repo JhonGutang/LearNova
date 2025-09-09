@@ -29,6 +29,19 @@ export class ModulesController {
     }
   };
 
+  getSpecificModule = async (req: Request, res: Response) => {
+    try {
+      const moduleId = Number(req.params.moduleId);
+      const module = await this.moduleService.getSpecificModule(moduleId);
+      if (module === null) {
+        return res.status(404).json({ error: 'Module not Found' });
+      }
+      return res.status(200).json(module);
+    } catch (error) {
+      console.error('Error getting specific module:', error);
+      res.status(500).json({ error: 'Internal server error.' });
+    }
+  }
 
 
 }
