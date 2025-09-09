@@ -5,7 +5,7 @@
   "scripts": {
     "start": "npx ts-node-dev --respawn --transpile-only src\\config\\server.ts",
     "build": "tsc",
-    "prod": "node ./dist/bin/www.js"
+    "prod": "node dist/config/server.js"
   },
   "dependencies": {
     "@prisma/client": "^6.15.0",
