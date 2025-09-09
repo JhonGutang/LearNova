@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import { slugify, deslugify } from "@/lib/utils";
 
 /**
- * Custom hook for redirecting and reverting URLs.
+ * Custom hook for redirecting and reverting URLs, and extracting id/title from slugs.
  */
 export function useRedirectLink() {
   const router = useRouter();
@@ -20,22 +20,31 @@ export function useRedirectLink() {
   );
 
   /**
-   * Converts a URL object or string back to a string path.
-   * If a string is provided, returns it as is.
-   * If a URL object is provided, returns its pathname + search + hash.
-   * @param link The URL or string to convert.
+   * Convert an id and title to a URL-safe slug in the format: {id}-{slugified-title}
+   * @param id The numeric id
+   * @param title The title string
    */
-
-
-  /**
-   * Convert a readable title to a URL-safe slug.
-   */
-  const toSlug = useCallback((title: string) => slugify(title), []);
+  const toSlug = useCallback((id: number | undefined, title: string) => {
+    return `${id}-${slugify(title)}`;
+  }, []);
 
   /**
-   * Convert a slug back to a readable Title Case string.
+   * Extracts the id and title from a slug in the format: {id}-{slugified-title}
+   * Returns an object: { id: number, title: string }
+   * @param slug The slug string
    */
-  const fromSlug = useCallback((slug: string) => deslugify(slug), []);
+  const fromSlug = useCallback((slug: string) => {
+    // Find the first hyphen, everything before is id, after is slugified title
+    const firstHyphen = slug.indexOf("-");
+    if (firstHyphen === -1) {
+      return { id: null, title: deslugify(slug) };
+    }
+    const idPart = slug.slice(0, firstHyphen);
+    const titlePart = slug.slice(firstHyphen + 1);
+    const id = Number(idPart);
+    const title = deslugify(titlePart);
+    return { id: isNaN(id) ? null : id, title };
+  }, []);
 
   return { redirect, toSlug, fromSlug };
 }

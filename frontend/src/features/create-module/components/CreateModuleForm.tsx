@@ -55,6 +55,24 @@ const CreateModuleForm: React.FC<CreateModuleFormProps> = ({
                     />
                 </div>
                 <div>
+                    <Label htmlFor="tagline">
+                        Tagline
+                    </Label>
+                    <Input
+                        id="tagline"
+                        type="text"
+                        value={createModuleFormData.tagline}
+                        onChange={(e) =>
+                            setCreateModuleFormData((prev) => ({
+                                ...prev,
+                                tagline: e.target.value,
+                            }))
+                        }
+                        placeholder="Enter a short tagline"
+                        className="mt-1"
+                    />
+                </div>
+                <div>
                     <Label htmlFor="description">
                         Description
                     </Label>

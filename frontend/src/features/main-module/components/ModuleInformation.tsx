@@ -11,6 +11,8 @@ const ModuleInformation: React.FC<ModuleInformationProps> = ({ module }) => {
     const totalSubModules = 7;
     const visibility = "Visible";
     const author = "Author's Name";
+
+
     return (
         <div className="basis-2/5 flex-shrink-0 flex-grow-0 p-10 h-full border-r-2 border-gray-200">
             <div className='flex items-center gap-2 text-2xl'>
@@ -22,6 +24,9 @@ const ModuleInformation: React.FC<ModuleInformationProps> = ({ module }) => {
                 >
                     <Pencil className="w-4 h-4 text-gray-500" />
                 </button>
+            </div>
+            <div className="text-base text-sm text-gray-500 italic mt-1 mb-2">
+                {module.tagline}
             </div>
             <div className='text-sm mb-2 mt-2'>
                 <span className="flex flex-wrap gap-2">
