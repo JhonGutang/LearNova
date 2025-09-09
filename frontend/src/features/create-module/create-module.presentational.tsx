@@ -11,23 +11,27 @@ import { ArrowLeft } from "lucide-react";
 type CreateModulePresentationalProps = {
   createModuleFormData: CreateModuleFormData
   setCreateModuleFormData: React.Dispatch<React.SetStateAction<CreateModuleFormData>>;
+  handleSelectCategories: (category: string) => void;
   categories: string[];
   currentStep: number;
   totalSteps: number;
   progressPercent: number;
   nextStep: () => void;
   prevStep: () => void;
+  saveModule: () => void;
 };
 
 const CreateModulePresentational: React.FC<CreateModulePresentationalProps> = ({
   createModuleFormData,
   setCreateModuleFormData,
   categories,
+  handleSelectCategories,
   currentStep,
   totalSteps,
   progressPercent,
   nextStep,
   prevStep,
+  saveModule
 }) => {
   const redirect = useRedirectLink();
 
@@ -60,6 +64,8 @@ const CreateModulePresentational: React.FC<CreateModulePresentationalProps> = ({
                 createModuleFormData={createModuleFormData}
                 setCreateModuleFormData={setCreateModuleFormData}
                 categories={categories}
+                saveModule={saveModule}
+                handleSelectCategories={handleSelectCategories}
               />
               <div className="flex justify-end mt-4">
                 <Button type="button" onClick={nextStep} className="text-sm">Next</Button>

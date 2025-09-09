@@ -6,10 +6,8 @@ export interface ModuleData {
   }
 
   export interface CreateModuleFormData {
-    moduleName: string;
-    moduleDescription: string;
-    category: string;
-    submoduleName: string;
-    submoduleDescription: string;
+    title: string;
+    description: string;
+    category: string[];
   }
   
