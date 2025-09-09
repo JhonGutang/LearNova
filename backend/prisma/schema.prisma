@@ -14,9 +14,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Status {
+  PUBLISHED
+  DRAFT
+  UNLISTED
+}
 model Module {
   id          Int      @id @default(autoincrement())
   title       String
+  tagline     String
+  status      Status   @default(DRAFT)
   description String
   category    String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
 }
