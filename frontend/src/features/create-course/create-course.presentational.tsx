@@ -40,7 +40,6 @@ const CreateModulePresentational: React.FC<CreateCoursePresentationalProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-5 gap-8 mx-10">
         <div className="w-full md:col-span-2">
           <div className="mb-4">
-              {/* Back to Modules Button */}
           <div className="mb-4">
             <Button
               type="button"
@@ -49,7 +48,7 @@ const CreateModulePresentational: React.FC<CreateCoursePresentationalProps> = ({
               onClick={() => redirect("/courses")}
             >
               <ArrowLeft className="w-4 h-4" />
-              Back to Modules
+              Back to Courses
             </Button>
           </div>
             <div className="flex items-center justify-between mb-2">
