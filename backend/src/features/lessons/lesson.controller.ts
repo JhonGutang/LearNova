@@ -19,4 +19,15 @@ export class LessonController {
             res.status(500).json({ message: "Failed to create lesson" });
         }
     }
+
+    getLessonsByCourseid = async(req: Request, res: Response) => {
+        try {
+            const courseId = Number(req.params.courseId);
+            const lessons = await this.lessonService.getLessons(courseId);
+            res.status(200).json(lessons);
+        } catch (error) {
+            console.error("Error fetching lessons by courseid:", error);
+            res.status(500).json({ message: "Failed to fetch lessons" });
+        }
+    }
 }
