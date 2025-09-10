@@ -24,6 +24,13 @@ export interface Course {
     description: string;
     categories: string[];
   }
+
+  export interface Lesson {
+    title: string;
+    description: string; 
+    progressLevel?: number;
+  }
+  export interface CreateLessonFormData extends Omit<Lesson, 'progessLevel'>{  }
   
 
 // Topics

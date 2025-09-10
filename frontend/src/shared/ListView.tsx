@@ -9,7 +9,7 @@ interface ListViewProps<T = any> {
 const getDefaultDisplay = (item: any) => {
   // Try to display title/name, description/tagline, and categories if present
   const title = item.title || item.name || "Untitled";
-  const tagline = item.tagline || "";
+  const taglineOrDescription = item.description || item.tagline || "";
   const categories = Array.isArray(item.categories)
     ? item.categories
     : item.categories
@@ -56,8 +56,8 @@ const getDefaultDisplay = (item: any) => {
           </div>
         )}
       </div>
-      {tagline && (
-        <p className="text-sm text-gray-600">{tagline}</p>
+      {taglineOrDescription && (
+        <p className="text-sm text-gray-600">{taglineOrDescription}</p>
       )}
       {extraInfo}
     </div>

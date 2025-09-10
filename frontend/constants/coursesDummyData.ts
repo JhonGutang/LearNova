@@ -1,39 +1,35 @@
-export type Lesson = {
-  title: string;
-  tagline: string;
-  progress_level: number;
-};
+import { Lesson } from "@/src/types/backend-data";
 
 export const dummyLessons: Lesson[] = [
   {
     title: "Variables and Data Types",
-    tagline: "Understand the building blocks of code.",
-    progress_level: 80,
+    description: "Understand the building blocks of code.",
+    progressLevel: 80,
   },
   {
     title: "Control Flow",
-    tagline: "Master if-else and loops.",
-    progress_level: 60,
+    description: "Master if-else and loops.",
+    progressLevel: 60,
   },
   {
     title: "Functions",
-    tagline: "Write reusable blocks of logic.",
-    progress_level: 40,
+    description: "Write reusable blocks of logic.",
+    progressLevel: 40,
   },
   {
     title: "Arrays and Lists",
-    tagline: "Store and manage collections of data.",
-    progress_level: 20,
+    description: "Store and manage collections of data.",
+    progressLevel: 20,
   },
   {
     title: "Object-Oriented Basics",
-    tagline: "Learn about classes and objects.",
-    progress_level: 10,
+    description: "Learn about classes and objects.",
+    progressLevel: 10,
   },
   {
     title: "Debugging Techniques",
-    tagline: "Find and fix errors in your code.",
-    progress_level: 0,
+    description: "Find and fix errors in your code.",
+    progressLevel: 0,
   },
 ];
 
