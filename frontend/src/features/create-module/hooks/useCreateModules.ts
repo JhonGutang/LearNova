@@ -12,12 +12,12 @@ export function useCreateModules() {
         title: "",
         tagline: "",
         description: "",
-        category: [],
+        categories: [],
     });
 
     const handleSelectCategories = (category: string) => {
         setCreateModuleFormData((prev) => {
-            const prevCategories = prev.category;
+            const prevCategories = prev.categories;
             let newCategories: string[];
             if (prevCategories.includes(category)) {
                 newCategories = prevCategories.filter((c) => c !== category);
@@ -26,7 +26,7 @@ export function useCreateModules() {
             }
             return {
                 ...prev,
-                category: newCategories,
+                categories: newCategories,
             };
         });
     };

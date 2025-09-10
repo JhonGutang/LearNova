@@ -7,7 +7,7 @@ export class ModulesValidation {
     const module: ModulePayload = req.body; // Assuming you're sending data in the request body
 
     // Validate the payload using the existing validation logic
-    if (!module.title || !module.tagline || !module.description || !module.category) {
+    if (!module.title || !module.tagline || !module.description || !module.categories) {
       return res.status(400).json({ error: 'Missing required fields.' });
     }
 
@@ -21,10 +21,10 @@ export class ModulesValidation {
     if (typeof module.description !== 'string') {
       errors.push('description must be a text');
     }
-    // category must be an array of strings
-    if (!Array.isArray(module.category)) {
-      errors.push('It must contain at least one category');
-    } else if (!module.category.every((cat: any) => typeof cat === 'string')) {
+    // categories must be an array of strings and at least one category
+    if (!Array.isArray(module.categories) || module.categories.length === 0) {
+      errors.push('categories must be a non-empty array');
+    } else if (!module.categories.every((cat: any) => typeof cat === 'string')) {
       errors.push('every category must be a text');
     }
     if (errors.length > 0) {

@@ -13,15 +13,44 @@ export class ModuleRepository implements ModuleRepositoryInterface {
             data: {
                 title: module.title,
                 description: module.description,
-                category: module.category,
                 tagline: module.tagline,
+                // Connect or create categories via the join table
+                categories: {
+                    create: module.categories.map((categoryName: string) => ({
+                        category: {
+                            connectOrCreate: {
+                                where: { name: categoryName },
+                                create: { name: categoryName }
+                            }
+                        }
+                    }))
+                }
             },
+            include: {
+                categories: {
+                    include: {
+                        category: true
+                    }
+                }
+            }
         });
         return newModule;
     }
-    
+
     async getAll(): Promise<object> {
-        const modules = await prisma.module.findMany();
+        const modules = await prisma.module.findMany({
+            include: {
+                categories: {
+                    select: {
+                        category: {
+                            select: {
+                                name: true,
+                            },
+                        },
+                    },
+                },
+            },
+        });
         return modules;
     }
 
@@ -30,8 +59,18 @@ export class ModuleRepository implements ModuleRepositoryInterface {
             where: {
                 id: moduleId,
             },
+            include: {
+                categories: {
+                    include: {
+                        category: {
+                            select: {
+                                name: true,
+                            },
+                        }
+                    }
+                }
+            }
         });
         return module;
     }
-    
 }

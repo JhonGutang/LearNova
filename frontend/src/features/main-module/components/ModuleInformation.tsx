@@ -7,7 +7,7 @@ interface ModuleInformationProps {
 }
 
 const ModuleInformation: React.FC<ModuleInformationProps> = ({ module }) => {
-
+    
     const totalSubModules = 7;
     const author = "Author's Name";
 
@@ -29,7 +29,7 @@ const ModuleInformation: React.FC<ModuleInformationProps> = ({ module }) => {
             </div>
             <div className='text-sm mb-2 mt-2'>
                 <span className="flex flex-wrap gap-2">
-                    {module.category.map((cat) => (
+                    {module.categories.map((cat) => (
                         <span key={cat} className="chip chip-success">
                             {cat}
                         </span>

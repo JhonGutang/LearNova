@@ -39,7 +39,7 @@ export class ModulesController {
       return res.status(200).json(module);
     } catch (error) {
       console.error('Error getting specific module:', error);
-      res.status(500).json({ error: 'Internal server error.' });
+      res.status(500).json({ error: `Internal server error: ${error}` });
     }
   }
 
