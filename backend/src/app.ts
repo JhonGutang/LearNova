@@ -8,8 +8,8 @@ import logger from 'morgan';
 const app = express();
 
 // Import your routes with types
-import moduleRouter from './features/courses/course.routes';
-
+import courseRouter from './features/courses/course.routes';
+import lessonRouter from './features/lessons/lesson.routes';
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -22,7 +22,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // API route handling
-app.use('/api/', moduleRouter);
+app.use('/api/', courseRouter);
+app.use('/api/', lessonRouter);
 
 // catch 404 and forward to error handler
 app.use((req: Request, res: Response, next: NextFunction) => {
