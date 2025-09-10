@@ -20,7 +20,7 @@ enum Status {
   UNLISTED
 }
 
-model Module {
+model Course {
   id          Int                @id @default(autoincrement())
   title       String
   tagline     String
@@ -28,21 +28,21 @@ model Module {
   description String
   created_at  DateTime           @default(now())
   updated_at  DateTime           @updatedAt
-  categories  Module_Category[]
+  categories  Course_Category[]
 }
 
 model Category {
   id       Int                @id @default(autoincrement())
   name     String             @unique
-  modules  Module_Category[]
+  modules  Course_Category[]
 }
 
-model Module_Category {
-  module_id   Int
+model Course_Category {
+  course_id   Int
   category_id Int
 
-  module      Module   @relation(fields: [module_id], references: [id])
+  course      Course   @relation(fields: [course_id], references: [id])
   category    Category @relation(fields: [category_id], references: [id])
 
-  @@id([module_id, category_id])
+  @@id([course_id, category_id])
 }

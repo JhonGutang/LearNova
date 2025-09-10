@@ -8,7 +8,7 @@ import logger from 'morgan';
 const app = express();
 
 // Import your routes with types
-import moduleRouter from './features/modules/modules.routes';
+import moduleRouter from './features/courses/course.routes';
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

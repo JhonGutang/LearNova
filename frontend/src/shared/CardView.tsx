@@ -1,19 +1,19 @@
 import React from "react";
-import { ModuleData } from "@/src/types/backend-data";
+import { Course } from "@/src/types/backend-data";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/src/shadcn/components/ui/card";
 import { Button } from "@/src/shadcn/components/ui/button";
 import { Users } from "lucide-react";
 import { useRedirectLink } from "../shadcn/hooks/useRedirectLink";
 interface CardViewProps {
-    data: ModuleData[];
+    data: Course[];
 }
 
 const CardView: React.FC<CardViewProps> = ({ data }) => {
   const {redirect, toSlug} = useRedirectLink();
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-      {data.map((module, idx) => {
-        const categories = Array.isArray(module.categories) ? module.categories : [module.categories];
+      {data.map((course, idx) => {
+        const categories = Array.isArray(course.categories) ? course.categories : [course.categories];
         const displayedCategories = categories.slice(0, 2);
         const remainingCount = categories.length - displayedCategories.length;
 
@@ -23,7 +23,7 @@ const CardView: React.FC<CardViewProps> = ({ data }) => {
             className="hover:shadow-lg transition-shadow h-full flex flex-col"
           >
             <CardHeader>
-              <CardTitle className="text-lg">{module.title}</CardTitle>
+              <CardTitle className="text-lg">{course.title}</CardTitle>
               <div className="mt-1 flex flex-wrap gap-1">
                 {displayedCategories.map((cat, i) => (
                   <span key={i} className="chip chip-success">
@@ -38,18 +38,18 @@ const CardView: React.FC<CardViewProps> = ({ data }) => {
               </div>
             </CardHeader>
             <CardContent className="flex-1 flex flex-col gap-4">
-              <p className="text-gray-600">{module.tagline}</p>
+              <p className="text-gray-600">{course.tagline}</p>
               <div className="flex-1" />
               <div className="flex items-center gap-2 text-gray-600 text-sm min-h-[28px]">
                 <Users className="w-5 h-5 text-gray-500" />
                 <span>
-                  {module.totalNumberOfStudents}{" "}
-                  {module.totalNumberOfStudents === 1 ? "student" : "students"}
+                  {course.totalNumberOfStudents}{" "}
+                  {course.totalNumberOfStudents === 1 ? "student" : "students"}
                 </span>
               </div>
             </CardContent>
             <CardFooter>
-              <Button variant="outline" className="w-full" onClick={() => redirect('/modules/' + toSlug(module.id, module.title))}>
+              <Button variant="outline" className="w-full" onClick={() => redirect('/courses/' + toSlug(course.id, course.title))}>
                 View
               </Button>
             </CardFooter>

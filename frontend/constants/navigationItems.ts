@@ -3,7 +3,7 @@ import { User, Settings, Book, LayoutDashboard } from "lucide-react";
 export const navItems = [
     { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
     { label: "Profile", icon: User, href: "/profile" },
-    { label: "Modules", icon: Book, href: "/modules" },
+    { label: "Courses", icon: Book, href: "/courses" },
     { label: "Settings", icon: Settings, href: "/settings" },
   ];
 

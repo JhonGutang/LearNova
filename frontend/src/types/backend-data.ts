@@ -1,13 +1,13 @@
 
 
-// Modules
-enum Status {
+// Course
+export enum Status {
   PUBLISHED,
   DRAFT,
   UNLISTED,
 }
 
-export interface ModuleData {
+export interface Course {
     id?: number;
     title: string;
     tagline: string;
@@ -18,7 +18,7 @@ export interface ModuleData {
   }
 
 
-  export interface CreateModuleFormData {
+  export interface CreateCourseFormData {
     title: string;
     tagline: string;
     description: string;
@@ -26,4 +26,4 @@ export interface ModuleData {
   }
   
 
-// Submodules
+// Topics
