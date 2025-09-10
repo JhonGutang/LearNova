@@ -4,7 +4,7 @@ import prisma from "../config/prisma";
 interface CourseRepositoryInterface {
     create(course: Object): Promise<object>;
     getAll(): Promise<object>;
-    getSpecificModule(courseId: number): Promise<object | null>;
+    getSpecificCourse(courseId: number): Promise<object | null>;
 }
 
 export class CourseRepository implements CourseRepositoryInterface {
@@ -53,7 +53,7 @@ export class CourseRepository implements CourseRepositoryInterface {
         return courses;
     }
 
-    async getSpecificModule(courseId: number): Promise<object | null> {
+    async getSpecificCourse(courseId: number): Promise<object | null> {
         const course = await prisma.course.findUnique({
             where: {
                 id: courseId,
@@ -67,7 +67,14 @@ export class CourseRepository implements CourseRepositoryInterface {
                             },
                         }
                     }
-                }
+                },
+                lessons: {
+                    select: {
+                        id: true,
+                        title: true,
+                        description: true,
+                    }
+                    }
             }
         });
         return course;

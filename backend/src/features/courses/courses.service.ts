@@ -40,7 +40,7 @@ export class CourseService implements CourseServiceInterface {
     }
 
     async getById(moduleId: number): Promise<object> {
-        const module = await this.courseRepository.getSpecificModule(moduleId);
+        const module = await this.courseRepository.getSpecificCourse(moduleId);
         return normalizeCategories(module);
     }
 }

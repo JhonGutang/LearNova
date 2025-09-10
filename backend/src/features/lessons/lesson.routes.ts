@@ -5,6 +5,6 @@ const router: Router = express.Router();
 const lessonController = new LessonController();
 
 router.post("/lesson", lessonController.createLesson);
-router.get("/lessons/:courseId", lessonController.getLessonsByCourseid)
+router.get("/course/:courseId/lessons", lessonController.getLessonsByCourseid)
 
 export default router;
