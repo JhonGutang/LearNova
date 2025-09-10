@@ -4,7 +4,7 @@ import TeacherHomeLayout from '@/src/layout/TeacherHomeLayout';
 import React from 'react';
 import { navItems } from '@/constants/navigationItems';
 import ListView from '@/src/shared/ListView';
-import { dummyCourses } from '@/constants/coursesDummyData';
+import { dummyLessons } from '@/constants/coursesDummyData';
 import ModuleInformation from './components/CourseInformation';
 import { Course } from '@/src/types/backend-data';
 interface CourseByIdPresentationalProps {
@@ -26,7 +26,7 @@ const CourseByIdPresentational: React.FC<CourseByIdPresentationalProps> = ({ nam
                         className="flex-1 overflow-y-auto"
                         style={{ maxHeight: 'calc(91vh - 80px)' }} 
                     >
-                        <ListView data={dummyCourses} />
+                        <ListView data={dummyLessons} />
                     </div>
                 </div>
             </div>
