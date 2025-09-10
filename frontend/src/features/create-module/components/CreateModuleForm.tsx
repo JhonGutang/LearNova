@@ -24,7 +24,7 @@ const CreateModuleForm: React.FC<CreateModuleFormProps> = ({
 }) => {
 
     // Category is always an array
-    const selectedCategories: string[] = createModuleFormData.category;
+    const selectedCategories: string[] = createModuleFormData.categories;
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -96,17 +96,17 @@ const CreateModuleForm: React.FC<CreateModuleFormProps> = ({
                     </Label>
                     <div className="flex flex-wrap gap-2 mt-2" id="category">
                         {categories.map((category) => {
-                            const isSelected = selectedCategories.includes(category);
+                            const isSelected =  createModuleFormData.categories.includes(category);
                             return (
                                 <ChipToggle key={category} option={category} isSelected={isSelected} onToggle={() =>handleSelectCategories(category)} />
                             );
                         })}
                     </div>
-                    {selectedCategories.length === 0 && (
+                    { createModuleFormData.categories.length === 0 && (
                         <ErrorMessage>Please select at least one category</ErrorMessage>
                     )}
                 </div>
-                <Button type="submit" className="w-full" disabled={selectedCategories.length === 0}>
+                <Button type="submit" className="w-full" disabled={ createModuleFormData.categories.length === 0}>
                     Create Module
                 </Button>
             </form>

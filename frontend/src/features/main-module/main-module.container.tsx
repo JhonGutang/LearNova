@@ -11,7 +11,7 @@ const MainModuleContainer: React.FC<MainModuleContainerProps> = ({name}) => {
     const {fromSlug} = useRedirectLink();
     const {id, title} = fromSlug(name)
     const {module} = useFetchModule(id);
-
+    
     if (!module) {
         return (
             <div className="flex items-center justify-center h-screen w-full">

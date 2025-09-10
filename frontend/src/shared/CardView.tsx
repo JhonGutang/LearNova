@@ -13,7 +13,7 @@ const CardView: React.FC<CardViewProps> = ({ data }) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
       {data.map((module, idx) => {
-        const categories = Array.isArray(module.category) ? module.category : [module.category];
+        const categories = Array.isArray(module.categories) ? module.categories : [module.categories];
         const displayedCategories = categories.slice(0, 2);
         const remainingCount = categories.length - displayedCategories.length;
 

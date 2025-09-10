@@ -19,13 +19,30 @@ enum Status {
   DRAFT
   UNLISTED
 }
+
 model Module {
-  id          Int      @id @default(autoincrement())
+  id          Int                @id @default(autoincrement())
   title       String
   tagline     String
-  status      Status   @default(DRAFT)
+  status      Status             @default(DRAFT)
   description String
-  category    String
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  created_at  DateTime           @default(now())
+  updated_at  DateTime           @updatedAt
+  categories  Module_Category[]
+}
+
+model Category {
+  id       Int                @id @default(autoincrement())
+  name     String             @unique
+  modules  Module_Category[]
+}
+
+model Module_Category {
+  module_id   Int
+  category_id Int
+
+  module      Module   @relation(fields: [module_id], references: [id])
+  category    Category @relation(fields: [category_id], references: [id])
+
+  @@id([module_id, category_id])
 }

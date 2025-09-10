@@ -14,7 +14,7 @@ export interface ModuleData {
     description: string;
     status: Status;
     totalNumberOfStudents: number;
-    category: string[],
+    categories: string[],
   }
 
 
@@ -22,7 +22,7 @@ export interface ModuleData {
     title: string;
     tagline: string;
     description: string;
-    category: string[];
+    categories: string[];
   }
   
 

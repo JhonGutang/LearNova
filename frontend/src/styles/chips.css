@@ -8,7 +8,7 @@
   background-color: #e0e0e0;
   color: #333;
   margin: 2px;
-  cursor: default;
+  cursor: pointer;
   user-select: none;
   transition: background 0.2s;
 }
