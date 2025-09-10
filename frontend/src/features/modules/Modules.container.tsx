@@ -2,7 +2,7 @@
 
 import { useFetchModules } from "./hooks/useFetchModules";
 import React from "react";
-import ModulesPresentational from "./Modules.presentational";
+import ModulesPresentational from "./modules.presentational";
 
 const ModulesContainer: React.FC = () => {
 	const modules = useFetchModules();

@@ -1,4 +1,4 @@
-import ModulesContainer from "@/src/features/modules/Modules.container";
+import ModulesContainer from "@/src/features/modules/modules.container";
 
 
 export default function ModulesPage() {

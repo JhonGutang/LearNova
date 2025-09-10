@@ -9,7 +9,6 @@ interface ModuleInformationProps {
 const ModuleInformation: React.FC<ModuleInformationProps> = ({ module }) => {
 
     const totalSubModules = 7;
-    const visibility = "Visible";
     const author = "Author's Name";
 
 
@@ -58,7 +57,7 @@ const ModuleInformation: React.FC<ModuleInformationProps> = ({ module }) => {
                 <div className="grid grid-cols-1 gap-2 text-sm">
                     <div className="flex items-center justify-between">
                         <span className="text-gray-600">Total Participants</span>
-                        <span className="font-medium text-gray-900">{module.totalNumberOfStudents}</span>
+                        <span className="font-medium text-gray-900">{module.totalNumberOfStudents ?? 8}</span>
                     </div>
                     <div className="flex items-center justify-between">
                         <span className="text-gray-600">Total Sub Modules</span>
@@ -69,8 +68,8 @@ const ModuleInformation: React.FC<ModuleInformationProps> = ({ module }) => {
                         <span className="font-medium text-gray-900">{author}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                        <span className="text-gray-600">Visibility</span>
-                        <span className="font-medium text-gray-900">{visibility}</span>
+                        <span className="text-gray-600">Status: </span>
+                        <span className="font-medium text-gray-900 capitalize">{module.status}</span>
                     </div>
                 </div>
             </div>
