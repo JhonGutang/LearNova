@@ -1,9 +1,7 @@
-import { LessonPayload } from "../../interfaces/lesson.interface";
+import { LessonPayload, LessonServiceInterface } from "../../interfaces/lesson.interface";
 import { LessonRepository } from "../../repositories/lesson.repository";
 
-interface LessonServiceInterface {
-    createLesson(lessonData: LessonPayload): Promise<object>; 
-}
+
 
 export class LessonService implements LessonServiceInterface{
     private lessonRepository: LessonRepository;
@@ -15,4 +13,10 @@ export class LessonService implements LessonServiceInterface{
     async createLesson(lessonData: LessonPayload): Promise<object> {
         return await this.lessonRepository.create(lessonData);
     }
+
+    async getLessons(courseid: number): Promise<object> {
+        const lessons = this.lessonRepository.getAll(courseid);
+        return lessons
+    }
+
 }

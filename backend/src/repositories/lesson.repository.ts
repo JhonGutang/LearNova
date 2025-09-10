@@ -14,4 +14,18 @@ export class LessonRepository implements LessonRepositoryInterface {
         return newLesson;
     }
 
+    async getAll(courseId: number): Promise<object> {
+        const lessons = await prisma.lesson.findMany({
+            where: {
+                course_id: courseId,
+            },
+            select: {
+                id: true,
+                course_id: true,
+                title: true,
+                description: true,
+            },
+        });
+        return lessons;
+    }
 }
