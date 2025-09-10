@@ -1,12 +1,12 @@
 'use client'
 import React from "react";
-import ModulePreview from "./components/ModulePreview";
-import CreateModuleForm from "./components/CreateCourseForm";
+import CreateCourseForm from "./components/CreateCourseForm";
 import { Progress } from "@/src/shadcn/components/ui/progress";
 import { Button } from "@/src/shadcn/components/ui/button";
 import { CreateCourseFormData } from "@/src/types/backend-data";
 import { useRedirectLink } from "@/src/shadcn/hooks/useRedirectLink";
 import { ArrowLeft } from "lucide-react";
+import CreateLessonForm from "./components/CreateLessonForm";
 
 type CreateCoursePresentationalProps = {
   createCourseFormData: CreateCourseFormData
@@ -33,33 +33,42 @@ const CreateModulePresentational: React.FC<CreateCoursePresentationalProps> = ({
   prevStep,
   saveCourse
 }) => {
-  const {redirect} = useRedirectLink();
+  const { redirect } = useRedirectLink();
+
+  // Handler for Next button
+  const handleNext = () => {
+    nextStep();
+  };
+
+  // Handler for Prev button
+  const handlePrev = () => {
+    prevStep();
+  };
 
   return (
-    <div className="w-full mt-8">
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-8 mx-10">
-        <div className="w-full md:col-span-2">
-          <div className="mb-4">
-          <div className="mb-4">
-            <Button
-              type="button"
-              variant="outline"
-              className="text-sm flex items-center gap-2"
-              onClick={() => redirect("/courses")}
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back to Courses
-            </Button>
+    <div className="w-full min-h-screen relative bg-gray-50">
+      {/* Back to Courses button at the top left, outside the main card */}
+      <div className="absolute top-6 left-6 z-10">
+        <Button
+          type="button"
+          variant="outline"
+          className="text-sm flex items-center gap-2"
+          onClick={() => redirect("/courses")}
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Courses
+        </Button>
+      </div>
+      <div className="w-full min-h-screen flex items-center justify-center">
+        <div className="w-full max-w-lg bg-white rounded-lg shadow-md p-8">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-600">Step {currentStep} of {totalSteps}</span>
+            <span className="text-sm text-gray-600">{progressPercent}%</span>
           </div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-600">Step {currentStep} of {totalSteps}</span>
-              <span className="text-sm text-gray-600">{progressPercent}%</span>
-            </div>
-            <Progress value={progressPercent} />
-          </div>
+          <Progress value={progressPercent} />
           {currentStep === 1 ? (
             <>
-              <CreateModuleForm
+              <CreateCourseForm
                 createCourseFormData={createCourseFormData}
                 setCreateCourseFormData={setCreateCourseFormData}
                 categories={categories}
@@ -67,23 +76,25 @@ const CreateModulePresentational: React.FC<CreateCoursePresentationalProps> = ({
                 handleSelectCategories={handleSelectCategories}
               />
               <div className="flex justify-end mt-4">
-                <Button type="button" onClick={nextStep} className="text-sm">Next</Button>
+                <Button type="button" onClick={handleNext} className="text-sm">Next</Button>
               </div>
             </>
           ) : (
             <>
-              <div className="w-full">
-                <h2 className="text-2xl font-semibold mb-6">Create Submodule</h2>
-                  <div className="flex items-center justify-between">
-                    <Button type="button" variant="ghost" onClick={prevStep} className="text-sm">Back</Button>
-                    <Button type="submit" className="text-sm">Save Submodule</Button>
-                  </div>
+              <div className="mb-4">
+                <CreateLessonForm />
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="text-sm flex items-center gap-2 mt-4"
+                  onClick={handlePrev}
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  Back
+                </Button>
               </div>
             </>
           )}
-        </div>
-        <div className="w-full md:col-span-3">
-          <ModulePreview/>
         </div>
       </div>
     </div>
