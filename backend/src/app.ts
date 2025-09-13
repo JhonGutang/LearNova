@@ -7,10 +7,10 @@ import logger from 'morgan';
 
 const app = express();
 
-// Import your routes with types
-import courseRouter from './features/courses/course.routes';
 import lessonRouter from './features/lessons/lesson.routes';
-// view engine setup
+
+// view engine setup (only needed if you actually render HTML pages)
+// You can safely remove this if you only use APIs/GraphQL
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
@@ -21,24 +21,26 @@ app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// API route handling
-app.use('/api/', courseRouter);
+// Keep REST endpoints (can remove later when fully on GraphQL)
 app.use('/api/', lessonRouter);
 
-// catch 404 and forward to error handler
+// Catch 404 (but skip /graphql so Apollo can handle it)
 app.use((req: Request, res: Response, next: NextFunction) => {
-  next(createError(404));
+  if (req.path.startsWith('/graphql')) {
+    return next();
+  }
+  res.status(404).json({
+    message: 'Not Found',
+    path: req.originalUrl,
+  });
 });
 
-// error handler
+// Error handler
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+  res.status(err.status || 500).json({
+    message: err.message,
+    error: req.app.get('env') === 'development' ? err : {},
+  });
 });
 
 export default app;
