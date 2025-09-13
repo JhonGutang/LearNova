@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Course, CreateCourseFormData } from "@/src/types/backend-data";
+import { CreateCourseFormData } from "@/src/types/backend-data";
 import { CATEGORIES } from "@/constants/coursesDummyData";
 import { CREATE_COURSE } from "../query";
 import * as ApolloReact from "@apollo/client/react";
