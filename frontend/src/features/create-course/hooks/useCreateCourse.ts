@@ -1,17 +1,30 @@
 import { useState } from "react";
 import { Course, CreateCourseFormData } from "@/src/types/backend-data";
 import { CATEGORIES } from "@/constants/coursesDummyData";
-import { CreateCourseService } from "../create-course.service";
-
-const createCourseService = new CreateCourseService();
+import { CREATE_COURSE } from "../query";
+import * as ApolloReact from "@apollo/client/react";
 
 export function useCreateCourse() {
-    const [course, setCourse] = useState<Course[]>([]);
     const [createCourseFormData, setCreateCourseFormData] = useState<CreateCourseFormData>({
         title: "",
         tagline: "",
         description: "",
         categories: [],
+    });
+
+    const [createCourse, { loading, error }] = ApolloReact.useMutation(CREATE_COURSE, {
+        refetchQueries: ['GetAllCourses'],
+        onCompleted: (data) => {
+            setCreateCourseFormData({
+                title: "",
+                tagline: "",
+                description: "",
+                categories: [],
+            });
+        },
+        onError: (error) => {
+            console.error('Failed to create course:', error);
+        }
     });
 
     const handleSelectCategories = (category: string) => {
@@ -32,19 +45,23 @@ export function useCreateCourse() {
 
     const saveCourse = async () => {
         try {
-            await createCourseService.create(createCourseFormData);
+            await createCourse({
+                variables: {
+                    input: createCourseFormData
+                }
+            });
         } catch (error) {
             console.error("Failed to create course:", error);
         }
-    }
+    };
 
     return {
-        course,
-        setCourse,
         createCourseFormData,
         setCreateCourseFormData,
         CATEGORIES,
         handleSelectCategories,
         saveCourse,
+        loading,
+        error,
     };
 }

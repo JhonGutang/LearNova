@@ -1,31 +1,23 @@
-import { useState, useEffect } from "react";
-import { CourseByIdService } from "../course-by-id.service";
-import { AxiosResponse } from "axios";
 import { Course } from "@/src/types/backend-data";
+import { GET_COURSE_BY_ID } from "../query";
+import * as ApolloReact from "@apollo/client/react";
 
-const courseByIdService = new CourseByIdService();
+interface CourseData {
+    course: Course;
+}
 
-export function useFetchCourse(courseId: number | null) {
-    const [course, setCourse] = useState<Course | null>();
+export function useFetchCourse(courseId: string | null) {
+    const { data, loading, error } = ApolloReact.useQuery<CourseData>(GET_COURSE_BY_ID, {
+        variables: { id: courseId },
+        skip: !courseId,
+        errorPolicy: 'all',
+        notifyOnNetworkStatusChange: true,
+    });
 
-    const handleFetchCourseById = (courseId: number) => {
-        courseByIdService.fetch(courseId)
-        .then((response: AxiosResponse) => {
-            setCourse(response.data);
-        })
-        .catch((error) => {
-            console.error("Failed to fetch course:", error);
-        });
-    }
-
-    useEffect(() => {
-        if(!courseId) return
-        handleFetchCourseById(courseId);
-    }, [courseId]);
-
-    return {
-        course,
-        setCourse,
-        handleFetchCourseById,
+    return { 
+        course: data?.course || null, 
+        loading, 
+        error,
+        refetch: () => {}
     };
 }
