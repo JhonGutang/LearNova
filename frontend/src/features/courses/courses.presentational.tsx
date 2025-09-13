@@ -6,10 +6,14 @@ import { Button } from "@/src/shadcn/components/ui/button";
 import { Course } from "@/src/types/backend-data";
 import CardView from "@/src/shared/CardView";
 import ListView from "@/src/shared/ListView";
-import { Plus } from "lucide-react";
+import { Plus, Loader2 } from "lucide-react";
 import { useRedirectLink } from "@/src/shadcn/hooks/useRedirectLink";
-interface CoursePrensetationalProps {
+import ErrorMessage from "@/src/shared/ErrorMessage";
+
+interface CoursePresentationalProps {
   courses: Course[];
+  loading: boolean;
+  error?: any;
 }
 
 interface CoursesHeaderProps {
@@ -45,10 +49,38 @@ const CourseHeader: React.FC<CoursesHeaderProps> = ({ view, setView }) => {
   );
 };
 
-const CoursesPresentational: React.FC<CoursePrensetationalProps> = ({
+const CoursesPresentational: React.FC<CoursePresentationalProps> = ({
   courses,
+  loading,
+  error,
 }) => {
   const [view, setView] = React.useState<"card" | "list">("card");
+
+  if (loading) {
+    return (
+      <TeacherHomeLayout navItems={navItems} pageTitle="Courses">
+        <main className="p-4">
+          <div className="flex items-center justify-center h-64">
+            <Loader2 className="h-8 w-8 animate-spin" />
+            <span className="ml-2">Loading courses...</span>
+          </div>
+        </main>
+      </TeacherHomeLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <TeacherHomeLayout navItems={navItems} pageTitle="Courses">
+        <main className="p-4">
+          <ErrorMessage 
+            message="Failed to load courses. Please try again later."
+            error={error}
+          />
+        </main>
+      </TeacherHomeLayout>
+    );
+  }
 
   return (
     <TeacherHomeLayout navItems={navItems} pageTitle="Courses">

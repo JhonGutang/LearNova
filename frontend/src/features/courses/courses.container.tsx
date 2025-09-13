@@ -1,13 +1,18 @@
- 'use client';
+'use client';
 
 import { useFetchCourses } from "./hooks/useFetchCourses";
 import React from "react";
 import CoursesPresentational from "./courses.presentational";
 
 const CoursesContainer: React.FC = () => {
-	const courses = useFetchCourses();
+	const { courses, loading, error } = useFetchCourses();
+	
 	return (
-		<CoursesPresentational courses={courses}/>
+		<CoursesPresentational 
+			courses={courses} 
+			loading={loading} 
+			error={error}
+		/>
 	);
 };
 
