@@ -8,8 +8,9 @@ interface CoursebydIdPageProps {
   }
   
   export default async function CourseByIdPage({ params }: CoursebydIdPageProps) {
+    const {courseTitle} = await params;
     return (
-        <CourseByIdContainer name={params['courseTitle']}/>
+        <CourseByIdContainer name={courseTitle}/>
     );
   }
   
