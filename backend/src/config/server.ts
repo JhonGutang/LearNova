@@ -1,80 +1,73 @@
 #!/usr/bin/env node
 
 import http, { Server } from 'http';
-import app from '../app';  // Ensure the path to `app.ts` is correct
+import app from '../app';
 import debug from 'debug';
 import dotenv from 'dotenv';
+import { ApolloServer } from '@apollo/server';
+import { expressMiddleware } from '@as-integrations/express4';
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
+import { json } from 'body-parser';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+import { resolvers } from '../features/courses/course.resolver';
 
-// Load environment variables
 dotenv.config();
 
-/**
- * Get port from environment and store in Express.
- */
 const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
-/**
- * Create HTTP server.
- */
-const server: Server = http.createServer(app);
+const httpServer: Server = http.createServer(app);
 
-/**
- * Listen on provided port, on all network interfaces.
- */
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+// Read GraphQL schema from file
+const typeDefs = readFileSync(join(__dirname, '../features/courses/course.graphql'), 'utf8');
 
-/**
- * Normalize a port into a number, string, or false.
- */
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  plugins: [
+    ApolloServerPluginDrainHttpServer({ httpServer }),
+    ApolloServerPluginLandingPageLocalDefault({ embed: true }), // Apollo Sandbox
+  ],
+});
+
+async function startApollo() {
+  await server.start();
+
+  app.use('/graphql', json(), expressMiddleware(server));
+
+  httpServer.listen(port);
+  httpServer.on('error', onError);
+  httpServer.on('listening', onListening);
+}
+
+startApollo();
+
 function normalizePort(val: string): number | string | false {
   const portNumber = parseInt(val, 10);
-
-  if (isNaN(portNumber)) {
-    // named pipe
-    return val;
-  }
-
-  if (portNumber >= 0) {
-    // port number
-    return portNumber;
-  }
-
+  if (isNaN(portNumber)) return val;
+  if (portNumber >= 0) return portNumber;
   return false;
 }
 
-/**
- * Event listener for HTTP server "error" event.
- */
 function onError(error: NodeJS.ErrnoException): void {
-  if (error.syscall !== 'listen') {
-    throw error;
-  }
-
+  if (error.syscall !== 'listen') throw error;
   const bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
-
-  // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
       console.error(bind + ' requires elevated privileges');
       process.exit(1);
-      break;
     case 'EADDRINUSE':
       console.error(bind + ' is already in use');
       process.exit(1);
-      break;
     default:
       throw error;
   }
 }
 
-/**
- * Event listener for HTTP server "listening" event.
- */
 function onListening(): void {
-  const addr = server.address();
+  const addr = httpServer.address();
   const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr?.port;
-  debug('Listening on ' + bind);
+  debug('app:server')('Listening on ' + bind);
 }

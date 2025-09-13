@@ -140,3 +140,4 @@ public/uploads/
 # package-lock.json
 # yarn.lock
 /generated/prisma
+/src/generated

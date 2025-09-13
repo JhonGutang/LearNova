@@ -22,7 +22,7 @@ enum Status {
 
 model Course {
   id          Int                @id @default(autoincrement())
-  title       String
+  title       String             @unique 
   tagline     String
   status      Status             @default(DRAFT)
   description String
