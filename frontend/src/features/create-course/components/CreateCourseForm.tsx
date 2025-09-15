@@ -23,7 +23,6 @@ const CreateCourseForm: React.FC<CreateCourseFormProps> = ({
     handleSelectCategories,
 }) => {
 
-    // Category is always an array
     const selectedCategories: string[] = createCourseFormData.categories;
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {

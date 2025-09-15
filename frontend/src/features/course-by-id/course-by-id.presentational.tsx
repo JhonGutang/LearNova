@@ -4,7 +4,6 @@ import TeacherHomeLayout from '@/src/layout/TeacherHomeLayout';
 import React from 'react';
 import { navItems } from '@/constants/navigationItems';
 import ListView from '@/src/shared/ListView';
-import { dummyLessons } from '@/constants/coursesDummyData';
 import ModuleInformation from './components/CourseInformation';
 import { Course } from '@/src/types/backend-data';
 interface CourseByIdPresentationalProps {
