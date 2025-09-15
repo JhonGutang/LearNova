@@ -7,8 +7,12 @@ export const GET_COURSE_BY_ID = gql`
             title
             tagline
             description
-            categories
             status
+            categories
+            lessons {
+                title
+                description
+            }
             created_at
             updated_at
         }

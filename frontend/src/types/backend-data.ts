@@ -12,6 +12,7 @@ export interface Course {
   description: string;
   status: string;
   categories: string[];
+  lessons: Lesson[];
   created_at: string;
   updated_at: string;
   // Optional field for display purposes

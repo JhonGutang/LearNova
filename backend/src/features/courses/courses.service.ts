@@ -76,7 +76,10 @@ export class CourseService implements CourseServiceInterface {
   async getById(courseId: number): Promise<object | null> {
     const course = await prisma.course.findUnique({
       where: { id: courseId },
-      include: { categories: { include: { category: true } } },
+      include: { 
+        categories: { include: { category: true } },
+        lessons: true,
+      },
     });
     return normalizeCategories(course);
   }

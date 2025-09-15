@@ -4,9 +4,15 @@ type Course {
     tagline: String!
     description: String!
     categories: [String!]!
+    lessons: [Lesson!]!
     status: String!
     created_at: String!
     updated_at: String!
+}
+
+type Lesson {
+    title: String!,
+    description: String!,
 }
 
 input CourseInput {
