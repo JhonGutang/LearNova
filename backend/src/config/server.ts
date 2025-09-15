@@ -11,7 +11,10 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
 import { json } from 'body-parser';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { resolvers } from '../features/courses/course.resolver';
+
+// Import both course and lesson resolvers
+import { resolvers as courseResolvers } from '../features/courses/course.resolver';
+import { resolvers as lessonResolvers } from '../features/lessons/lesson.resolver';
 
 dotenv.config();
 
@@ -20,8 +23,13 @@ app.set('port', port);
 
 const httpServer: Server = http.createServer(app);
 
-// Read GraphQL schema from file
-const typeDefs = readFileSync(join(__dirname, '../features/courses/course.graphql'), 'utf8');
+// Read GraphQL schemas from files
+const courseTypeDefs = readFileSync(join(__dirname, '../features/courses/course.graphql'), 'utf8');
+const lessonTypeDefs = readFileSync(join(__dirname, '../features/lessons/lesson.graphql'), 'utf8');
+
+// Merge typeDefs and resolvers
+const typeDefs = [courseTypeDefs, lessonTypeDefs];
+const resolvers = [courseResolvers, lessonResolvers];
 
 const server = new ApolloServer({
   typeDefs,

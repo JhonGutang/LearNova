@@ -7,8 +7,6 @@ import logger from 'morgan';
 
 const app = express();
 
-import lessonRouter from './features/lessons/lesson.routes';
-
 // view engine setup (only needed if you actually render HTML pages)
 // You can safely remove this if you only use APIs/GraphQL
 app.set('views', path.join(__dirname, 'views'));
@@ -21,8 +19,6 @@ app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Keep REST endpoints (can remove later when fully on GraphQL)
-app.use('/api/', lessonRouter);
 
 // Catch 404 (but skip /graphql so Apollo can handle it)
 app.use((req: Request, res: Response, next: NextFunction) => {

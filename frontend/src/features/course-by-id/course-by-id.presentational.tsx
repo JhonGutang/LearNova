@@ -26,7 +26,7 @@ const CourseByIdPresentational: React.FC<CourseByIdPresentationalProps> = ({ nam
                         className="flex-1 overflow-y-auto"
                         style={{ maxHeight: 'calc(91vh - 80px)' }} 
                     >
-                        <ListView data={dummyLessons} />
+                        <ListView data={course.lessons} />
                     </div>
                 </div>
             </div>
