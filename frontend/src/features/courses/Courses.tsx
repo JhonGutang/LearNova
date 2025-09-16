@@ -10,6 +10,7 @@ import { navItems } from "@/constants/navigationItems";
 import ErrorMessage from "@/src/shared/ErrorMessage";
 import CardView from "@/src/shared/CardView";
 import ListView from "@/src/shared/ListView";
+import CreateCourseForm from "../create-course/CreateCourseFormDialog";
 
 interface CoursesHeaderProps {
   view: "card" | "list";
@@ -22,10 +23,7 @@ const CourseHeader: React.FC<CoursesHeaderProps> = ({ view, setView }) => {
     <div className="flex items-center justify-between mb-4">
       <h2 className="text-2xl font-bold">Courses</h2>
       <div className="flex gap-2">
-        <Button variant="default" onClick={() => redirect("/create-course")}>
-          <Plus className="w-4 h-4 mr-2" />
-          Create New Course
-        </Button>
+        <CreateCourseForm/>
         <Button
           variant={view === "card" ? "default" : "outline"}
           onClick={() => setView("card")}

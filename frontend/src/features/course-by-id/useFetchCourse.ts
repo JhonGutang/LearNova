@@ -1,5 +1,5 @@
 import { Course } from "@/src/types/backend-data";
-import { GET_COURSE_BY_ID } from "../query";
+import { GET_COURSE_BY_ID } from "./query";
 import * as ApolloReact from "@apollo/client/react";
 
 interface CourseData {
