@@ -11,11 +11,6 @@ const CreateCourseContainer: React.FC = () => {
         handleSelectCategories,
         saveCourse
     } = useCreateCourse();
-    const { currentStep,
-        totalSteps,
-        progressPercent,
-        nextStep,
-        prevStep, } = useProgressBarTrack();
 
     return (
         <CreateModulePresentational
@@ -23,11 +18,6 @@ const CreateCourseContainer: React.FC = () => {
             setCreateCourseFormData={setCreateCourseFormData}
             categories={CATEGORIES}
             handleSelectCategories={handleSelectCategories}
-            currentStep={currentStep}
-            totalSteps={totalSteps}
-            progressPercent={progressPercent}
-            nextStep={nextStep}
-            prevStep={prevStep}
             saveCourse={saveCourse}
         />
     );

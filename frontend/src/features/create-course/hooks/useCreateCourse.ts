@@ -3,8 +3,11 @@ import { CreateCourseFormData } from "@/src/types/backend-data";
 import { CATEGORIES } from "@/constants/coursesDummyData";
 import { CREATE_COURSE } from "../query";
 import * as ApolloReact from "@apollo/client/react";
+import { useRedirectLink } from "@/src/shadcn/hooks/useRedirectLink";
+
 
 export function useCreateCourse() {
+    const {redirect} = useRedirectLink();
     const [createCourseFormData, setCreateCourseFormData] = useState<CreateCourseFormData>({
         title: "",
         tagline: "",
@@ -50,6 +53,7 @@ export function useCreateCourse() {
                     input: createCourseFormData
                 }
             });
+            redirect('/courses')
         } catch (error) {
             console.error("Failed to create course:", error);
         }
