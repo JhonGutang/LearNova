@@ -15,7 +15,7 @@ interface CourseByIdProps {
 
 const CourseById: React.FC<CourseByIdProps> = ({ name }) => {
   const { fromSlug } = useRedirectLink();
-  const { id } = fromSlug(name);
+  const { id, title } = fromSlug(name);
   const { course, loading, error } = useFetchCourse(id?.toString() || null);
 
   if (loading || error || !course) {
@@ -23,7 +23,7 @@ const CourseById: React.FC<CourseByIdProps> = ({ name }) => {
   }
 
   return (
-    <TeacherHomeLayout pageTitle={name} navItems={navItems}>
+    <TeacherHomeLayout pageTitle={title} navItems={navItems}>
       <div className="flex h-[91vh]">
         <CourseInformation course={course} />
         <div className="h-full py-10 px-4 flex-1 flex flex-col">
