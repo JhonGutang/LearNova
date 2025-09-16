@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Course } from "@/src/types/backend-data";
 import { GET_COURSES } from "../query";
 import * as ApolloReact from "@apollo/client/react";
@@ -7,15 +8,23 @@ interface CoursesData {
 }
 
 export function useFetchCourses() {
-    const { data, loading, error } = ApolloReact.useQuery<CoursesData>(GET_COURSES, {
+    const [courses, setCourses] = useState<Course[]>([]);
+    const { data, loading, error, refetch } = ApolloReact.useQuery<CoursesData>(GET_COURSES, {
+        fetchPolicy: "network-only",
         errorPolicy: 'all',
         notifyOnNetworkStatusChange: true,
     });
 
+    useEffect(() => {
+        if (data && data.courses) {
+            setCourses(data.courses);
+        }
+    }, [data]);
+
     return { 
-        courses: data?.courses || [], 
+        courses, 
         loading, 
         error,
-        refetch: () => {}
+        refetch
     };
 }
