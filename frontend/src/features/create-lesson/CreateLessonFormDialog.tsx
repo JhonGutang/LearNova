@@ -11,13 +11,13 @@ import {
   DialogClose,
 } from "@/src/shadcn/components/ui/dialog";
 import { Plus } from "lucide-react";
-import { useCreateLesson } from "./hook/useCreateLesson";
+import { useCreateLesson } from "./useCreateLesson";
 
-interface CreateLessonPresentationalProps {
+interface CreatelessonFormDialogProps {
   courseId: string;
 }
 
-const CreateLessonPresentational: React.FC<CreateLessonPresentationalProps> = ({
+const CreatelessonFormDialog: React.FC<CreatelessonFormDialogProps> = ({
   courseId,
 }) => {
   const [open, setOpen] = useState(false);
@@ -33,7 +33,7 @@ const CreateLessonPresentational: React.FC<CreateLessonPresentationalProps> = ({
     setSuccess,
   } = useCreateLesson();
 
-  // Reset form and success state when dialog is closed
+
   const handleDialogClose = () => {
     setOpen(false);
     setForm({
@@ -130,4 +130,4 @@ const CreateLessonPresentational: React.FC<CreateLessonPresentationalProps> = ({
   );
 };
 
-export default CreateLessonPresentational;
+export default CreatelessonFormDialog;

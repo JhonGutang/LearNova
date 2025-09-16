@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { CreateLessonFormData } from "@/src/types/backend-data";
-import { CREATE_LESSON } from "../query";
+import { CREATE_LESSON } from "./query";
 import * as ApolloReact from "@apollo/client/react";
 
 export const useCreateLesson = () => {

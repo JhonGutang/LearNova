@@ -5,7 +5,7 @@ import { useFetchCourse } from "./useFetchCourse";
 import TeacherHomeLayout from "@/src/layout/TeacherHomeLayout";
 import { navItems } from "@/constants/navigationItems";
 import CourseInformation from "./components/CourseInformation";
-import CreateLessonPresentational from "../create-lesson/create-lesson.presentational";
+import CreateLessonFormDialog from "../create-lesson/CreateLessonFormDialog";
 import ListView from "@/src/shared/ListView";
 import CourseStateGuard from "./components/CourseStateGuard";
 
@@ -29,7 +29,7 @@ const CourseById: React.FC<CourseByIdProps> = ({ name }) => {
         <div className="h-full py-10 px-4 flex-1 flex flex-col">
           <div className="flex items-center justify-between mb-4">
             <div className="text-xl font-semibold">Lessons</div>
-            <CreateLessonPresentational courseId={course.id} />
+            <CreateLessonFormDialog courseId={course.id} />
           </div>
           <div
             className="flex-1 overflow-y-auto"
