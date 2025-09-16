@@ -2,6 +2,7 @@ scalar DateTime
 
 type Lesson {
     id: Int!,
+    course_id: Int!,
     title: String!,
     description: String!
     created_at: DateTime!
