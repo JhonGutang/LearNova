@@ -27,10 +27,7 @@ const CourseByIdContainer: React.FC<CourseByIdContainerProps> = ({name}) => {
     if (error) {
         return (
             <div className="flex items-center justify-center h-screen w-full">
-                <ErrorMessage 
-                    message="Failed to load course. Please try again later."
-                    error={error}
-                />
+                <ErrorMessage>Failed to load course. Please try again later.</ErrorMessage>
             </div>
         );
     }
@@ -46,7 +43,7 @@ const CourseByIdContainer: React.FC<CourseByIdContainerProps> = ({name}) => {
     }
 
     return (
-        <CourseByIdPresentational name={title} course={course}/>
+        <CourseByIdPresentational name={title} course={course} baseLink={name}/>
     );
 };
 
