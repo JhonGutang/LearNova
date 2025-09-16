@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Course } from "@/src/types/backend-data";
-import { GET_COURSES } from "../query";
+import { GET_COURSES } from "./query";
 import * as ApolloReact from "@apollo/client/react";
 
 interface CoursesData {

@@ -1,8 +1,8 @@
-import CoursesContainer from "@/src/features/courses/courses.container";
+import Courses from "@/src/features/courses/Courses";
 
 
 export default function CoursesPage() {
   return (
-    <CoursesContainer/>
+    <Courses/>
   );
 }

@@ -1,20 +1,15 @@
+"use client";
 
-import { navItems } from "@/constants/navigationItems";
-import TeacherHomeLayout from "@/src/layout/TeacherHomeLayout";
+import { useFetchCourses } from "./useFetchCourses";
 import React from "react";
 import { Button } from "@/src/shadcn/components/ui/button";
-import { Course } from "@/src/types/backend-data";
+import { Loader2, Plus } from "lucide-react";
+import { useRedirectLink } from "@/src/shadcn/hooks/useRedirectLink";
+import TeacherHomeLayout from "@/src/layout/TeacherHomeLayout";
+import { navItems } from "@/constants/navigationItems";
+import ErrorMessage from "@/src/shared/ErrorMessage";
 import CardView from "@/src/shared/CardView";
 import ListView from "@/src/shared/ListView";
-import { Plus, Loader2 } from "lucide-react";
-import { useRedirectLink } from "@/src/shadcn/hooks/useRedirectLink";
-import ErrorMessage from "@/src/shared/ErrorMessage";
-
-interface CoursePresentationalProps {
-  courses: Course[];
-  loading: boolean;
-  error?: any;
-}
 
 interface CoursesHeaderProps {
   view: "card" | "list";
@@ -22,8 +17,7 @@ interface CoursesHeaderProps {
 }
 
 const CourseHeader: React.FC<CoursesHeaderProps> = ({ view, setView }) => {
-    const {redirect} = useRedirectLink();
-
+  const { redirect } = useRedirectLink();
   return (
     <div className="flex items-center justify-between mb-4">
       <h2 className="text-2xl font-bold">Courses</h2>
@@ -49,11 +43,8 @@ const CourseHeader: React.FC<CoursesHeaderProps> = ({ view, setView }) => {
   );
 };
 
-const CoursesPresentational: React.FC<CoursePresentationalProps> = ({
-  courses,
-  loading,
-  error,
-}) => {
+const Courses: React.FC = () => {
+  const { courses, loading, error } = useFetchCourses();
   const [view, setView] = React.useState<"card" | "list">("card");
 
   if (loading) {
@@ -73,10 +64,9 @@ const CoursesPresentational: React.FC<CoursePresentationalProps> = ({
     return (
       <TeacherHomeLayout navItems={navItems} pageTitle="Courses">
         <main className="p-4">
-          <ErrorMessage 
-            message="Failed to load courses. Please try again later."
-            error={error}
-          />
+          <ErrorMessage>
+            "Failed to load courses. Please try again later."{" "}
+          </ErrorMessage>
         </main>
       </TeacherHomeLayout>
     );
@@ -96,4 +86,4 @@ const CoursesPresentational: React.FC<CoursePresentationalProps> = ({
   );
 };
 
-export default CoursesPresentational;
+export default Courses;
