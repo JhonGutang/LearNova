@@ -6,8 +6,8 @@ import TeacherHomeLayout from "@/src/layout/TeacherHomeLayout";
 import { navItems } from "@/constants/navigationItems";
 import CourseInformation from "./components/CourseInformation";
 import CreateLessonFormDialog from "../create-lesson/CreateLessonFormDialog";
-import ListView from "@/src/shared/ListView";
 import CourseStateGuard from "./components/CourseStateGuard";
+import LessonListView from "./components/LessonView";
 
 interface CourseByIdProps {
   name: string;
@@ -35,7 +35,7 @@ const CourseById: React.FC<CourseByIdProps> = ({ name }) => {
             className="flex-1 overflow-y-auto"
             style={{ maxHeight: "calc(91vh - 80px)" }}
           >
-            <ListView data={course.lessons} />
+            <LessonListView lessons={course.lessons || []} parentLink={name} />
           </div>
         </div>
       </div>

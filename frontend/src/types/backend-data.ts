@@ -27,6 +27,7 @@ export interface CreateCourseFormData {
 }
 
 export interface Lesson {
+  id: number,
   title: string;
   description: string;
   progressLevel?: number;
