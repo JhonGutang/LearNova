@@ -4,6 +4,7 @@ import ApolloClientWrapper from "../components/ApolloClientWrapper";
 
 import "../styles/globals.css";
 import "../styles/chips.css";
+import "../styles/textFormattingStyles.css"
 import { Metadata } from "next";
 
 const geistSans = Geist({

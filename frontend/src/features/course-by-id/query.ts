@@ -10,6 +10,7 @@ export const GET_COURSE_BY_ID = gql`
             status
             categories
             lessons {
+                id
                 title
                 description
             }
