@@ -37,6 +37,7 @@ export class CourseService implements CourseServiceInterface {
         const newCourse = await prisma.course.create({
           data: {
             title: course.title,
+            creator_id: course.creator_id,
             tagline: course.tagline,
             description: course.description,
             categories: {

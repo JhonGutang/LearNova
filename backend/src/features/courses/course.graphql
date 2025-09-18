@@ -1,5 +1,6 @@
 type Course {
     id: ID!
+    creator_id: Int!
     title: String!
     tagline: String!
     description: String!
@@ -17,6 +18,7 @@ type Lesson {
 
 input CourseInput {
     title: String!
+    creator_id: Int!
     tagline: String!
     description: String!
     categories: [String!]!
