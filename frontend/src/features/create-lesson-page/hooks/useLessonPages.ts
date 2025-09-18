@@ -1,5 +1,5 @@
 import * as ApolloReact from "@apollo/client/react";
-import { LESSON_PAGES_QUERY, CREATE_LESSON_PAGE_MUTATION } from "../query";
+import { LESSON_PAGES_QUERY, CREATE_OR_UPDATE_LESSON_PAGE_MUTATION } from "../query";
 
 // Define the type for a lesson page (based on query.ts)
 export interface LessonPage {
@@ -23,7 +23,7 @@ interface CreateLessonPageInput {
 }
 
 interface CreateLessonPageData {
-  createLessonPage: LessonPage;
+  createOrUpdateLessonPage: LessonPage;
 }
 
 
@@ -41,19 +41,19 @@ export function useFetchLessonPages(lessonId: number) {
   };
 }
 
-export function useCreateLessonPage() {
-  const [createLessonPageMutation, { data, loading, error }] = ApolloReact.useMutation<CreateLessonPageData, { input: CreateLessonPageInput }>(
-    CREATE_LESSON_PAGE_MUTATION
+export function useUpsertLessonPage() {
+  const [upsertLessonPageMutation, { data, loading, error }] = ApolloReact.useMutation<CreateLessonPageData, { input: CreateLessonPageInput }>(
+    CREATE_OR_UPDATE_LESSON_PAGE_MUTATION
   );
 
-  const createLessonPage = async (input: CreateLessonPageInput) => {
-    const response = await createLessonPageMutation({ variables: { input } });
-    return response.data?.createLessonPage;
+  const upsertLessonPage = async (input: CreateLessonPageInput) => {
+    const response = await upsertLessonPageMutation({ variables: { input } });
+    return response.data?.createOrUpdateLessonPage;
   };
 
   return {
-    createLessonPage,
-    data: data?.createLessonPage,
+    upsertLessonPage,
+    data: data?.createOrUpdateLessonPage,
     loading,
     error,
   };
