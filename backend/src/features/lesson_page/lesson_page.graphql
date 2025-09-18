@@ -24,4 +24,8 @@ type Mutation {
   createOrUpdateLessonPage(
     input: CreateOrUpdateLessonPageInput!
   ): LessonPage!
+
+  deleteLessonPage(
+    id: Int!
+  ): Boolean!
 }
