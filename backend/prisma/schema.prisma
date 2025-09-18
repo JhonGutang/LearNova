@@ -49,12 +49,26 @@ model Course_Category {
 }
 
 model Lesson {
-  id          Int      @id @default(autoincrement())
+  id          Int           @id @default(autoincrement())
   course_id   Int
   title       String
   description String
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
 
-  course      Course   @relation(fields: [course_id], references: [id])
+  course      Course        @relation(fields: [course_id], references: [id])
+  pages       Lesson_Page[] 
+}
+
+model Lesson_Page {
+  id            Int      @id @default(autoincrement())
+  lesson_id     Int
+  page_number   Int
+  content_json  Json
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  lesson        Lesson   @relation(fields: [lesson_id], references: [id], onDelete: Cascade)
+
+  @@unique([lesson_id, page_number])
 }
