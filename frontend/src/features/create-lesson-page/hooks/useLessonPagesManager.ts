@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { useRedirectLink } from "@/src/shadcn/hooks/useRedirectLink";
-import { useFetchLessonPages, useCreateLessonPage } from "./useLessonPages";
+import { useFetchLessonPages, useUpsertLessonPage } from "./useLessonPages";
 
 export function useLessonPagesManager(lessonLink: string) {
   // Extract lesson id and title from the link
@@ -8,7 +8,7 @@ export function useLessonPagesManager(lessonLink: string) {
   const { id, title } = fromSlug(lessonLink);
 
   // Fetch lesson pages
-  const { lessonPages, loading, error } = useFetchLessonPages(Number(id));
+  const { lessonPages, loading, error, refetch } = useFetchLessonPages(Number(id));
 
   // Memoize pages: sorted and formatted for sidebar
   const pages = useMemo(() => {
@@ -48,12 +48,12 @@ export function useLessonPagesManager(lessonLink: string) {
 
   const totalPages = pages.length;
 
-  // For creating new lesson pages
+  // For creating or updating lesson pages
   const {
-    createLessonPage,
+    upsertLessonPage,
     loading: creating,
     error: createError,
-  } = useCreateLessonPage();
+  } = useUpsertLessonPage();
 
   // Compute the next page number
   const nextPageNumber = useMemo(() => {
@@ -68,15 +68,16 @@ export function useLessonPagesManager(lessonLink: string) {
   // Add a new page and select it
   const handleAddPage = useCallback(async () => {
     if (!id) return;
-    const newPage = await createLessonPage({
+    const newPage = await upsertLessonPage({
       lessonId: Number(id),
       pageNumber: nextPageNumber,
       contentJson: '',
     });
     if (newPage) {
       setActivePageId(String(newPage.id));
+      refetch();
     }
-  }, [id, createLessonPage, nextPageNumber]);
+  }, [id, upsertLessonPage, nextPageNumber, refetch]);
 
   // Select a page by id
   const handleSelectPage = useCallback((id: string) => {
@@ -88,15 +89,23 @@ export function useLessonPagesManager(lessonLink: string) {
     alert('Save all pages functionality not implemented yet.');
   }, []);
 
-  // Save current page (creates a new page with given content)
+  // Save current page (creates or updates a page with given content)
   const saveCurrentPage = useCallback(async (content: string) => {
     if (!id) return;
-    await createLessonPage({
+    let pageNumber: number;
+    if (activePage) {
+      // Extract page number from the active page's name (e.g., 'Page 3')
+      const match = activePage.name.match(/Page (\d+)/);
+      pageNumber = match ? parseInt(match[1], 10) : nextPageNumber;
+    } else {
+      pageNumber = nextPageNumber;
+    }
+    await upsertLessonPage({
       lessonId: Number(id),
-      pageNumber: nextPageNumber,
+      pageNumber,
       contentJson: content,
     });
-  }, [id, createLessonPage, nextPageNumber]);
+  }, [id, upsertLessonPage, activePage, nextPageNumber]);
 
   // Debug: log fetched lesson pages
   useEffect(() => {

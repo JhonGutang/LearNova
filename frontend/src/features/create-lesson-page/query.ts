@@ -13,9 +13,9 @@ export const LESSON_PAGES_QUERY = gql`
   }
 `;
 
-export const CREATE_LESSON_PAGE_MUTATION = gql`
-  mutation CreateLessonPage($input: CreateLessonPageInput!) {
-    createLessonPage(input: $input) {
+export const CREATE_OR_UPDATE_LESSON_PAGE_MUTATION = gql`
+  mutation CreateOrUpdateLessonPage($input: CreateOrUpdateLessonPageInput!) {
+    createOrUpdateLessonPage(input: $input) {
       id
       lesson_id
       page_number
