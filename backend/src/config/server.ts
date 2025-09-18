@@ -16,6 +16,7 @@ import { join } from 'path';
 import { resolvers as courseResolvers } from '../features/courses/course.resolver';
 import { resolvers as lessonResolvers } from '../features/lessons/lesson.resolver';
 import { resolvers as lessonPageResolvers } from '../features/lesson_page/lesson_page.resolver';
+import { resolvers as creatorResolvers } from '../features/creator/creator.resolver';
 
 dotenv.config();
 
@@ -28,10 +29,11 @@ const httpServer: Server = http.createServer(app);
 const courseTypeDefs = readFileSync(join(__dirname, '../features/courses/course.graphql'), 'utf8');
 const lessonTypeDefs = readFileSync(join(__dirname, '../features/lessons/lesson.graphql'), 'utf8');
 const lessonPageTypeDefs = readFileSync(join(__dirname, '../features/lesson_page/lesson_page.graphql'), 'utf8');
+const creatorTypeDefs = readFileSync(join(__dirname, '../features/creator/creator.graphql'), 'utf8');
 
 // Merge typeDefs and resolvers
-const typeDefs = [courseTypeDefs, lessonTypeDefs, lessonPageTypeDefs] ;
-const resolvers = [courseResolvers, lessonResolvers, lessonPageResolvers];
+const typeDefs = [courseTypeDefs, lessonTypeDefs, lessonPageTypeDefs, creatorTypeDefs] ;
+const resolvers = [courseResolvers, lessonResolvers, lessonPageResolvers, creatorResolvers];
 
 const server = new ApolloServer({
   typeDefs,

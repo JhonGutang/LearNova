@@ -1,0 +1,43 @@
+scalar DateTime
+
+type Creator {
+  id: Int!
+  first_name: String!
+  last_name: String!
+  middle_name: String
+  password: String!
+  contact_information: ContactInformation
+  created_at: DateTime
+  updated_at: DateTime
+}
+
+type ContactInformation {
+  id: Int!
+  creator_id: Int!
+  phone: String!
+  email: String!
+  address: String!
+}
+
+input CreateCreatorInput {
+  first_name: String!
+  last_name: String!
+  middle_name: String
+  password: String!
+  contact_information: CreateContactInformationInput
+}
+
+input CreateContactInformationInput {
+  phone: String!
+  email: String!
+  address: String!
+}
+
+type Query {
+  creator(id: Int!): Creator
+  creators: [Creator!]!
+}
+
+type Mutation {
+  createCreator(input: CreateCreatorInput!): Creator!
+}
