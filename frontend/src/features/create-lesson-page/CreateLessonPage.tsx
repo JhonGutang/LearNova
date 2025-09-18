@@ -13,6 +13,7 @@ type Page = {
   id: string;
   name: string;
   content: string;
+  pageNumber: number;
 };
 const TiptapEditor = dynamic(() => import('./components/Tiptap'), { ssr: false })
 
@@ -28,9 +29,12 @@ const CreateLessonPage: React.FC<CreateLessonPageProps> = ({ lessonLink }) => {
     error,
     handleAddPage,
     handleSelectPage,
+    handleDeletePage,
     saveCurrentPage,
     creating,
     createError,
+    deleting,
+    deleteError,
     saveStatus,
     handleDebounceStart,
   } = useLessonPagesManager(lessonLink);
@@ -41,7 +45,7 @@ const CreateLessonPage: React.FC<CreateLessonPageProps> = ({ lessonLink }) => {
   // Auto-save callback
   const handleAutoSave = useCallback((content: string) => {
     saveCurrentPage(content);
-  }, [saveCurrentPage]);
+  }, [saveCurrentPage, activePage, activePageId]);
 
   // Handler to save current page
   const handleSaveCurrentPage = useCallback(() => {
@@ -61,6 +65,8 @@ const CreateLessonPage: React.FC<CreateLessonPageProps> = ({ lessonLink }) => {
         activePageId={activePageId || ''}
         onAddPage={handleAddPage}
         onSelectPage={handleSelectPage}
+        onDeletePage={handleDeletePage}
+        deleting={deleting}
       />
       <main className="flex-1 p-6">
         <div className="flex items-center justify-between mb-6">
@@ -123,6 +129,7 @@ const CreateLessonPage: React.FC<CreateLessonPageProps> = ({ lessonLink }) => {
           onDebounceStart={handleDebounceStart}
         />
         {createError && <div className="text-red-500 mt-2">Error saving page.</div>}
+        {deleteError && <div className="text-red-500 mt-2">Error deleting page.</div>}
       </main>
     </div>
   );
