@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import { Sidebar } from "./components/Sidebar";
 import dynamic from 'next/dynamic'
 import { useLessonPagesManager } from "./hooks/useLessonPagesManager";
@@ -31,10 +31,17 @@ const CreateLessonPage: React.FC<CreateLessonPageProps> = ({ lessonLink }) => {
     saveCurrentPage,
     creating,
     createError,
+    saveStatus,
+    handleDebounceStart,
   } = useLessonPagesManager(lessonLink);
 
   // Ref to hold the editor instance
   const editorRef = useRef<any>(null);
+
+  // Auto-save callback
+  const handleAutoSave = useCallback((content: string) => {
+    saveCurrentPage(content);
+  }, [saveCurrentPage]);
 
   // Handler to save current page
   const handleSaveCurrentPage = useCallback(() => {
@@ -66,6 +73,29 @@ const CreateLessonPage: React.FC<CreateLessonPageProps> = ({ lessonLink }) => {
             </p>
           </div>
           <div className="flex items-center gap-2">
+            {/* Auto-save status indicator */}
+            {saveStatus === 'debouncing' && (
+              <div className="flex items-center gap-1 text-sm text-gray-600">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
+                <span>Saving...</span>
+              </div>
+            )}
+            
+            {saveStatus === 'saving' && (
+              <div className="flex items-center gap-1 text-sm text-gray-600">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
+                <span>Saving...</span>
+              </div>
+            )}
+            
+            {saveStatus === 'saved' && (
+              <div className="flex items-center gap-1 text-sm text-green-600 animate-fade-in">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M5.5 16a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 16h-8z" />
+                </svg>
+                <span>Saved</span>
+              </div>
+            )}
             <button 
               onClick={handleSaveCurrentPage}
               className="px-3 py-1 rounded bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition"
@@ -73,6 +103,9 @@ const CreateLessonPage: React.FC<CreateLessonPageProps> = ({ lessonLink }) => {
             >
               {creating ? 'Saving...' : 'Save Current Page'}
             </button>
+            
+            
+            
             <button className="px-3 py-1 rounded bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition">Share</button>
             <img
               src="/avatar-placeholder.png"
@@ -86,6 +119,8 @@ const CreateLessonPage: React.FC<CreateLessonPageProps> = ({ lessonLink }) => {
         <TiptapEditor 
           content={activePage?.content || ''}
           editorRef={editorRef}
+          onAutoSave={handleAutoSave}
+          onDebounceStart={handleDebounceStart}
         />
         {createError && <div className="text-red-500 mt-2">Error saving page.</div>}
       </main>

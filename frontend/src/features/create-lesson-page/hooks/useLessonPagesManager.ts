@@ -2,6 +2,8 @@ import { useState, useCallback, useEffect, useMemo } from "react";
 import { useRedirectLink } from "@/src/shadcn/hooks/useRedirectLink";
 import { useFetchLessonPages, useUpsertLessonPage } from "./useLessonPages";
 
+type SaveStatus = 'idle' | 'debouncing' | 'saving' | 'saved';
+
 export function useLessonPagesManager(lessonLink: string) {
   // Extract lesson id and title from the link
   const { fromSlug } = useRedirectLink();
@@ -24,6 +26,9 @@ export function useLessonPagesManager(lessonLink: string) {
 
   // Track the currently selected page id
   const [activePageId, setActivePageId] = useState<string | undefined>(undefined);
+  
+  // Track save status for auto-save functionality
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
 
   // Ensure activePageId is always valid (defaults to first page)
   useEffect(() => {
@@ -89,22 +94,49 @@ export function useLessonPagesManager(lessonLink: string) {
     alert('Save all pages functionality not implemented yet.');
   }, []);
 
+  // Handle debounce start
+  const handleDebounceStart = useCallback(() => {
+    console.log('Debounce started - setting status to debouncing');
+    setSaveStatus('debouncing');
+  }, []);
+
   // Save current page (creates or updates a page with given content)
   const saveCurrentPage = useCallback(async (content: string) => {
     if (!id) return;
-    let pageNumber: number;
-    if (activePage) {
-      // Extract page number from the active page's name (e.g., 'Page 3')
-      const match = activePage.name.match(/Page (\d+)/);
-      pageNumber = match ? parseInt(match[1], 10) : nextPageNumber;
-    } else {
-      pageNumber = nextPageNumber;
+    
+    console.log('Starting actual save - setting status to saving');
+    setSaveStatus('saving');
+    
+    try {
+      let pageNumber: number;
+      if (activePage) {
+        // Extract page number from the active page's name (e.g., 'Page 3')
+        const match = activePage.name.match(/Page (\d+)/);
+        pageNumber = match ? parseInt(match[1], 10) : nextPageNumber;
+      } else {
+        pageNumber = nextPageNumber;
+      }
+      
+      await upsertLessonPage({
+        lessonId: Number(id),
+        pageNumber,
+        contentJson: content,
+      });
+      
+      console.log('Save completed - setting status to saved');
+      setSaveStatus('saved');
+      
+      // Auto-hide the saved indicator after 3 seconds
+      setTimeout(() => {
+        console.log('Auto-hiding saved indicator - setting status to idle');
+        setSaveStatus('idle');
+      }, 3000);
+      
+    } catch (error) {
+      console.log('Save failed - setting status to idle');
+      setSaveStatus('idle');
+      throw error;
     }
-    await upsertLessonPage({
-      lessonId: Number(id),
-      pageNumber,
-      contentJson: content,
-    });
   }, [id, upsertLessonPage, activePage, nextPageNumber]);
 
   // Debug: log fetched lesson pages
@@ -129,5 +161,7 @@ export function useLessonPagesManager(lessonLink: string) {
     nextPageNumber,
     creating,
     createError,
+    saveStatus,
+    handleDebounceStart,
   };
 }
