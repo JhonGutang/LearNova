@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import { Sidebar } from "./components/Sidebar";
 import dynamic from 'next/dynamic'
 import { useLessonPagesManager } from "./hooks/useLessonPagesManager";
@@ -28,8 +28,21 @@ const CreateLessonPage: React.FC<CreateLessonPageProps> = ({ lessonLink }) => {
     error,
     handleAddPage,
     handleSelectPage,
-    saveAllPages,
+    saveCurrentPage,
+    creating,
+    createError,
   } = useLessonPagesManager(lessonLink);
+
+  // Ref to hold the editor instance
+  const editorRef = useRef<any>(null);
+
+  // Handler to save current page
+  const handleSaveCurrentPage = useCallback(() => {
+    if (editorRef.current) {
+      const content = editorRef.current.getHTML();
+      saveCurrentPage(content);
+    }
+  }, [saveCurrentPage]);
 
   if (loading) return <div className="p-8">Loading lesson pages...</div>;
   if (error) return <div className="p-8 text-red-500">Error loading lesson pages.</div>;
@@ -54,10 +67,11 @@ const CreateLessonPage: React.FC<CreateLessonPageProps> = ({ lessonLink }) => {
           </div>
           <div className="flex items-center gap-2">
             <button 
-              onClick={saveAllPages}
+              onClick={handleSaveCurrentPage}
               className="px-3 py-1 rounded bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition"
+              disabled={creating}
             >
-              Save All Pages
+              {creating ? 'Saving...' : 'Save Current Page'}
             </button>
             <button className="px-3 py-1 rounded bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition">Share</button>
             <img
@@ -68,7 +82,12 @@ const CreateLessonPage: React.FC<CreateLessonPageProps> = ({ lessonLink }) => {
           </div>
         </div>
 
-        <TiptapEditor content={activePage?.content || ''}/>
+        {/* Pass a ref callback to TiptapEditor to get the editor instance */}
+        <TiptapEditor 
+          content={activePage?.content || ''}
+          editorRef={editorRef}
+        />
+        {createError && <div className="text-red-500 mt-2">Error saving page.</div>}
       </main>
     </div>
   );
