@@ -3,10 +3,13 @@ import type { FormType, StepType } from "@/src/types/form-types";
 import * as ApolloReact from "@apollo/client/react";
 import { CREATE_CREATOR } from "../query";
 import { useFormNavigation } from "./useFormNavigation";
+import { useRedirectLink } from "@/src/shadcn/hooks/useRedirectLink";
+
 
 export const useAuth = (
   steps: StepType[]
 ) => {
+  const { redirect } = useRedirectLink()
   const [form, setForm] = useState<FormType>({
     firstName: "",
     middleName: "",
@@ -66,6 +69,9 @@ export const useAuth = (
         },
       });
       setIsSubmitted(true);
+      setTimeout(() => {
+        redirect('/courses');
+      }, 3000);
       navigation.setError(null);
     } catch (err: any) {
       navigation.setError(
