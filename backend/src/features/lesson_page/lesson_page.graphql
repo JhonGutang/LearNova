@@ -1,0 +1,28 @@
+scalar JSON
+
+
+type LessonPage {
+  id: Int!
+  lesson_id: Int!
+  page_number: Int!
+  content_json: JSON!
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
+type Query {
+  lessonPage(id: Int!): LessonPage
+  lessonPages(lessonId: Int!): [LessonPage!]!
+}
+
+input CreateLessonPageInput {
+  lessonId: Int!
+  pageNumber: Int!
+  contentJson: JSON!
+}
+
+type Mutation {
+  createLessonPage(
+    input: CreateLessonPageInput!
+  ): LessonPage!
+}
