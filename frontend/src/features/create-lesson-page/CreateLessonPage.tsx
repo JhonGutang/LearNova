@@ -1,10 +1,9 @@
 'use client'
 
-import React, { useState, useCallback } from "react";
-import { useRedirectLink } from "@/src/shadcn/hooks/useRedirectLink";
+import React, { useState, useCallback, useEffect } from "react";
 import { Sidebar } from "./components/Sidebar";
 import dynamic from 'next/dynamic'
-
+import { useLessonPagesManager } from "./hooks/useLessonPagesManager";
 
 interface CreateLessonPageProps {
   lessonLink: string;
@@ -13,46 +12,33 @@ interface CreateLessonPageProps {
 type Page = {
   id: string;
   name: string;
+  content: string;
 };
 const TiptapEditor = dynamic(() => import('./components/Tiptap'), { ssr: false })
 
 const CreateLessonPage: React.FC<CreateLessonPageProps> = ({ lessonLink }) => {
-  const { fromSlug } = useRedirectLink();
-  const { title } = fromSlug(lessonLink);
+  const {
+    title,
+    pages,
+    activePageId,
+    activePage,
+    currentPageIndex,
+    totalPages,
+    loading,
+    error,
+    handleAddPage,
+    handleSelectPage,
+    saveAllPages,
+  } = useLessonPagesManager(lessonLink);
 
-  // Pages state: array of pages, each with id and name
-  const [pages, setPages] = useState<Page[]>([
-    { id: "page-1", name: "Page 1" },
-    { id: "page-2", name: "Page 2" },
-  ]);
-  
-  // Track the currently selected page by id
-  const [activePageId, setActivePageId] = useState<string>(pages[0].id);
-
-  // Add a new page
-  const handleAddPage = useCallback(() => {
-    const newId = `page-${pages.length + 1}`;
-    const newPage = { id: newId, name: `Page ${pages.length + 1}` };
-    setPages(prev => [...prev, newPage]);
-    setActivePageId(newId);
-  }, [pages.length]);
-
-  // Select a page
-  const handleSelectPage = useCallback((id: string) => {
-    setActivePageId(id);
-  }, []);
-
-  // Save all pages content
-  const saveAllPages = useCallback(() => {
-    console.log('Save all pages functionality');
-    // TODO: Implement actual save functionality for all pages
-  }, []);
+  if (loading) return <div className="p-8">Loading lesson pages...</div>;
+  if (error) return <div className="p-8 text-red-500">Error loading lesson pages.</div>;
 
   return (
     <div className="flex min-h-screen">
       <Sidebar 
         pages={pages}
-        activePageId={activePageId}
+        activePageId={activePageId || ''}
         onAddPage={handleAddPage}
         onSelectPage={handleSelectPage}
       />
@@ -61,7 +47,9 @@ const CreateLessonPage: React.FC<CreateLessonPageProps> = ({ lessonLink }) => {
           <div>
             <h2 className="text-2xl font-bold">{title}</h2>
             <p className="text-sm text-gray-600 mt-1">
-              {pages.find(page => page.id === activePageId)?.name || 'Unknown Page'}
+              {currentPageIndex && totalPages
+                ? `Page ${currentPageIndex} / ${totalPages}`
+                : 'Unknown Page'}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -79,9 +67,8 @@ const CreateLessonPage: React.FC<CreateLessonPageProps> = ({ lessonLink }) => {
             />
           </div>
         </div>
-        
-        {/* Lesson content area */}
-        <TiptapEditor/>
+
+        <TiptapEditor content={activePage?.content || ''}/>
       </main>
     </div>
   );
