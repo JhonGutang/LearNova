@@ -1,5 +1,5 @@
 import * as ApolloReact from "@apollo/client/react";
-import { LESSON_PAGES_QUERY, CREATE_OR_UPDATE_LESSON_PAGE_MUTATION } from "../query";
+import { LESSON_PAGES_QUERY, CREATE_OR_UPDATE_LESSON_PAGE_MUTATION, DELETE_LESSON_PAGE_MUTATION } from "../query";
 
 // Define the type for a lesson page (based on query.ts)
 export interface LessonPage {
@@ -15,7 +15,6 @@ interface LessonPagesData {
   lessonPages: LessonPage[];
 }
 
-
 interface CreateLessonPageInput {
   lessonId: number;
   pageNumber: number;
@@ -26,6 +25,9 @@ interface CreateLessonPageData {
   createOrUpdateLessonPage: LessonPage;
 }
 
+interface DeleteLessonPageData {
+  deleteLessonPage: boolean;
+}
 
 export function useFetchLessonPages(lessonId: number) {
   const { data, loading, error, refetch } = ApolloReact.useQuery<LessonPagesData>(LESSON_PAGES_QUERY, {
@@ -54,6 +56,24 @@ export function useUpsertLessonPage() {
   return {
     upsertLessonPage,
     data: data?.createOrUpdateLessonPage,
+    loading,
+    error,
+  };
+}
+
+export function useDeleteLessonPage() {
+  const [deleteLessonPageMutation, { data, loading, error }] = ApolloReact.useMutation<DeleteLessonPageData, { id: number }>(
+    DELETE_LESSON_PAGE_MUTATION
+  );
+
+  const deleteLessonPage = async (id: number) => {
+    const response = await deleteLessonPageMutation({ variables: { id } });
+    return response.data?.deleteLessonPage;
+  };
+
+  return {
+    deleteLessonPage,
+    data: data?.deleteLessonPage,
     loading,
     error,
   };

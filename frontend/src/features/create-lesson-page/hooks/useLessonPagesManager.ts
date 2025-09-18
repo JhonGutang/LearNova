@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { useRedirectLink } from "@/src/shadcn/hooks/useRedirectLink";
-import { useFetchLessonPages, useUpsertLessonPage } from "./useLessonPages";
+import { useFetchLessonPages, useUpsertLessonPage, useDeleteLessonPage } from "./useLessonPages";
 
 type SaveStatus = 'idle' | 'debouncing' | 'saving' | 'saved';
 
@@ -11,7 +11,6 @@ export function useLessonPagesManager(lessonLink: string) {
 
   // Fetch lesson pages
   const { lessonPages, loading, error, refetch } = useFetchLessonPages(Number(id));
-
   // Memoize pages: sorted and formatted for sidebar
   const pages = useMemo(() => {
     if (!lessonPages) return [];
@@ -21,6 +20,7 @@ export function useLessonPagesManager(lessonLink: string) {
         id: String(page.id),
         name: `Page ${page.page_number}`,
         content: page.content_json,
+        pageNumber: page.page_number, // Keep the actual page number
       }));
   }, [lessonPages]);
 
@@ -60,6 +60,13 @@ export function useLessonPagesManager(lessonLink: string) {
     error: createError,
   } = useUpsertLessonPage();
 
+  // For deleting lesson pages
+  const {
+    deleteLessonPage,
+    loading: deleting,
+    error: deleteError,
+  } = useDeleteLessonPage();
+
   // Compute the next page number
   const nextPageNumber = useMemo(() => {
     if (pages.length === 0) return 1;
@@ -89,6 +96,25 @@ export function useLessonPagesManager(lessonLink: string) {
     setActivePageId(id);
   }, []);
 
+  // Delete a page by id
+  const handleDeletePage = useCallback(async (id: string): Promise<boolean> => {
+    const success = await deleteLessonPage(Number(id));
+    if (success) {
+      // If we deleted the currently active page, select the first available page
+      if (activePageId === id) {
+        const remainingPages = pages.filter(page => page.id !== id);
+        if (remainingPages.length > 0) {
+          setActivePageId(remainingPages[0].id);
+        } else {
+          setActivePageId(undefined);
+        }
+      }
+      // Refetch to update the list
+      refetch();
+    }
+    return success || false;
+  }, [deleteLessonPage, activePageId, pages, refetch]);
+
   // Save all pages (not implemented)
   const saveAllPages = useCallback(() => {
     alert('Save all pages functionality not implemented yet.');
@@ -110,12 +136,19 @@ export function useLessonPagesManager(lessonLink: string) {
     try {
       let pageNumber: number;
       if (activePage) {
-        // Extract page number from the active page's name (e.g., 'Page 3')
-        const match = activePage.name.match(/Page (\d+)/);
-        pageNumber = match ? parseInt(match[1], 10) : nextPageNumber;
+        console.log('this is active page', activePage)
+        pageNumber = activePage.pageNumber;
       } else {
         pageNumber = nextPageNumber;
       }
+
+      console.log(pageNumber)
+      
+      console.log('DEBUG - About to send payload:', {
+        lessonId: Number(id),
+        pageNumber,
+        contentJson: content,
+      });
       
       await upsertLessonPage({
         lessonId: Number(id),
@@ -125,8 +158,7 @@ export function useLessonPagesManager(lessonLink: string) {
       
       console.log('Save completed - setting status to saved');
       setSaveStatus('saved');
-      
-      // Auto-hide the saved indicator after 3 seconds
+
       setTimeout(() => {
         console.log('Auto-hiding saved indicator - setting status to idle');
         setSaveStatus('idle');
@@ -157,10 +189,13 @@ export function useLessonPagesManager(lessonLink: string) {
     error,
     handleAddPage,
     handleSelectPage,
+    handleDeletePage,
     saveCurrentPage,
     nextPageNumber,
     creating,
     createError,
+    deleting,
+    deleteError,
     saveStatus,
     handleDebounceStart,
   };

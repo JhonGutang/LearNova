@@ -25,3 +25,9 @@ export const CREATE_OR_UPDATE_LESSON_PAGE_MUTATION = gql`
     }
   }
 `;
+
+export const DELETE_LESSON_PAGE_MUTATION = gql`
+  mutation DeleteLessonPage($id: Int!) {
+    deleteLessonPage(id: $id)
+  }
+`;

@@ -1,6 +1,6 @@
 'use client'; // Needed in Next.js 13 App Router
 
-import { useEditor, EditorContent, Editor } from '@tiptap/react'
+import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import MenuBar from './TextFormattingTools';
 import TextAlign from '@tiptap/extension-text-align'
@@ -16,6 +16,7 @@ interface TiptapEditorProps {
 
 export default function TiptapEditor({ content, editorRef, onAutoSave, onDebounceStart }: TiptapEditorProps) {
   const lastSavedContentRef = useRef<string>(content || '');
+  const isDebouncingRef = useRef(false);
 
   const editor = useEditor({
     extensions: [
@@ -28,35 +29,35 @@ export default function TiptapEditor({ content, editorRef, onAutoSave, onDebounc
     immediatelyRender: false,
   });
 
-  // Track if debounce is currently active
-  const isDebouncingRef = useRef(false);
+  // Hold a debounced function ref that updates whenever onAutoSave changes
+  const debouncedAutoSaveRef = useRef<ReturnType<typeof debounce> | null>(null);
 
-  // Debounced auto-save handler
-  const debouncedAutoSave = useRef(
-    debounce(async (content: string) => {
-      console.log('Debounced auto-save executing with content:', content);
+  useEffect(() => {
+    if (!onAutoSave) return;
+
+    debouncedAutoSaveRef.current = debounce(async (content: string) => {
       isDebouncingRef.current = false;
-      if (onAutoSave) {
-        try {
-          await onAutoSave(content);
-          // Update the last saved content only after the save is completed
-          lastSavedContentRef.current = content;
-          console.log('Auto-save completed successfully');
-        } catch (error) {
-          console.error('Auto-save failed:', error);
-        }
+      try {
+        await onAutoSave(content);
+        lastSavedContentRef.current = content;
+      } catch (error) {
+        // Optionally handle error silently
       }
-    }, 1000)
-  ).current;
+    }, 1000);
 
-  // Forward the editor instance to the ref
+    return () => {
+      debouncedAutoSaveRef.current?.cancel();
+    };
+  }, [onAutoSave]);
+
+  // Forward the editor instance to the parent ref
   useEffect(() => {
     if (editorRef && editor) {
       editorRef.current = editor;
     }
   }, [editor, editorRef]);
 
-  // Update editor content when prop changes
+  // Sync editor content with prop updates
   useEffect(() => {
     if (editor && content !== undefined) {
       editor.commands.setContent(content || '<p></p>');
@@ -68,46 +69,27 @@ export default function TiptapEditor({ content, editorRef, onAutoSave, onDebounc
   useEffect(() => {
     if (!editor || !onAutoSave) return;
 
-    // Handler for editor updates - this covers content changes AND formatting changes
     const handleUpdate = () => {
       const currentContent = editor.getHTML();
       if (currentContent !== lastSavedContentRef.current) {
-        console.log('Editor content changed, triggering auto-save:', {
-          previousContent: lastSavedContentRef.current,
-          newContent: currentContent,
-          isDebouncing: isDebouncingRef.current
-        });
-        
-        // If not currently debouncing, start debounce and notify parent
         if (!isDebouncingRef.current) {
           isDebouncingRef.current = true;
-          console.log('Starting debounce period');
           onDebounceStart?.();
-        } else {
-          console.log('Debounce already active, cancelling previous and restarting');
         }
-        
-        // Cancel previous debounce and start new one
-        debouncedAutoSave.cancel();
-        debouncedAutoSave(currentContent);
-        console.log('Debounced function scheduled, will execute in 1 second if no more changes');
+        debouncedAutoSaveRef.current?.cancel();
+        debouncedAutoSaveRef.current?.(currentContent);
       }
     };
 
-    // Listen to multiple events to catch all types of changes:
-    // - "update": Content changes (typing, deleting)
-    // - "transaction": All editor transactions including formatting
-    // - "selectionUpdate": Selection changes that might affect formatting
     editor.on("update", handleUpdate);
     editor.on("transaction", handleUpdate);
 
-    // Clean up on unmount
     return () => {
       editor.off("update", handleUpdate);
       editor.off("transaction", handleUpdate);
-      debouncedAutoSave.cancel();
+      debouncedAutoSaveRef.current?.cancel();
     };
-  }, [editor, onAutoSave, debouncedAutoSave]);
+  }, [editor, onAutoSave, onDebounceStart]);
 
   return (
     <div>
