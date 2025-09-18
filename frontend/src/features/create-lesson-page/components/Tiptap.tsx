@@ -7,7 +7,7 @@ import TextAlign from '@tiptap/extension-text-align'
 import { useEffect } from 'react';
 
 
-export default function TiptapEditor({ content }: { content: string }) {
+export default function TiptapEditor({ content, editorRef }: { content: string, editorRef?: React.MutableRefObject<any> }) {
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -18,6 +18,13 @@ export default function TiptapEditor({ content }: { content: string }) {
     content: content || '<p></p>',
     immediatelyRender: false,
   });
+
+  // Forward the editor instance to the ref
+  useEffect(() => {
+    if (editorRef && editor) {
+      editorRef.current = editor;
+    }
+  }, [editor, editorRef]);
 
   // Update editor content when prop changes
   useEffect(() => {
