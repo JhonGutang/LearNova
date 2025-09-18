@@ -7,8 +7,8 @@ interface LessonPageProps {
   };
 }
 
-const LessonPage = ({ params }: LessonPageProps) => {
-  const { lessonTitle } = params;
+const LessonPage = async ({ params }: LessonPageProps) => {
+  const { lessonTitle } = await Promise.resolve(params);
   return (
     <CreateLessonPage lessonLink={lessonTitle} />
   );
