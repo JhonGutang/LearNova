@@ -1,5 +1,5 @@
 import { LessonPageService } from "./lesson_page.service";
-import { CreateLessonPageInput } from "../../generated/graphql";
+import { CreateOrUpdateLessonPageInput } from "../../generated/graphql";
 const lessonPageService = new LessonPageService();
 
 export const resolvers = {
@@ -12,11 +12,19 @@ export const resolvers = {
     },
   },
   Mutation: {
-    createLessonPage: async (
-      _: any,
-      args: { input: CreateLessonPageInput }
-    ) => {
+    createOrUpdateLessonPage: async (_: any, args: { input: CreateOrUpdateLessonPageInput }) => {
+      const { lessonId, pageNumber, contentJson } = args.input;
+      const existingPage = await lessonPageService.getLessonByPageNumber(lessonId, pageNumber);
+  
+      if (existingPage) {
+        return await lessonPageService.updateLessonPage(existingPage.id, {
+          lessonId,
+          pageNumber,
+          contentJson,
+        });
+      }
+  
       return await lessonPageService.createLessonPage(args.input);
     },
   },
-};
+}  

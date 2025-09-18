@@ -1,6 +1,5 @@
 scalar JSON
 
-
 type LessonPage {
   id: Int!
   lesson_id: Int!
@@ -15,14 +14,14 @@ type Query {
   lessonPages(lessonId: Int!): [LessonPage!]!
 }
 
-input CreateLessonPageInput {
+input CreateOrUpdateLessonPageInput {
   lessonId: Int!
   pageNumber: Int!
   contentJson: JSON!
 }
 
 type Mutation {
-  createLessonPage(
-    input: CreateLessonPageInput!
+  createOrUpdateLessonPage(
+    input: CreateOrUpdateLessonPageInput!
   ): LessonPage!
 }
