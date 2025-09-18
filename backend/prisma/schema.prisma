@@ -22,6 +22,7 @@ enum Status {
 
 model Course {
   id          Int                @id @default(autoincrement())
+  creator_id  Int
   title       String             @unique 
   tagline     String
   status      Status             @default(DRAFT)
@@ -30,6 +31,7 @@ model Course {
   updated_at  DateTime           @updatedAt
   categories  Course_Category[]
   lessons     Lesson[]
+  creator     Creator            @relation(fields: [creator_id], references: [id])
 }
 
 model Category {
@@ -71,4 +73,27 @@ model Lesson_Page {
   lesson        Lesson   @relation(fields: [lesson_id], references: [id], onDelete: Cascade)
 
   @@unique([lesson_id, page_number])
+}
+
+model Creator {
+  id          Int     @id @default(autoincrement())
+  first_name  String
+  last_name   String
+  middle_name String?
+  password    String
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  contact_information Contact_Information?
+  courses    Course[]
+}
+
+model Contact_Information {
+  id        Int     @id @default(autoincrement())
+  creator_id Int    @unique
+  phone     String
+  email     String
+  address   String
+
+  creator   Creator @relation(fields: [creator_id], references: [id])
 }
