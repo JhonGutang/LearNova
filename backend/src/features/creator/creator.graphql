@@ -33,6 +33,17 @@ input CreateContactInformationInput {
   address: String!
 }
 
+input AuthenticateCreatorInput {
+  email: String!
+  password: String!
+}
+
+type AuthError {
+  message: String!
+}
+
+union AuthResult = Creator | AuthError
+
 type Query {
   creator(id: Int!): Creator
   creators: [Creator!]!
@@ -40,4 +51,5 @@ type Query {
 
 type Mutation {
   createCreator(input: CreateCreatorInput!): Creator!
+  authenticateCreator(input: AuthenticateCreatorInput): AuthResult
 }
