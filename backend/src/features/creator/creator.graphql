@@ -38,15 +38,21 @@ input AuthenticateCreatorInput {
   password: String!
 }
 
-type AuthError {
+enum Status {
+  SUCCESS
+  ERROR
+}
+
+type AuthResult {
+  status: Status!
   message: String!
 }
 
-union AuthResult = Creator | AuthError
 
 type Query {
   creator(id: Int!): Creator
   creators: [Creator!]!
+  me: Creator,
 }
 
 type Mutation {

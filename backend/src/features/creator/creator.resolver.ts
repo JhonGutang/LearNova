@@ -1,7 +1,9 @@
 
 import { AuthenticateCreatorInput, AuthResult } from "../../generated/graphql";
 import { CreatorService } from "./creator.service";
-
+import { MyContext } from "../../types/context";
+import prisma from "../../config/prisma";
+import { Status } from "../../generated/graphql";
 const creatorService = new CreatorService();
 
 export const resolvers = {
@@ -11,7 +13,17 @@ export const resolvers = {
         },
         creators: async () => {
             return await creatorService.getCreators();
-        }
+        },
+        me: async (_: any, __: any, context: MyContext) => {
+            console.log("SESSION CONTENT:", context.session);
+        
+            if (!context.session.creatorId) return null;
+        
+            return prisma.creator.findUnique({
+              where: { id: context.session.creatorId },
+              include: { contact_information: true },
+            });
+          },
     },
     Mutation: {
         createCreator: async (_: any, args: { input: any }) => {
@@ -19,13 +31,15 @@ export const resolvers = {
         },
         authenticateCreator: async (
             _: any,
-            args: { input: AuthenticateCreatorInput }
+            args: { input: AuthenticateCreatorInput },
+            context: MyContext
         ): Promise<AuthResult> => {
-            const creator = await creatorService.validateCredentials(args.input);
-            if (creator === null) {
-                return { __typename: "AuthError", message: "invalid credentials" };
+            const creatorId = await creatorService.validateCredentials(args.input);
+            if (creatorId === null) {
+                return { status: Status.Error, message: "Invalid credentials" };
             }
-            return { __typename: "Creator", ...creator };
+            context.session.creatorId = creatorId;
+            return { status: Status.Success, message: "Valid Credentials" };
         }
     }
 }

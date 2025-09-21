@@ -47,7 +47,17 @@ const server = new ApolloServer({
 async function startApollo() {
   await server.start();
 
-  app.use('/graphql', json(), expressMiddleware(server));
+  app.use(
+    '/graphql',
+    json(),
+    expressMiddleware(server, {
+      context: async ({ req, res }) => ({
+        session: (req as any).session,
+        req,
+        res,
+      }),
+    })
+  );
 
   httpServer.listen(port);
   httpServer.on('error', onError);

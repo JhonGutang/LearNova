@@ -10,7 +10,7 @@ interface CreatorServiceProps {
   getCreator(id: number): Promise<Creator | null>;
   getCreators(): Promise<Creator[]>;
   createCreator(input: CreateCreatorInput): Promise<Creator>;
-  validateCredentials(input: AuthenticateCreatorInput): Promise<Creator | null>;
+  validateCredentials(input: AuthenticateCreatorInput): Promise<number | null>;
 }
 
 export class CreatorService implements CreatorServiceProps {
@@ -52,7 +52,7 @@ export class CreatorService implements CreatorServiceProps {
 
   async validateCredentials(
     input: AuthenticateCreatorInput
-  ): Promise<Creator | null> {
+  ): Promise<number | null> {
     const creator = await prisma.creator.findFirst({
       where: {
         contact_information: {
@@ -66,13 +66,11 @@ export class CreatorService implements CreatorServiceProps {
 
     if (!creator) return null;
 
-    const passwordMatch = await bcrypt.compare(
+    const isPasswordMatch = await bcrypt.compare(
       input.password,
       creator.password
     );
 
-    if (!passwordMatch) return null;
-
-    return creator;
+    return isPasswordMatch ? creator.id : null;
   }
 }
