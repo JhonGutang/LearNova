@@ -52,7 +52,7 @@ type AuthResult {
 type Query {
   creator(id: Int!): Creator
   creators: [Creator!]!
-  me: Creator,
+  sessionAccount: Creator,
 }
 
 type Mutation {

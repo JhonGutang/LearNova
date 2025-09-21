@@ -4,7 +4,7 @@ import { GET_COURSES } from "./query";
 import * as ApolloReact from "@apollo/client/react";
 
 interface CoursesData {
-    courses: Course[];
+    coursesByCreator: Course[];
 }
 
 export function useFetchCourses() {
@@ -16,8 +16,8 @@ export function useFetchCourses() {
     });
 
     useEffect(() => {
-        if (data && data.courses) {
-            setCourses(data.courses);
+        if (data && data.coursesByCreator) {
+            setCourses(data.coursesByCreator);
         }
     }, [data]);
 

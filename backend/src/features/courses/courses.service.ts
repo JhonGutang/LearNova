@@ -1,12 +1,13 @@
 import { PrismaClient } from "../../../generated/prisma";
-import { CourseInput } from "../../generated/graphql";
+import { Course, CourseInput } from "../../generated/graphql";
 
 const prisma = new PrismaClient();
-
+type CreateCourseData = CourseInput & { creator_id: number};
 interface CourseServiceInterface {
-  create(course: CourseInput): Promise<object>;
+  create(course: CourseInput): Promise<Course>;
   getAll(): Promise<object>;
   getById(courseId: number): Promise<object | null>;
+  getByCreator(creatorId: number): Promise<Course[] | [] >;
 }
 
 function normalizeCategories(input: any): any {
@@ -25,7 +26,7 @@ function normalizeCategories(input: any): any {
 }
 
 export class CourseService implements CourseServiceInterface {
-    async create(course: CourseInput): Promise<object> {
+    async create(course: CreateCourseData): Promise<Course> {
         const existingCourse = await prisma.course.findUnique({
           where: { title: course.title },
         });
@@ -83,5 +84,13 @@ export class CourseService implements CourseServiceInterface {
       },
     });
     return normalizeCategories(course);
+  }
+
+  async getByCreator(creatorId: number): Promise<Course[] | []> {
+    const courses = await prisma.course.findMany({
+      where: { creator_id: creatorId },
+      include: { categories: { include: { category: true } } },
+    });
+    return normalizeCategories(courses);
   }
 }
