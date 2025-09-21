@@ -1,8 +1,9 @@
+import prisma from '../../config/prisma';
 import { CourseInput } from '../../generated/graphql';
 import { MyContext } from '../../types/context';
 import { CourseService } from './courses.service';
 
-const courseService = new CourseService();
+const courseService = new CourseService(prisma);
 
 export const resolvers = {
   Query: {
