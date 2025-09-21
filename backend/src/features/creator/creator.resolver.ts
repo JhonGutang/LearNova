@@ -2,7 +2,6 @@
 import { AuthenticateCreatorInput, AuthResult } from "../../generated/graphql";
 import { CreatorService } from "./creator.service";
 import { MyContext } from "../../types/context";
-import prisma from "../../config/prisma";
 import { Status } from "../../generated/graphql";
 const creatorService = new CreatorService();
 
@@ -14,15 +13,12 @@ export const resolvers = {
         creators: async () => {
             return await creatorService.getCreators();
         },
-        me: async (_: any, __: any, context: MyContext) => {
+        sessionAccount: async (_: any, __: any, context: MyContext) => {
             console.log("SESSION CONTENT:", context.session);
         
             if (!context.session.creatorId) return null;
         
-            return prisma.creator.findUnique({
-              where: { id: context.session.creatorId },
-              include: { contact_information: true },
-            });
+            return creatorService.getCreator(context.session.creatorId);
           },
     },
     Mutation: {
