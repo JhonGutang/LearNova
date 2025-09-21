@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import React, { useEffect } from 'react';
 import {
   Card,
@@ -35,7 +35,7 @@ const Signin = () => {
     }));
   };
 
-  // Show error toast if error changes
+  // Show error toast if authentication fails
   useEffect(() => {
     if (error) {
       CustomToast({
@@ -49,20 +49,15 @@ const Signin = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const response = await handleAuthentication();
-    // Show success toast if authentication was successful
-    if (
-      response &&
-      response.data &&
-      (response.data as any).authenticateCreator &&
-      (response.data as any).authenticateCreator.__typename !== "AuthError"
-    ) {
+
+    const result = response?.data?.authenticateCreator;
+    if (result?.status === "SUCCESS") {
       CustomToast({
         type: "success",
         title: "Sign in successful!",
-        description: "You have been signed in. Redirecting...",
+        description: result.message || "You have been signed in. Redirecting...",
       });
     }
-    // Optionally, handle redirect or success here
   };
 
   return (
@@ -129,8 +124,12 @@ const Signin = () => {
         <CardFooter className="flex flex-col items-center">
           <div className="mt-6 text-center w-full">
             <p className="text-sm text-gray-600">
-              Don't have an account?{' '}
-              <Button variant="ghost" className='cursor-pointer' onClick={() => redirect('/signup')}>
+              Don&apos;t have an account?{" "}
+              <Button
+                variant="ghost"
+                className="cursor-pointer"
+                onClick={() => redirect("/signup")}
+              >
                 Signup
               </Button>
             </p>
