@@ -8,6 +8,7 @@ const graphqlEndpoint = process.env.NEXT_PUBLIC_GRAPHQL_API_URL || 'http://local
 // Create the HTTP link
 const httpLink = new HttpLink({
   uri: graphqlEndpoint,
+  credentials: 'include',
 });
 
 // Create Apollo Client instance
