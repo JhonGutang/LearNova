@@ -191,7 +191,7 @@ const Signin = () => {
                   type="submit"
                   className={`${
                     step > 0 ? "flex-1" : "w-full"
-                  } rounded-full px-6 py-4 font-semibold transition-all duration-300 bg-blue-600 hover:bg-blue-700`}
+                  } px-6 py-4 font-semibold transition-all duration-300 bg-blue-600 hover:bg-blue-700`}
                 >
                   {step === steps.length - 1 ? "Sign In" : "Next"}
                 </Button>

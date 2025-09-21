@@ -1,6 +1,8 @@
 // 'use client' removed to keep this as a Server Component
 import { Geist, Geist_Mono } from "next/font/google";
 import ApolloClientWrapper from "../components/ApolloClientWrapper";
+import { Toaster } from "sonner";
+
 
 import "../styles/globals.css";
 import "../styles/chips.css";
@@ -28,6 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ApolloClientWrapper>
           {children}
+          <Toaster richColors position="top-right" /> 
         </ApolloClientWrapper>
       </body>
     </html>
