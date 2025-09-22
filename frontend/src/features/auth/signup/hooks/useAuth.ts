@@ -55,11 +55,9 @@ export const useAuth = (
       middle_name: form.middleName,
       last_name: form.lastName,
       password: form.password,
-      contact_information: {
-        phone: form.phone,
-        email: form.email,
-        address: form.address,
-      },
+      email: form.email,
+      phone: form.phone,
+      address: form.address,
     };
 
     try {
