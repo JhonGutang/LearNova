@@ -14,6 +14,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  CREATOR
+  STUDENT
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  email      String   @unique
+  password   String
+  role       Role
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  creator Creator?
+}
+
+model Creator {
+  id          Int      @id @default(autoincrement())
+  user_id     Int      @unique
+  first_name  String
+  last_name   String
+  middle_name String?
+  phone       String
+  address     String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  user                User                 @relation(fields: [user_id], references: [id])
+  courses             Course[]
+}
+
+
 enum Status {
   PUBLISHED
   DRAFT
@@ -21,79 +53,56 @@ enum Status {
 }
 
 model Course {
-  id          Int                @id @default(autoincrement())
+  id          Int               @id @default(autoincrement())
   creator_id  Int
-  title       String             @unique 
+  title       String            @unique
   tagline     String
-  status      Status             @default(DRAFT)
+  status      Status            @default(DRAFT)
   description String
-  created_at  DateTime           @default(now())
-  updated_at  DateTime           @updatedAt
+  created_at  DateTime          @default(now())
+  updated_at  DateTime          @updatedAt
   categories  Course_Category[]
   lessons     Lesson[]
-  creator     Creator            @relation(fields: [creator_id], references: [id])
+  creator     Creator           @relation(fields: [creator_id], references: [id])
 }
 
 model Category {
-  id       Int                @id @default(autoincrement())
-  name     String             @unique
-  modules  Course_Category[]
+  id      Int               @id @default(autoincrement())
+  name    String            @unique
+  modules Course_Category[]
 }
 
 model Course_Category {
   course_id   Int
   category_id Int
 
-  course      Course   @relation(fields: [course_id], references: [id])
-  category    Category @relation(fields: [category_id], references: [id])
+  course   Course   @relation(fields: [course_id], references: [id])
+  category Category @relation(fields: [category_id], references: [id])
 
   @@id([course_id, category_id])
 }
 
 model Lesson {
-  id          Int           @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   course_id   Int
   title       String
   description String
-  created_at  DateTime      @default(now())
-  updated_at  DateTime      @updatedAt
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
 
-  course      Course        @relation(fields: [course_id], references: [id])
-  pages       Lesson_Page[] 
+  course Course        @relation(fields: [course_id], references: [id])
+  pages  Lesson_Page[]
 }
 
 model Lesson_Page {
-  id            Int      @id @default(autoincrement())
-  lesson_id     Int
-  page_number   Int
-  content_json  Json
-  created_at    DateTime @default(now())
-  updated_at    DateTime @updatedAt
+  id           Int      @id @default(autoincrement())
+  lesson_id    Int
+  page_number  Int
+  content_json Json
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
 
-  lesson        Lesson   @relation(fields: [lesson_id], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lesson_id], references: [id], onDelete: Cascade)
 
   @@unique([lesson_id, page_number])
-}
-
-model Creator {
-  id          Int     @id @default(autoincrement())
-  first_name  String
-  last_name   String
-  middle_name String?
-  password    String
-  created_at    DateTime @default(now())
-  updated_at    DateTime @updatedAt
-
-  contact_information Contact_Information?
-  courses    Course[]
-}
-
-model Contact_Information {
-  id        Int     @id @default(autoincrement())
-  creator_id Int    @unique
-  phone     String
-  email     String
-  address   String
-
-  creator   Creator @relation(fields: [creator_id], references: [id])
 }
