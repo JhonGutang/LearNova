@@ -7,6 +7,7 @@ import { useRedirectLink } from "@/src/shadcn/hooks/useRedirectLink";
 interface Credentials {
   email: string;
   password: string;
+  role: String
 }
 
 export const useAuthenticateCreator = () => {
@@ -14,6 +15,7 @@ export const useAuthenticateCreator = () => {
   const [credentials, setCredentials] = useState<Credentials>({
     email: "",
     password: "",
+    role: "CREATOR"
   });
   const [error, setError] = useState<string | null>(null);
 
@@ -29,13 +31,14 @@ export const useAuthenticateCreator = () => {
           input: {
             email: credentials.email,
             password: credentials.password,
+            role: credentials.role
           },
         },
       });
 
       const result =
-        (response?.data as { authenticateCreator?: { status: string; message: string } })
-          ?.authenticateCreator;
+        (response?.data as { login?: { status: string; message: string } })
+          ?.login;
 
       if (!result) {
         setError("No response from server.");

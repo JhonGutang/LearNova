@@ -1,0 +1,59 @@
+
+type CreatorProfile {
+  id: Int!
+  user_id: Int!
+  first_name: String!
+  last_name: String!
+  middle_name: String
+  email: String!
+  phone: String!
+  address: String!
+  created_at: DateTime
+  updated_at: DateTime
+}
+
+type StudentProfile {
+  id: Int!
+  user_id: Int!
+  first_name: String!
+  last_name: String!
+  middle_name: String
+  email: String!
+  phone: String!
+  address: String!
+  created_at: DateTime
+  updated_at: DateTime
+}
+
+
+enum Role {
+    CREATOR
+    STUDENT
+}
+
+input LoginInput {
+    email: String!
+    password: String!
+    role: Role!
+}
+
+enum Status{
+    SUCCESS
+    ERROR
+}
+
+type AuthResult {
+    status: Status
+    message: String!
+
+}
+
+union UserProfile = CreatorProfile | StudentProfile
+
+type Query {
+    user: UserProfile
+}
+
+type Mutation {
+    login(input: LoginInput): AuthResult
+}
