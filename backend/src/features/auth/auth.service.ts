@@ -39,7 +39,6 @@ function normalizeStudentProfile(student: any, user: any): UserProfile {
   };
 }
 
-// --- AuthService class ---
 
 export class AuthService implements AuthServiceInterface {
   private prisma: any;
@@ -49,7 +48,6 @@ export class AuthService implements AuthServiceInterface {
   }
 
   async getCurrentUserProfile(userId: number, role: string): Promise<UserProfile | null> {
-    // Find user by id
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
     });
@@ -100,6 +98,7 @@ export class AuthService implements AuthServiceInterface {
       if (context && context.session) {
         context.session.userId = user.id;
         context.session.role = input.role;
+        context.session.creatorId = creator.id;
       }
 
       return true;

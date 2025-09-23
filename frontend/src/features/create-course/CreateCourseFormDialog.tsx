@@ -15,10 +15,7 @@ import {
 import { useCreateCourse } from "./useCreateCourse";
 import { Plus } from "lucide-react";
 
-
-
-const CreateCourseForm: React.FC = ({
-}) => {
+const CreateCourseForm: React.FC = ({}) => {
   const {
     createCourseFormData,
     setCreateCourseFormData,
@@ -27,13 +24,25 @@ const CreateCourseForm: React.FC = ({
     saveCourse
   } = useCreateCourse();
   const [open, setOpen] = useState(false);
+  const [categoryError, setCategoryError] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (createCourseFormData.categories.length === 0) {
+      setCategoryError("Please select at least one category");
+      return;
+    }
+    setCategoryError(null);
     saveCourse();
     setOpen(false);
   };
 
+  // Clear error if user selects a category after error
+  React.useEffect(() => {
+    if (categoryError && createCourseFormData.categories.length > 0) {
+      setCategoryError(null);
+    }
+  }, [createCourseFormData.categories, categoryError]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -117,15 +126,15 @@ const CreateCourseForm: React.FC = ({
                   );
                 })}
               </div>
-              {createCourseFormData.categories.length === 0 && (
-                <ErrorMessage>Please select at least one category</ErrorMessage>
+              {(categoryError || createCourseFormData.categories.length === 0) && (
+                <ErrorMessage>
+                  {categoryError || "Please select at least one category"}
+                </ErrorMessage>
               )}
             </div>
-              <Button className="w-full">Create Course</Button>
+            <Button className="w-full" type="submit">Create Course</Button>
           </form>
-          
         </div>
-        
       </DialogContent>
     </Dialog>
   );

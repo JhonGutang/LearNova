@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import { Course } from "@/src/types/backend-data";
 import { GET_COURSES } from "./query";
 import * as ApolloReact from "@apollo/client/react";
-
+import { useRedirectLink } from "@/src/shadcn/hooks/useRedirectLink";
 interface CoursesData {
     coursesByCreator: Course[];
 }
 
 export function useFetchCourses() {
     const [courses, setCourses] = useState<Course[]>([]);
+    const {redirect} = useRedirectLink()
     const { data, loading, error, refetch } = ApolloReact.useQuery<CoursesData>(GET_COURSES, {
         fetchPolicy: "network-only",
         errorPolicy: 'all',
@@ -20,6 +21,12 @@ export function useFetchCourses() {
             setCourses(data.coursesByCreator);
         }
     }, [data]);
+
+    useEffect(() => {
+        if (error) {
+            redirect("/error");
+        }
+    }, [error]);
 
     return { 
         courses, 

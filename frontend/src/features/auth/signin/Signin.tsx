@@ -50,7 +50,7 @@ const Signin = () => {
     e.preventDefault();
     const response = await handleAuthentication();
 
-    const result = response?.data?.login;
+    const result = response?.data?.login
     if (result?.status === "SUCCESS") {
       CustomToast({
         type: "success",
