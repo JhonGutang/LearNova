@@ -1,10 +1,10 @@
 import ErrorMessage from "@/src/shared/ErrorMessage";
-import { Course } from "@/src/types/backend-data";
+import { CourseWithLessons } from "@/src/types/backend-data";
 import { ErrorLike } from "@apollo/client";
 import { Loader2 } from "lucide-react";
 
 interface CourseStateGuardProps {
-    course: Course | null
+    course: CourseWithLessons | null
     loading: Boolean,
     error: ErrorLike | undefined
 }

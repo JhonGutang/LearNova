@@ -12,13 +12,16 @@ import {
 } from "@/src/shadcn/components/ui/dialog";
 import { Plus } from "lucide-react";
 import { useCreateLesson } from "./useCreateLesson";
+import { Lesson } from "@/src/types/backend-data";
 
 interface CreatelessonFormDialogProps {
   courseId: string;
+  addLesson: (newLesson: Lesson) => void;
 }
 
 const CreatelessonFormDialog: React.FC<CreatelessonFormDialogProps> = ({
   courseId,
+  addLesson,
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -33,7 +36,6 @@ const CreatelessonFormDialog: React.FC<CreatelessonFormDialogProps> = ({
     setSuccess,
   } = useCreateLesson();
 
-
   const handleDialogClose = () => {
     setOpen(false);
     setForm({
@@ -45,16 +47,15 @@ const CreatelessonFormDialog: React.FC<CreatelessonFormDialogProps> = ({
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await handleSubmit(courseId);
+    const newLesson = await handleSubmit(courseId);
+    addLesson(newLesson);
     if (!error) {
-      setTimeout(() => {
-        setOpen(false);
-        setForm({
-          title: "",
-          description: "",
-        });
-        setSuccess(false);
-      }, 500);
+      setOpen(false);
+      setForm({
+        title: "",
+        description: "",
+      });
+      setSuccess(false);
     }
   };
 
@@ -106,16 +107,20 @@ const CreatelessonFormDialog: React.FC<CreatelessonFormDialogProps> = ({
                   required
                 />
               </div>
-              {error && (
-                <div className="text-red-500 text-sm">{error}</div>
-              )}
+              {error && <div className="text-red-500 text-sm">{error}</div>}
               {success && (
-                <div className="text-green-600 text-sm">Lesson created successfully!</div>
+                <div className="text-green-600 text-sm">
+                  Lesson created successfully!
+                </div>
               )}
             </div>
             <DialogFooter>
               <DialogClose asChild>
-                <Button variant="outline" type="button" onClick={handleDialogClose}>
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={handleDialogClose}
+                >
                   Close
                 </Button>
               </DialogClose>

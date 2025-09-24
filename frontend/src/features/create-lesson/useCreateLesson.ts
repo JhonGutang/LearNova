@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { CreateLessonFormData } from "@/src/types/backend-data";
+import {
+  CreateLessonFormData,
+  CreateLessonResponse,
+} from "@/src/types/backend-data";
 import { CREATE_LESSON } from "./query";
 import * as ApolloReact from "@apollo/client/react";
 
@@ -36,21 +39,26 @@ export const useCreateLesson = () => {
     });
   };
 
-  const handleSubmit = async (courseId: string) => {
+  const handleSubmit = async (
+    courseId: string
+  ): Promise<CreateLessonResponse["createLesson"]> => {
     setSuccess(false);
-    try {
-      await createLesson({
-        variables: {
-          input: {
-            course_id: Number(courseId),
-            title: form.title,
-            description: form.description,
-          },
+
+    const response = await createLesson({
+      variables: {
+        input: {
+          course_id: Number(courseId),
+          title: form.title,
+          description: form.description,
         },
-      });
-    } catch (err) {
-      console.error("Failed to create lesson:", err);
+      },
+    });
+
+    const data = response.data as CreateLessonResponse;
+    if (!data || !data.createLesson) {
+      throw new Error("No lesson data returned from server.");
     }
+    return data.createLesson;
   };
 
   return {

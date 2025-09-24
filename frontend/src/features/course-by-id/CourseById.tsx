@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { useRedirectLink } from "@/src/shadcn/hooks/useRedirectLink";
-import { useFetchCourse } from "./useFetchCourse";
+import { useCourseById } from "./useCourseById";
 import TeacherHomeLayout from "@/src/layout/TeacherHomeLayout";
 import { navItems } from "@/constants/navigationItems";
 import CourseInformation from "./components/CourseInformation";
@@ -16,7 +16,7 @@ interface CourseByIdProps {
 const CourseById: React.FC<CourseByIdProps> = ({ name }) => {
   const { fromSlug } = useRedirectLink();
   const { id, title } = fromSlug(name);
-  const { course, loading, error } = useFetchCourse(id?.toString() || null);
+  const { course, loading, error, addNewLesson } = useCourseById(id?.toString() || null);
 
   if (loading || error || !course) {
     return <CourseStateGuard course={course} loading={loading} error={error} />;
@@ -29,7 +29,7 @@ const CourseById: React.FC<CourseByIdProps> = ({ name }) => {
         <div className="h-full py-10 px-4 flex-1 flex flex-col">
           <div className="flex items-center justify-between mb-4">
             <div className="text-xl font-semibold">Lessons</div>
-            <CreateLessonFormDialog courseId={course.id} />
+            <CreateLessonFormDialog courseId={course.id} addLesson={addNewLesson}/>
           </div>
           <div
             className="flex-1 overflow-y-auto"
