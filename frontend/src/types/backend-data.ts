@@ -12,28 +12,19 @@ export interface Course {
   description: string;
   status: string;
   categories: string[];
-  lessons: Lesson[];
   created_at: string;
+}
+
+export interface CourseWithLessons extends Course {
+  lessons: Lesson[];
   updated_at: string;
-  // Optional field for display purposes
   totalNumberOfStudents?: number;
 }
 
-export interface CreateCourseFormData {
-  title: string;
-  tagline: string;
-  description: string;
-  categories: string[];
-}
+export type CreateCourseFormData = Omit<Course, "id" | "status" | "created_at">;
 
 export interface CreateCourseResponse {
-  createCourse: {
-    id: string;
-    title: string;
-    tagline: string;
-    description: string;
-    categories: string[];
-  };
+  createCourse: Course
 }
 
 export interface Lesson {

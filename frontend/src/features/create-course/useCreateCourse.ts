@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CreateCourseFormData, CreateCourseResponse } from "@/src/types/backend-data";
+import { Course, CreateCourseFormData, CreateCourseResponse } from "@/src/types/backend-data";
 import { CATEGORIES } from "@/constants/coursesDummyData";
 import { CREATE_COURSE } from "./query";
 import * as ApolloReact from "@apollo/client/react";
@@ -50,11 +50,11 @@ export function useCreateCourse() {
           });
         
           const data = response.data as CreateCourseResponse;
-          if (!data?.createCourse) {
+          if (!data.createCourse) {
             throw new Error("No course data returned from server.");
           }
         
-          return data.createCourse;
+          return data.createCourse
     };
 
     return {
