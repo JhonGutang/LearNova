@@ -11,19 +11,21 @@ import ErrorMessage from "@/src/shared/ErrorMessage";
 import CardView from "@/src/shared/CardView";
 import ListView from "@/src/shared/ListView";
 import CreateCourseForm from "../create-course/CreateCourseFormDialog";
+import { Course } from "@/src/types/backend-data";
 
 interface CoursesHeaderProps {
   view: "card" | "list";
   setView: (view: "card" | "list") => void;
+  addCourse: (newCourse: Course) => void 
 }
 
-const CourseHeader: React.FC<CoursesHeaderProps> = ({ view, setView }) => {
+const CourseHeader: React.FC<CoursesHeaderProps> = ({ view, setView, addCourse }) => {
   const { redirect } = useRedirectLink();
   return (
     <div className="flex items-center justify-between mb-4">
       <h2 className="text-2xl font-bold">Courses</h2>
       <div className="flex gap-2">
-        <CreateCourseForm/>
+        <CreateCourseForm addCourse={addCourse}/>
         <Button
           variant={view === "card" ? "default" : "outline"}
           onClick={() => setView("card")}
@@ -42,7 +44,7 @@ const CourseHeader: React.FC<CoursesHeaderProps> = ({ view, setView }) => {
 };
 
 const Courses: React.FC = () => {
-  const { courses, loading, error } = useFetchCourses();
+  const { courses, loading, error, addNewCourse } = useFetchCourses();
   const [view, setView] = React.useState<"card" | "list">("card");
 
   if (loading) {
@@ -73,7 +75,7 @@ const Courses: React.FC = () => {
   return (
     <TeacherHomeLayout navItems={navItems} pageTitle="Courses">
       <main className="p-4">
-        <CourseHeader view={view} setView={setView} />
+        <CourseHeader view={view} setView={setView} addCourse={addNewCourse}/>
         {view === "card" ? (
           <CardView data={courses} />
         ) : (

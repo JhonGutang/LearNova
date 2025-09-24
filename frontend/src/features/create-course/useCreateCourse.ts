@@ -1,13 +1,11 @@
 import { useState } from "react";
-import { CreateCourseFormData } from "@/src/types/backend-data";
+import { CreateCourseFormData, CreateCourseResponse } from "@/src/types/backend-data";
 import { CATEGORIES } from "@/constants/coursesDummyData";
 import { CREATE_COURSE } from "./query";
 import * as ApolloReact from "@apollo/client/react";
-import { useRedirectLink } from "@/src/shadcn/hooks/useRedirectLink";
 
 
 export function useCreateCourse() {
-    const {redirect} = useRedirectLink();
     const [createCourseFormData, setCreateCourseFormData] = useState<CreateCourseFormData>({
         title: "",
         tagline: "",
@@ -46,16 +44,17 @@ export function useCreateCourse() {
         });
     };
 
-    const saveCourse = async () => {
-        try {
-            await createCourse({
-                variables: {
-                    input: createCourseFormData
-                }
-            });
-        } catch (error) {
-            console.error("Failed to create course:", error);
-        }
+    const saveCourse = async (): Promise<CreateCourseResponse['createCourse']> => {
+        const response = await createCourse({
+            variables: { input: createCourseFormData },
+          });
+        
+          const data = response.data as CreateCourseResponse;
+          if (!data?.createCourse) {
+            throw new Error("No course data returned from server.");
+          }
+        
+          return data.createCourse;
     };
 
     return {

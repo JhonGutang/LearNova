@@ -26,6 +26,16 @@ export interface CreateCourseFormData {
   categories: string[];
 }
 
+export interface CreateCourseResponse {
+  createCourse: {
+    id: string;
+    title: string;
+    tagline: string;
+    description: string;
+    categories: string[];
+  };
+}
+
 export interface Lesson {
   id: number,
   title: string;
