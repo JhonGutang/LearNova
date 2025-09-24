@@ -5,27 +5,24 @@ import {
 } from "@/src/types/backend-data";
 import { CREATE_LESSON } from "./query";
 import * as ApolloReact from "@apollo/client/react";
+import { CustomToast } from "@/src/shared/CustomToast";
 
 export const useCreateLesson = () => {
   const [form, setForm] = useState<CreateLessonFormData>({
     title: "",
     description: "",
   });
-  const [success, setSuccess] = useState(false);
 
   const [createLesson, { loading, error }] = ApolloReact.useMutation(
     CREATE_LESSON,
     {
       onCompleted: () => {
-        setSuccess(true);
         setForm({
           title: "",
           description: "",
         });
       },
-      onError: () => {
-        setSuccess(false);
-      },
+      onError: () => {},
       refetchQueries: [],
     }
   );
@@ -42,8 +39,6 @@ export const useCreateLesson = () => {
   const handleSubmit = async (
     courseId: string
   ): Promise<CreateLessonResponse["createLesson"]> => {
-    setSuccess(false);
-
     const response = await createLesson({
       variables: {
         input: {
@@ -53,11 +48,18 @@ export const useCreateLesson = () => {
         },
       },
     });
-
+    
     const data = response.data as CreateLessonResponse;
+  
     if (!data || !data.createLesson) {
       throw new Error("No lesson data returned from server.");
     }
+
+    CustomToast({
+      type: "success",
+      title: "Lesson created!",
+      description: `Lesson '${data.createLesson.title}' was created successfully.`,
+    });
     return data.createLesson;
   };
 
@@ -65,10 +67,8 @@ export const useCreateLesson = () => {
     form,
     loading,
     error: error ? error.message : null,
-    success,
     handleChange,
     handleSubmit,
     setForm,
-    setSuccess,
   };
 };

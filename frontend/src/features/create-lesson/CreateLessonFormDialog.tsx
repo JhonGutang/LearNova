@@ -29,11 +29,9 @@ const CreatelessonFormDialog: React.FC<CreatelessonFormDialogProps> = ({
     form,
     loading,
     error,
-    success,
     handleChange,
     handleSubmit,
     setForm,
-    setSuccess,
   } = useCreateLesson();
 
   const handleDialogClose = () => {
@@ -42,7 +40,6 @@ const CreatelessonFormDialog: React.FC<CreatelessonFormDialogProps> = ({
       title: "",
       description: "",
     });
-    setSuccess(false);
   };
 
   const onSubmit = async (e: React.FormEvent) => {
@@ -55,7 +52,6 @@ const CreatelessonFormDialog: React.FC<CreatelessonFormDialogProps> = ({
         title: "",
         description: "",
       });
-      setSuccess(false);
     }
   };
 
@@ -108,11 +104,6 @@ const CreatelessonFormDialog: React.FC<CreatelessonFormDialogProps> = ({
                 />
               </div>
               {error && <div className="text-red-500 text-sm">{error}</div>}
-              {success && (
-                <div className="text-green-600 text-sm">
-                  Lesson created successfully!
-                </div>
-              )}
             </div>
             <DialogFooter>
               <DialogClose asChild>

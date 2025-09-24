@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Course, CreateCourseFormData, CreateCourseResponse } from "@/src/types/backend-data";
+import { CreateCourseFormData, CreateCourseResponse } from "@/src/types/backend-data";
 import { CATEGORIES } from "@/constants/coursesDummyData";
 import { CREATE_COURSE } from "./query";
 import * as ApolloReact from "@apollo/client/react";
+import { CustomToast } from "@/src/shared/CustomToast";
 
 
 export function useCreateCourse() {
@@ -53,6 +54,12 @@ export function useCreateCourse() {
           if (!data.createCourse) {
             throw new Error("No course data returned from server.");
           }
+        
+          CustomToast({
+            type: "success",
+            title: "Course created!",
+            description: `Course '${data.createCourse.title}' was created successfully.`,
+          });
         
           return data.createCourse
     };
