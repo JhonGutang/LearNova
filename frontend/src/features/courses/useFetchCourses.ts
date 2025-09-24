@@ -28,10 +28,15 @@ export function useFetchCourses() {
         }
     }, [error]);
 
+    const addNewCourse = (newCourse: Course) => {
+        setCourses(prevCourses => [...prevCourses, newCourse]);
+    }
+
     return { 
         courses, 
         loading, 
         error,
-        refetch
+        refetch,
+        addNewCourse
     };
 }

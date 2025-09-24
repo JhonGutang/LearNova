@@ -14,8 +14,13 @@ import {
 } from "@/src/shadcn/components/ui/dialog";
 import { useCreateCourse } from "./useCreateCourse";
 import { Plus } from "lucide-react";
+import { Course } from "@/src/types/backend-data";
 
-const CreateCourseForm: React.FC = ({}) => {
+interface CreateCourseFormProps {
+  addCourse: (newCourse: Course) => void
+}
+
+const CreateCourseForm: React.FC<CreateCourseFormProps> = ({addCourse}) => {
   const {
     createCourseFormData,
     setCreateCourseFormData,
@@ -26,14 +31,15 @@ const CreateCourseForm: React.FC = ({}) => {
   const [open, setOpen] = useState(false);
   const [categoryError, setCategoryError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (createCourseFormData.categories.length === 0) {
       setCategoryError("Please select at least one category");
       return;
     }
     setCategoryError(null);
-    saveCourse();
+    const newCourse = await saveCourse();
+    addCourse(newCourse)
     setOpen(false);
   };
 
