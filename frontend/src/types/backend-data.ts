@@ -34,4 +34,8 @@ export interface Lesson {
   progressLevel?: number;
 }
 
-export interface CreateLessonFormData extends Omit<Lesson, 'progressLevel'> {}
+export interface CreateLessonFormData extends Omit<Lesson, 'progressLevel' | "id"> {}
+
+export interface CreateLessonResponse {
+  createLesson: Lesson
+}
