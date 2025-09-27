@@ -19,7 +19,7 @@ import {
 import { useAuth } from "../useAuth"
 
 export default function Signin() {
-  const { login, loading, error } = useAuth()
+  const { login, loginLoading, loginError } = useAuth()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [formError, setFormError] = useState<string | null>(null)
@@ -106,17 +106,17 @@ export default function Signin() {
                     </div>
                   </div>
                 </div>
-                {(formError || error) && (
+                {(formError || loginError) && (
                   <div className="text-red-500 text-sm text-center">
-                    {formError || error?.message}
+                    {formError || loginError?.message}
                   </div>
                 )}
                 <Button
                   type="submit"
                   className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer"
-                  disabled={loading}
+                  disabled={loginLoading}
                 >
-                  {loading ? "Logging in..." : "Login"}
+                  {loginLoading ? "Logging in..." : "Login"}
                 </Button>
                 <div className="relative flex items-center justify-center text-xs text-gray-400">
                   <span className="absolute left-0 w-full border-t border-gray-200"></span>

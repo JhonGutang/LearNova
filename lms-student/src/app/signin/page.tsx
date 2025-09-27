@@ -1,4 +1,4 @@
-import Signin from "@/features/auth/sigin/Signin"
+import Signin from "@/features/auth/signin/Signin"
 
 const SigninPage:React.FC = () => {
   return (

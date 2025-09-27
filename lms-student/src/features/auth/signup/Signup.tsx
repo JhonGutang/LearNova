@@ -2,7 +2,6 @@
 import React, { useCallback, useState } from "react";
 import { SignupFormFields } from "@/constants/AuthFormFields";
 import { useAuth } from "../useAuth";
-import { studentCreateInput } from "@/types/data";
 import { Eye, EyeOff } from "lucide-react";
 
 const initialFormState: Record<string, string> = {
@@ -34,51 +33,22 @@ const Signup: React.FC = () => {
     setShowPassword((prev) => ({ ...prev, [fieldId]: !prev[fieldId] }));
   }, []);
 
-  const validate = useCallback(() => {
-    const newErrors: { [key: string]: string } = {};
-    // Required fields except middle-name and confirm-password
-    ["email", "first-name", "last-name", "phone", "address", "password"].forEach((id) => {
-      if (!form[id]) newErrors[id] = `${id.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())} is required`;
-    });
-    // Email validation
-    if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      newErrors.email = "Invalid email address";
-    }
-    // Password strength
-    if (form.password && !/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(form.password)) {
-      newErrors.password = "Password must be at least 8 characters and include a number and a letter";
-    }
-    // Phone validation
-    if (form.phone && !/^[0-9\-\s\(\)]+$/.test(form.phone)) {
-      newErrors.phone = "Invalid phone number";
-    }
-    // Password match
-    if (form.password !== form["confirm-password"]) {
-      newErrors["confirm-password"] = "Passwords do not match";
-    }
-    return newErrors;
-  }, [form]);
-
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    const validationErrors = validate();
-    setErrors(validationErrors);
-    if (Object.keys(validationErrors).length > 0) return;
-    const input: studentCreateInput = {
-      email: form.email,
-      first_name: form["first-name"],
-      last_name: form["last-name"],
-      phone: form.phone,
-      address: form.address,
-      password: form.password,
-    };
-    if (form["middle-name"]) input.middle_name = form["middle-name"];
-    try {
-      await register(input);
-      // Clear the form fields after successful registration
-      setForm({ ...initialFormState });
-    } catch {}
-  }, [form, register, validate]);
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      await register(
+        form,
+        () => {
+          setForm({ ...initialFormState });
+          setErrors({});
+        },
+        (validationErrors) => {
+          setErrors(validationErrors);
+        }
+      );
+    },
+    [form, register]
+  );
   
   return (
     <div className="flex min-h-screen bg-gray-100 p-8 md:p-0 items-center justify-center">
