@@ -1,5 +1,6 @@
-// components/ui/login-form.tsx
+'use client'
 
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -15,8 +16,25 @@ import {
   Lock,
   Waves
 } from "lucide-react"
+import { useAuth } from "../useAuth"
 
 export default function Signin() {
+  const { login, loading, error } = useAuth()
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [formError, setFormError] = useState<string | null>(null)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setFormError(null)
+    try {
+      await login({ email, password, role: undefined as any }) // role will be set to STUDENT in useAuth
+      // TODO: redirect or show success
+    } catch (err: any) {
+      setFormError(err?.message || "Login failed")
+    }
+  }
+
   return (
     <div className="flex min-h-screen bg-gray-100 p-8 md:p-0 items-center justify-center">
       <div className="flex w-full overflow-hidden rounded-3xl bg-white shadow-xl max-w-[80vw] mx-auto min-h-[500px]">
@@ -51,13 +69,22 @@ export default function Signin() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <form className="space-y-6">
+              <form className="space-y-6" onSubmit={handleSubmit}>
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <Input id="email" type="email" placeholder="email@example.com" className="pl-10" />
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="email@example.com"
+                        className="pl-10"
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
+                        required
+                        autoComplete="email"
+                      />
                     </div>
                   </div>
                   <div className="space-y-2">
@@ -66,12 +93,30 @@ export default function Signin() {
                     </div>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <Input id="password" type="password" placeholder="********" className="pl-10" />
+                      <Input
+                        id="password"
+                        type="password"
+                        placeholder="********"
+                        className="pl-10"
+                        value={password}
+                        onChange={e => setPassword(e.target.value)}
+                        required
+                        autoComplete="current-password"
+                      />
                     </div>
                   </div>
                 </div>
-                <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer">
-                  Login
+                {(formError || error) && (
+                  <div className="text-red-500 text-sm text-center">
+                    {formError || error?.message}
+                  </div>
+                )}
+                <Button
+                  type="submit"
+                  className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer"
+                  disabled={loading}
+                >
+                  {loading ? "Logging in..." : "Login"}
                 </Button>
                 <div className="relative flex items-center justify-center text-xs text-gray-400">
                   <span className="absolute left-0 w-full border-t border-gray-200"></span>

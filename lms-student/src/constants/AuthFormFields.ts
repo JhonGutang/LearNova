@@ -1,15 +1,27 @@
 export const SignupFormFields = [
     {
-      id: "name",
-      label: "Name",
+        id: "email",
+        label: "Email",
+        type: "email",
+        placeholder: "email@example.com",
+      },
+    {
+      id: "first-name",
+      label: "First Name",
       type: "text",
-      placeholder: "Your Name",
+      placeholder: "Your First Name",
     },
     {
-      id: "email",
-      label: "Email",
-      type: "email",
-      placeholder: "email@example.com",
+      id: "middle-name",
+      label: "Middle Name",
+      type: "text",
+      placeholder: "Your Middle Name",
+    },
+    {
+      id: "last-name",
+      label: "Last Name",
+      type: "text",
+      placeholder: "Your Last Name",
     },
     {
       id: "phone",
