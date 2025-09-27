@@ -150,7 +150,7 @@ const Signup: React.FC = () => {
           <div className="mt-2 text-sm text-gray-500 flex-shrink-0 text-center">
             Already have an account?
             <a
-              onClick={() => redirectToSignin()}
+              onClick={redirectToSignin}
               className="font-semibold text-blue-600 hover:underline cursor-pointer"
             >
               Sign In

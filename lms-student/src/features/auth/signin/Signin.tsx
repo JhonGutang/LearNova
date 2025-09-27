@@ -99,7 +99,6 @@ export default function Signin() {
               <span className="relative z-10 px-2 bg-white">OR</span>
             </div>
             <Button variant="outline" className="w-full flex items-center space-x-2 cursor-pointer" type="button">
-              {/* <Google className="h-4 w-4" /> */}
               <span>Sign in with Google</span>
             </Button>
           </form>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from "react";
+import React, { ReactNode, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -28,7 +28,12 @@ const sidebarLinks = [
 const SIDEBAR_WIDTH_EXPANDED = 240;
 const SIDEBAR_WIDTH_COLLAPSED = 72;
 
-const SidebarLayout = ({ children }: { children: React.ReactNode }) => {
+interface SidebarLayoutProps {
+  children: ReactNode; // main content
+  headerChild?: ReactNode; // optional header child
+}
+
+const SidebarLayout = ({ children, headerChild }: SidebarLayoutProps) => {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const sidebarWidth = collapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED;
@@ -114,7 +119,7 @@ const SidebarLayout = ({ children }: { children: React.ReactNode }) => {
       </aside>
 
       {/* Right content area */}
-      <div className="flex flex-col flex-1 relative">
+      <div className="flex flex-col flex-1 relative ">
         {/* Header */}
         <header
           className="fixed top-0 right-0 h-20 flex items-center px-6 z-40 bg-white/80 backdrop-blur border-b transition-all duration-200"
@@ -132,9 +137,15 @@ const SidebarLayout = ({ children }: { children: React.ReactNode }) => {
           >
             <SidebarIcon className="w-6 h-6 text-teal-600" />
           </Button>
-          <h1 className="text-2xl font-bold text-teal-700 tracking-tight">
-            {sidebarLinks.find((l) => l.href === pathname)?.label || "Dashboard"}
-          </h1>
+          <div className="flex flex-1 items-center justify-between">
+            <h1 className="text-2xl font-bold text-teal-700 tracking-tight">
+              {sidebarLinks.find((l) => l.href === pathname)?.label || "Dashboard"}
+            </h1>
+            {/* Optional header child */}
+            {headerChild && (
+              <div className="ml-6 flex items-center">{headerChild}</div>
+            )}
+          </div>
         </header>
 
         {/* Main content */}
