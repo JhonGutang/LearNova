@@ -10,8 +10,8 @@ export const LOGIN_STUDENT = gql`
 `;
 
 export const CREATE_STUDENT = gql`
-  mutation CreateStudent($createStudentInput2: CreateStudentInput!) {
-    createStudent(input: $createStudentInput2) {
+  mutation CreateStudent($input: CreateStudentInput!) {
+    createStudent(input: $input) {
       status
       message
     }

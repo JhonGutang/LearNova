@@ -8,3 +8,13 @@ export interface credentials {
     password: string
     role:  Role
 }
+
+export interface studentCreateInput {
+    address: string;
+    email: string;
+    first_name: string;
+    last_name: string;
+    middle_name?: string;
+    password: string;
+    phone: string;
+}
