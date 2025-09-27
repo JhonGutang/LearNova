@@ -16,8 +16,6 @@ export const useAuth = () => {
         },
       });
 
-      // Fix: Use comparison (===) instead of assignment (=)
-      // Also, make sure to check for response.data and response.data.login existence
       const loginResult = (response.data as any)?.login;
       if (loginResult?.status === "ERROR") {
         CustomToast({
