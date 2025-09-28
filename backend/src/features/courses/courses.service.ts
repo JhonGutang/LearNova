@@ -53,8 +53,8 @@ function normalizeCourseWithCreator(course: any): any {
   if (!course) return null;
   return {
     id: String(course.id),
-    creator_name: `${course.creator?.first_name || ""} ${course.creator?.last_name || ""}`.trim(),
-    creator_middle_name: course.creator?.middle_name || null,
+    creatorName: `${course.creator?.first_name || ""} ${course.creator?.last_name || ""}`.trim(),
+    creatorMiddleName: course.creator?.middle_name || null,
     title: course.title,
     tagline: course.tagline,
     description: course.description,
@@ -64,8 +64,8 @@ function normalizeCourseWithCreator(course: any): any {
       description: lesson.description,
     })) || [],
     status: course.status,
-    created_at: course.created_at instanceof Date ? course.created_at.toISOString() : course.created_at,
-    updated_at: course.updated_at instanceof Date ? course.updated_at.toISOString() : course.updated_at,
+    createdAt: course.created_at instanceof Date ? course.created_at.toISOString() : course.created_at,
+    updatedAt: course.updated_at instanceof Date ? course.updated_at.toISOString() : course.updated_at,
   };
 }
 

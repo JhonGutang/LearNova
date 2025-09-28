@@ -13,15 +13,15 @@ type Course {
 
 type CourseWithCreator {
   id: ID!
-  creator_name: String!
-  creator_middle_name: String
+  creatorName: String!
+  creatorMiddleName: String
   title: String!
   tagline: String!
   description: String!
   categories: [String!]!
   status: String!
-  created_at: String!
-  updated_at: String!
+  createdAt: String!
+  updatedAt: String!
 }
 
 type Lesson {
