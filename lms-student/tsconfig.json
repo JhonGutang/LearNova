@@ -20,7 +20,11 @@
     ],
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "typeRoots": [
+      "node_modules/@types",  // Make sure the types directory is in the root of the node_modules
+      "./types"               // If you have any custom type definitions
+    ],
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]

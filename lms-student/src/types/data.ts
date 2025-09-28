@@ -18,3 +18,12 @@ export interface studentCreateInput {
     password: string;
     phone: string;
 }
+
+export interface CoursesWithCreator {
+    id: string;
+    creatorName: string;
+    title: string;
+    tagline?: string;
+    categories: string[];
+
+}

@@ -1,7 +1,16 @@
-import Homepage from "@/features/homepage/Homepage";
+import React from "react";
+import Sidebar from "@/shared/layout/Sidebar";
+import HeaderContents from "@/shared/HeaderContents";
+import Courses from "@/features/courses/Courses";
 
-export default function Home() {
+const Homepage: React.FC = () => {
   return (
-    <Homepage/>
+    <div className="flex min-h-screen">
+      <Sidebar headerChild={<HeaderContents />}>
+        <Courses/>
+      </Sidebar>
+    </div>
   );
-}
+};
+
+export default Homepage;

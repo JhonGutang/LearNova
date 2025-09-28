@@ -11,7 +11,7 @@ interface CardViewProps {
 
 const CARD_WIDTH = 330; // Consistent width for all card elements
 
-const CardView: React.FC<CardViewProps> = ({
+const CoursesCardView: React.FC<CardViewProps> = ({
   courseName,
   tagline,
   author,
@@ -63,4 +63,4 @@ const CardView: React.FC<CardViewProps> = ({
   );
 };
 
-export default CardView;
+export default CoursesCardView;
