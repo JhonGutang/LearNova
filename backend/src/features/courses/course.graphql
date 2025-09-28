@@ -11,6 +11,19 @@ type Course {
   updated_at: String!
 }
 
+type CourseWithCreator {
+  id: ID!
+  creator_name: String!
+  creator_middle_name: String
+  title: String!
+  tagline: String!
+  description: String!
+  categories: [String!]!
+  status: String!
+  created_at: String!
+  updated_at: String!
+}
+
 type Lesson {
   title: String!
   description: String!
@@ -26,6 +39,7 @@ input CourseInput {
 type Query {
   courses: [Course!]!
   coursesByCreator: [Course!]!
+  coursesWithCreator: [CourseWithCreator!]!
   course(id: ID!): Course
 }
 

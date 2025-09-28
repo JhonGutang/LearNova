@@ -31,6 +31,14 @@ export const resolvers = {
       console.log("SESSION CONTENT:", context.session);
       if (!context.session.creatorId) return null;
       return courseService.getByCreator(context.session.creatorId);
+    },
+    coursesWithCreator: async () => {
+      try {
+        return await courseService.getAllWithCreator();
+      } catch (error) {
+        console.error('Error getting courses with creator:', error);
+        throw new Error('Internal server error');
+      }
     }
   },
 
