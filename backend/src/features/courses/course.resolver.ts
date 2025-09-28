@@ -39,6 +39,18 @@ export const resolvers = {
         console.error('Error getting courses with creator:', error);
         throw new Error('Internal server error');
       }
+    },
+    courseWithCreator: async (_: any, args: { id: string, title: string }) => {
+      try {
+        const courseId = parseInt(args.id);
+        const course = await courseService.getByIdWithCreator(courseId, args.title);
+        if (!course) {
+          throw new Error('Course not found');
+        }
+        return course;
+      } catch (error) {
+        throw new Error(`Internal server error: ${error}`);
+      }
     }
   },
 

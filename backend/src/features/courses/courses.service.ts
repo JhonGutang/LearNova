@@ -7,6 +7,7 @@ interface CourseServiceInterface {
   getAll(): Promise<object>;
   getAllWithCreator(): Promise<Object>;
   getById(courseId: number): Promise<object | null>;
+  getByIdWithCreator(courseId: number, title: string): Promise<object | null>;
   getByCreator(creatorId: number): Promise<Course[] | []>;
 }
 
@@ -142,6 +143,34 @@ export class CourseService implements CourseServiceInterface {
       },
     });
     return normalizeCourse(course);
+  }
+
+  async getByIdWithCreator(courseId: number, title: string): Promise<Course | null> {
+    const course = await this.prisma.course.findUnique({
+      where: { id: courseId },
+      include: {
+        categories: { include: { category: true } },
+        lessons: true,
+        creator: true
+      },
+    });
+
+    if (!course) return null;
+    
+    const normalize = (str: string) =>
+      str
+        .toLowerCase()
+        .replace(/[\s\-]+/g, '')
+        .trim();
+
+    if (
+      course.id !== courseId ||
+      normalize(course.title) !== normalize(title)
+    ) {
+      return null;
+    }
+
+    return normalizeCourseWithCreator(course);
   }
 
   async getByCreator(creatorId: number): Promise<Course[]> {

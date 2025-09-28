@@ -4,10 +4,12 @@ import CoursesCardView from "@/shared/CoursesCardView";
 import { Button } from "@/components/ui/button";
 import { Star } from "lucide-react";
 import { useCoursesWithCreator } from "./useCourses";
+import { useRedirectLink } from "@/hooks/useRedirect";
+import React from "react";
 
 const Courses: React.FC = () => {
   const { courses, loading, error } = useCoursesWithCreator();
-
+  const { toSlug, redirect } = useRedirectLink()
   if (loading) {
     return (
       <main className="p-6 flex flex-wrap gap-6">
@@ -25,39 +27,44 @@ const Courses: React.FC = () => {
   }
 
   return (
-    <main className="p-6 flex flex-wrap gap-6 justify-start">
-      {courses?.length ? (
-        courses.map((course) => (
-          <div
-            key={course.id}
-            className="flex"
-            style={{ width: 330 }}
-          >
-            <CoursesCardView
-              courseName={course.title}
-              tagline={course.tagline}
-              author={course.creatorName}
-              className="w-full"
+    <>
+      <main className="p-6 flex flex-wrap gap-6 justify-start">
+        {courses?.length ? (
+          courses.map((course) => (
+            <div
+              key={course.id}
+              className="flex"
+              style={{ width: 330 }}
             >
-              <div className="flex gap-2">
-                <Button className="cursor-pointer bg-teal-600 hover:bg-teal-700 text-white">
-                  View
-                </Button>
-                <Button
-                  className="cursor-pointer bg-yellow-400 hover:bg-yellow-500 text-white"
-                  variant="secondary"
-                  aria-label="Add to Favorites"
-                >
-                  <Star className="w-5 h-5" />
-                </Button>
-              </div>
-            </CoursesCardView>
-          </div>
-        ))
-      ) : (
-        <div>No courses found.</div>
-      )}
-    </main>
+              <CoursesCardView
+                courseName={course.title}
+                tagline={course.tagline}
+                author={course.creatorName}
+                className="w-full"
+              >
+                <div className="flex gap-2">
+                  <Button
+                    className="cursor-pointer bg-teal-600 hover:bg-teal-700 text-white"
+                    onClick={() => redirect(toSlug(Number(course.id), course.title))}
+                  >
+                    View
+                  </Button>
+                  <Button
+                    className="cursor-pointer bg-yellow-400 hover:bg-yellow-500 text-white"
+                    variant="secondary"
+                    aria-label="Add to Favorites"
+                  >
+                    <Star className="w-5 h-5" />
+                  </Button>
+                </div>
+              </CoursesCardView>
+            </div>
+          ))
+        ) : (
+          <div>No courses found.</div>
+        )}
+      </main>
+    </>
   );
 };
 

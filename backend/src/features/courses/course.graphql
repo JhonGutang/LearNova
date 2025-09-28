@@ -41,6 +41,7 @@ type Query {
   coursesByCreator: [Course!]!
   coursesWithCreator: [CourseWithCreator!]!
   course(id: ID!): Course
+  courseWithCreator(id: ID!, title: String!): CourseWithCreator
 }
 
 type Mutation {
