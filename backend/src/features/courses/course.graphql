@@ -19,6 +19,7 @@ type CourseWithCreator {
   tagline: String!
   description: String!
   categories: [String!]!
+  lessons: [Lesson]
   status: String!
   createdAt: String!
   updatedAt: String!

@@ -8,6 +8,8 @@ import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { ScrollArea } from "../../components/ui/scroll-area";
 import { mockCourse, communityMessages, suggestions } from "@/mock/Courses";
+import CommunityChat from "./components/CommunityChat";
+import Suggestions from "./components/Suggestions";
 interface CourseByIdProps {
     courseLink: string
 }
@@ -56,21 +58,27 @@ const CourseById: React.FC<CourseByIdProps> = ({ courseLink }) => {
             <CardContent>
               <ScrollArea className="max-h-72 pr-2">
                 <ul className="space-y-3">
-                  {mockCourse.lessons.map((lesson, idx) => (
-                    <li
-                      key={lesson.title}
-                      className={`flex cursor-pointer items-center justify-between p-3 rounded-lg border transition-colors ${lesson.completed ? "bg-green-50 border-green-200" : "bg-white border-gray-200"}`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`w-3 h-3 rounded-full ${lesson.completed ? "bg-green-500" : "bg-gray-300"}`}
-                          title={lesson.completed ? "Completed" : "Incomplete"}
-                        />
-                        <span className={`font-medium ${lesson.completed ? "text-green-700" : "text-gray-800"}`}>{lesson.title}</span>
-                      </div>
-                      <span className="text-xs text-gray-500">{lesson.duration}</span>
-                    </li>
-                  ))}
+                  {course?.lessons.map((lesson, idx) => {
+                    // Fallbacks for missing data
+                    const title = lesson.title ?? `Lesson ${idx + 1}`;
+                    const completed = typeof lesson.completed === "boolean" ? lesson.completed : false;
+                    const duration = lesson.duration ?? "Unknown duration";
+                    return (
+                      <li
+                        key={title}
+                        className={`flex cursor-pointer items-center justify-between p-3 rounded-lg border transition-colors ${completed ? "bg-green-50 border-green-200" : "bg-white border-gray-200"}`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div
+                            className={`w-3 h-3 rounded-full ${completed ? "bg-green-500" : "bg-gray-300"}`}
+                            title={completed ? "Completed" : "Incomplete"}
+                          />
+                          <span className={`font-medium ${completed ? "text-green-700" : "text-gray-800"}`}>{title}</span>
+                        </div>
+                        <span className="text-xs text-gray-500">{duration}</span>
+                      </li>
+                    );
+                  })}
                 </ul>
               </ScrollArea>
             </CardContent>
@@ -79,50 +87,8 @@ const CourseById: React.FC<CourseByIdProps> = ({ courseLink }) => {
   
         {/* Community/Chat Sidebar */}
         <aside className="w-full md:w-96 flex flex-col gap-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Community</CardTitle>
-              <div className="text-xs text-gray-400">Chat with fellow students</div>
-            </CardHeader>
-            <CardContent className="flex flex-col p-0">
-              <ScrollArea className="px-4 py-2 max-h-64">
-                <ul className="space-y-4">
-                  {communityMessages.map((msg, idx) => (
-                    <li key={idx} className="flex items-start gap-3">
-                      <AvatarWithImage src={msg.user.avatar} alt={msg.user.name} className="w-8 h-8" />
-                      <div>
-                        <div className="font-semibold text-sm">{msg.user.name}</div>
-                        <div className="text-gray-700 text-sm">{msg.message}</div>
-                        <div className="text-xs text-gray-400 mt-1">{msg.time}</div>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </ScrollArea>
-              <div className="border-t p-4 bg-gray-50 flex gap-2">
-                <Input placeholder="Type your message..." disabled />
-                <Button disabled>Send</Button>
-              </div>
-            </CardContent>
-          </Card>
-          {/* Suggestions Carousel */}
-          <div className="mt-2">
-            <div className="font-semibold text-sm mb-2 ml-1 text-gray-700">Suggestions for you</div>
-            <div className="overflow-x-auto scrollbar-thin">
-              <div className="flex gap-3 min-w-full">
-                {suggestions.map((s, idx) => (
-                  <div
-                    key={idx}
-                    className="min-w-[200px] max-w-[220px] bg-white border border-gray-200 rounded-lg shadow-sm p-4 flex flex-col items-start gap-2 shrink-0"
-                  >
-                    <img src={s.icon} alt="" className="w-7 h-7 mb-1" />
-                    <div className="font-medium text-gray-800 text-sm">{s.title}</div>
-                    <div className="text-xs text-gray-500">{s.description}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          <CommunityChat/>
+          <Suggestions/>
         </aside>
       </div>
     );

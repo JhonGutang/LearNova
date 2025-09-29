@@ -27,10 +27,16 @@ export interface CourseWithCreatorBase {
     categories: string[];
 }
 
+interface Lesson {
+    id?: string | number
+    title: string
+    description: string 
+}
+
 export interface CourseWithCreatorAndLessons extends CourseWithCreatorBase {
     creatorMiddleName?: string | null;
     description: string;
-    lessons: string[];
+    lessons: Lesson[];
     status: string;
     createdAt: string;
     updatedAt: string;

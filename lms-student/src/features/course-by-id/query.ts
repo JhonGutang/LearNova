@@ -10,6 +10,10 @@ export const COURSE_WITH_CREATOR_QUERY = gql`
       tagline
       description
       categories
+      lessons {
+        title
+        description
+      }
       status
       createdAt
       updatedAt
