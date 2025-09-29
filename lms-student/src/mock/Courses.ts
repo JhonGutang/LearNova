@@ -60,3 +60,48 @@ export const courses = [
     author: "Jack Wilson",
   },
 ];
+
+
+export const mockCourse = {
+  title: "Modern Web Development",
+  description:
+    "Learn the latest in web technologies, frameworks, and best practices. This course covers everything from HTML/CSS to advanced React and backend integration.",
+  teacher: {
+    name: "Jane Doe",
+    avatar: "/globe.svg",
+    bio: "Senior Web Engineer & Instructor",
+  },
+  lessons: [
+    { title: "Introduction & Setup", duration: "10 min", completed: true },
+    { title: "HTML & CSS Basics", duration: "20 min", completed: true },
+    { title: "JavaScript Essentials", duration: "30 min", completed: false },
+    { title: "React Fundamentals", duration: "40 min", completed: false },
+    { title: "Backend Integration", duration: "35 min", completed: false },
+  ],
+};
+
+
+export const communityMessages = [
+  {
+    user: { name: "Alex", avatar: "/window.svg" },
+    message: "Anyone stuck on the React lesson?",
+    time: "2 min ago",
+  },
+  {
+    user: { name: "Samira", avatar: "/file.svg" },
+    message: "The teacher's explanation is super clear!",
+    time: "5 min ago",
+  },
+  {
+    user: { name: "Chris", avatar: "/vercel.svg" },
+    message: "Can we have a group study session?",
+    time: "10 min ago",
+  },
+];
+
+export const suggestions = [
+  { title: "Try the JavaScript Quiz!", description: "Test your JS basics with a quick quiz.", icon: "/file.svg" },
+  { title: "Join Study Group", description: "Collaborate with peers for better learning.", icon: "/globe.svg" },
+  { title: "Explore Extra Resources", description: "Check out recommended articles and videos.", icon: "/window.svg" },
+  { title: "Ask a Mentor", description: "Get help from experienced mentors.", icon: "/vercel.svg" },
+];

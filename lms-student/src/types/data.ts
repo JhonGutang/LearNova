@@ -19,11 +19,19 @@ export interface studentCreateInput {
     phone: string;
 }
 
-export interface CoursesWithCreator {
+export interface CourseWithCreatorBase {
     id: string;
     creatorName: string;
     title: string;
     tagline?: string;
     categories: string[];
+}
 
+export interface CourseWithCreatorAndLessons extends CourseWithCreatorBase {
+    creatorMiddleName?: string | null;
+    description: string;
+    lessons: string[];
+    status: string;
+    createdAt: string;
+    updatedAt: string;
 }
