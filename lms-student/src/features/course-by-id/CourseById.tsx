@@ -8,6 +8,7 @@ import { ScrollArea } from "../../components/ui/scroll-area";
 import { mockCourse } from "@/mock/Courses";
 import CommunityChat from "./components/CommunityChat";
 import Suggestions from "./components/Suggestions";
+import { Button } from "@/components/ui/button";
 interface CourseByIdProps {
     courseLink: string
 }
@@ -34,17 +35,43 @@ const CourseById: React.FC<CourseByIdProps> = ({ courseLink }) => {
         {/* Main Content */}
         <div className="flex-1 flex flex-col gap-6">
           {/* Course Details */}
-          <Card className="w-full">
-            <CardHeader className="flex flex-row items-center gap-4">
-              <AvatarWithImage src={mockCourse.teacher.avatar} alt={mockCourse.teacher.name} />
+          <Card className="w-full shadow-lg border-0 bg-white">
+            <CardHeader className="flex flex-row items-center gap-6 pb-0">
+              <AvatarWithImage
+                src={course?.teacher?.avatar || mockCourse.teacher.avatar}
+                alt={course?.teacher?.name || mockCourse.teacher.name}
+                className="w-16 h-16 border-2 border-primary shadow"
+              />
               <div>
-                <CardTitle className="text-2xl font-bold">{course?.title}</CardTitle>
-                <div className="text-gray-500 text-sm">by {course?.creatorName}</div>
+                <CardTitle className="text-3xl font-extrabold text-primary mb-1">{course?.title}</CardTitle>
+                <div className="flex items-center gap-2 text-gray-500 text-sm">
+                  <span>by</span>
+                  <span className="font-semibold text-gray-700">{course?.creatorName}</span>
+                  <span className="inline-block w-1 h-1 bg-gray-300 rounded-full mx-1" />
+                  <span className="text-xs text-gray-400">{course?.categories || "General"}</span>
+                </div>
               </div>
             </CardHeader>
-            <CardContent>
-              <p className="text-gray-700 mb-2">{course?.description}</p>
-              <div className="text-xs text-gray-400">{mockCourse.teacher.bio}</div>
+            <CardContent className="pt-2">
+              <div className="text-sm italic mb-2">"{course?.tagline}"</div>
+              <p className="text-gray-700 mb-4 text-base leading-relaxed">{course?.description}</p>
+              <div className="flex items-center gap-3 mb-4">
+                <AvatarWithImage
+                  src={course?.teacher?.avatar || mockCourse.teacher.avatar}
+                  alt={course?.teacher?.name || mockCourse.teacher.name}
+                  className="w-8 h-8"
+                />
+                <div>
+                  <div className="font-medium text-gray-800">{course?.creatorName}</div>
+                  <div className="text-xs text-gray-500">{mockCourse.teacher.bio}</div>
+                </div>
+              </div>
+              <Button
+                className="w-full py-2 text-lg font-semibold bg-gradient-to-r from-teal-400 to-teal-600 hover:from-teal-500 hover:to-teal-700 transition-colors shadow"
+                size="lg"
+              >
+                Enroll Now
+              </Button>
             </CardContent>
           </Card>
   
