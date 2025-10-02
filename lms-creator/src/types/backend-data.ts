@@ -9,10 +9,11 @@ export interface Course {
   id: string;
   title: string;
   tagline: string;
+  creatorName: string;
   description: string;
   status: string;
   categories: string[];
-  created_at: string;
+  createdAt: string;
 }
 
 export interface CourseWithLessons extends Course {
@@ -21,7 +22,7 @@ export interface CourseWithLessons extends Course {
   totalNumberOfStudents?: number;
 }
 
-export type CreateCourseFormData = Omit<Course, "id" | "status" | "created_at">;
+export type CreateCourseFormData = Omit<Course, "id" | "status" | "createdAt">;
 
 export interface CreateCourseResponse {
   createCourse: Course

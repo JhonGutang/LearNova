@@ -7,11 +7,7 @@ interface CourseInformationProps {
 }
 
 const CourseInformation: React.FC<CourseInformationProps> = ({ course }) => {
-    
     const totalSubModules = 7;
-    const author = "Author's Name";
-
-
     return (
         <div className="basis-2/5 flex-shrink-0 flex-grow-0 p-10 h-full border-r-2 border-gray-200">
             <div className='flex items-center gap-2 text-2xl'>
@@ -24,7 +20,7 @@ const CourseInformation: React.FC<CourseInformationProps> = ({ course }) => {
                     <Pencil className="w-4 h-4 text-gray-500" />
                 </button>
             </div>
-            <div className="text-base text-sm text-gray-500 italic mt-1 mb-2">
+            <div className="text-sm text-gray-500 italic mt-1 mb-2">
                 {course.tagline}
             </div>
             <div className='text-sm mb-2 mt-2'>
@@ -57,7 +53,7 @@ const CourseInformation: React.FC<CourseInformationProps> = ({ course }) => {
                 <div className="grid grid-cols-1 gap-2 text-sm">
                     <div className="flex items-center justify-between">
                         <span className="text-gray-600">Total Participants</span>
-                        <span className="font-medium text-gray-900">{course.totalNumberOfStudents ?? 8}</span>
+                        <span className="font-medium text-gray-900"> 8</span>
                     </div>
                     <div className="flex items-center justify-between">
                         <span className="text-gray-600">Total Lessons</span>
@@ -65,7 +61,7 @@ const CourseInformation: React.FC<CourseInformationProps> = ({ course }) => {
                     </div>
                     <div className="flex items-center justify-between">
                         <span className="text-gray-600">Course Author</span>
-                        <span className="font-medium text-gray-900">{author}</span>
+                        <span className="font-medium text-gray-900">{course.creatorName}</span>
                     </div>
                     <div className="flex items-center justify-between">
                         <span className="text-gray-600">Status: </span>

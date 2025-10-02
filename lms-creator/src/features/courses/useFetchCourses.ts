@@ -4,7 +4,7 @@ import { GET_COURSES } from "./query";
 import * as ApolloReact from "@apollo/client/react";
 import { useRedirectLink } from "@/src/shadcn/hooks/useRedirectLink";
 interface CoursesData {
-    coursesByCreator: Course[];
+    courses: Course[];
 }
 
 export function useFetchCourses() {
@@ -17,8 +17,8 @@ export function useFetchCourses() {
     });
 
     useEffect(() => {
-        if (data && data.coursesByCreator) {
-            setCourses(data.coursesByCreator);
+        if (data && data.courses) {
+            setCourses(data.courses);
         }
     }, [data]);
 

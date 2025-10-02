@@ -5,6 +5,7 @@ export const GET_COURSE_BY_ID = gql`
         course(id: $id) {
             id
             title
+            creatorName
             tagline
             description
             status
@@ -14,8 +15,7 @@ export const GET_COURSE_BY_ID = gql`
                 title
                 description
             }
-            created_at
-            updated_at
+            createdAt
         }
     }
 `;

@@ -7,18 +7,11 @@ const courseService = new CourseService(prisma);
 
 export const resolvers = {
   Query: {
-    courses: async () => {
-      try {
-        return await courseService.getAll();
-      } catch (error) {
-        console.error('Error getting courses:', error);
-        throw new Error('Internal server error');
-      }
-    },
-    course: async (_: any, args: { id: string }) => {
+    course: async (_: any, args: { id: string }, context: MyContext) => {
+      if (!context.session.creatorId) return null;
       try {
         const courseId = parseInt(args.id);
-        const course = await courseService.getById(courseId);
+        const course = await courseService.getById(courseId, context.session.creatorId);
         if (!course) {
           throw new Error('Course not found');
         }
@@ -27,10 +20,13 @@ export const resolvers = {
         throw new Error(`Internal server error: ${error}`);
       }
     },
-    coursesByCreator: async (_: any, __: any, context: MyContext) => {
-      console.log("SESSION CONTENT:", context.session);
-      if (!context.session.creatorId) return null;
-      return courseService.getByCreator(context.session.creatorId);
+    courses: async (_: any, __: any, context: MyContext) => {
+      try {
+        if (!context.session.creatorId) return null;
+        return await courseService.getAll(context.session.creatorId);
+      } catch (error) {
+        throw new Error(`Internal server error: ${error}`);
+      }
     },
     coursesWithCreator: async () => {
       try {
