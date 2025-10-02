@@ -61,4 +61,5 @@ type Query {
 type Mutation {
     login(input: LoginInput): AuthResult
     changePassword(input: ChangePasswordInput): AuthResult
+    logout: AuthResult
 }

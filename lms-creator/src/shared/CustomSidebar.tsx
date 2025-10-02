@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Link from 'next/link';
 import {
     Sidebar,
@@ -16,6 +16,10 @@ import {
     SidebarTrigger,
   } from '@/src/shadcn/components/ui/sidebar';
 import { Bell } from "lucide-react";
+import LogoutDialog from "../features/auth/logout/LogoutDialog";
+
+// Simple Dialog implementation using shadcn/ui Dialog or fallback
+
 
 interface CustomSidebarProps {
   navItems: {
@@ -28,6 +32,7 @@ interface CustomSidebarProps {
 }
 
 const CustomSidebar: React.FC<CustomSidebarProps> = ({ navItems, pageTitle, children }) => {
+
   return (
     <SidebarProvider>
       <Sidebar collapsible="icon">
@@ -47,16 +52,28 @@ const CustomSidebar: React.FC<CustomSidebarProps> = ({ navItems, pageTitle, chil
             <SidebarGroupLabel>Navigation</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {navItems.map((item) => (
-                  <SidebarMenuItem key={item.label}>
-                    <SidebarMenuButton asChild tooltip={item.label}>
-                      <Link href={item.href}>
-                        <item.icon className="h-4 w-4" />
-                        <span>{item.label}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
+                {navItems.map((item) => {
+                  const isLogout = item.label.toLowerCase() === "logout";
+                  if (isLogout) {
+                    // Render logout with dialog
+                    return (
+                      <SidebarMenuItem key={item.label}>
+                        <LogoutDialog item={item}/>
+                      </SidebarMenuItem>
+                    );
+                  }
+                  // Normal nav item
+                  return (
+                    <SidebarMenuItem key={item.label}>
+                      <SidebarMenuButton asChild tooltip={item.label}>
+                        <Link href={item.href}>
+                          <item.icon className="h-4 w-4" />
+                          <span>{item.label}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>

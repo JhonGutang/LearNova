@@ -43,7 +43,24 @@ export const resolvers = {
                     message: "Password Change Failed"
                 };
             }
-        }
+        },
+        logout: async (_: any, __: any, context: MyContext) => {
+            return new Promise((resolve) => {
+              context.session.destroy((error: any) => {
+                if (error) {
+                  resolve({
+                    status: Status.Error,
+                    message: "Session Destruction Failed: " + error
+                  });
+                } else {
+                  resolve({
+                    status: Status.Success,
+                    message: "Session Destroyed"
+                  });
+                }
+              });
+            });
+          }
         
     }
 }
