@@ -19,7 +19,7 @@ export interface studentCreateInput {
     phone: string;
 }
 
-export interface CourseWithCreatorBase {
+export interface Course {
     id: string;
     creatorName: string;
     title: string;
@@ -33,7 +33,7 @@ interface Lesson {
     description: string 
 }
 
-export interface CourseWithCreatorAndLessons extends CourseWithCreatorBase {
+export interface CourseWithCreatorAndLessons extends Course {
     creatorMiddleName?: string | null;
     description: string;
     lessons: Lesson[];

@@ -10,19 +10,6 @@ type Course {
   lessons: [Lesson]
 }
 
-type CourseWithCreator {
-  id: ID!
-  creatorName: String!
-  creatorMiddleName: String
-  title: String!
-  tagline: String!
-  description: String!
-  categories: [String!]!
-  lessons: [Lesson]
-  status: String!
-  createdAt: String!
-  updatedAt: String!
-}
 
 type Lesson {
   id: ID!
@@ -40,8 +27,7 @@ input CourseInput {
 extend type Query {
   course(id: ID!): Course
   courses: [Course!]!
-  coursesWithCreator: [CourseWithCreator!]!
-  courseWithCreator(id: ID!, title: String!): CourseWithCreator
+  courseWithCreator(id: ID!, title: String!): Course
 }
 
 extend type Mutation {

@@ -4,31 +4,10 @@ import { Course, CourseInput } from "../../generated/graphql";
 type CreateCourseData = CourseInput & { creator_id: number };
 interface CourseServiceInterface {
   create(course: CourseInput): Promise<Course>;
-  getAllWithCreator(): Promise<Object>;
   getById(courseId: number, creatorId: number): Promise<object | null>;
   getByIdWithCreator(courseId: number, title: string): Promise<object | null>;
-  getAll(creatorId: number): Promise<Course[] | []>;
+  getAll(creatorId?: number): Promise<Course[] | []>;
 }
-
-function normalizeCategories(input: any): any {
-  if (Array.isArray(input)) {
-    return input.map((course: any) => ({
-      ...course,
-      categories: course.categories.map(
-        (category: any) => category.category.name
-      ),
-    }));
-  } else if (input && typeof input === "object") {
-    return {
-      ...input,
-      categories: input.categories.map(
-        (category: any) => category.category.name
-      ),
-    };
-  }
-  return input;
-}
-
 
 function normalizeCourseWithCreator(course: any): any {
   if (!course) return null;
@@ -93,16 +72,6 @@ export class CourseService implements CourseServiceInterface {
       categories: newCourse.categories.map((cat: any) => cat.category.name),
       createdAt: newCourse.created_at instanceof Date ? newCourse.created_at.toISOString() : newCourse.created_at,
     };
-  }
-
-  async getAllWithCreator(): Promise<any[]> {
-    const courses = await this.prisma.course.findMany({
-      include: {
-        categories: { include: { category: true } },
-        creator: true,
-      },
-    });
-    return courses.map(normalizeCourseWithCreator);
   }
 
     async getById(courseId: number, creatorId: number): Promise<Course | null> {
@@ -183,24 +152,43 @@ export class CourseService implements CourseServiceInterface {
     return normalizeCourseWithCreator(course);
   }
 
-  async getAll(creatorId: number): Promise<Course[]> {
+  async getAll(creatorId?: number): Promise<Course[]> {
+    const whereClause = creatorId ? { creator_id: creatorId } : {};
+    const select: any = {
+      id: true,
+      title: true,
+      tagline: true,
+      categories: { select: { category: { select: { name: true } } } },
+      created_at: true,
+    };
+
+
+    if (!creatorId) {
+      select.creator = { select: { first_name: true, last_name: true } };
+    }
+
     const courses = await this.prisma.course.findMany({
-      where: { creator_id: creatorId },
-      select: {
-        id: true,
-        title: true,
-        tagline: true,
-        categories: { select: { category: { select: { name: true } } } },
-        created_at: true,
-      },
+      where: whereClause,
+      select,
     });
 
-    return courses.map((course: any) => ({
-      id: String(course.id),
-      title: course.title,
-      tagline: course.tagline,
-      categories: course.categories?.map((cat: any) => cat.category.name) || [],
-      createdAt: course.created_at instanceof Date ? course.created_at.toISOString() : course.created_at,
-    }));
+    return courses.map((course: any) => {
+      const base = {
+        id: String(course.id),
+        title: course.title,
+        tagline: course.tagline,
+        categories: course.categories?.map((cat: any) => cat.category.name) || [],
+        createdAt: course.created_at instanceof Date ? course.created_at.toISOString() : course.created_at,
+      };
+      if (!creatorId) {
+        return {
+          ...base,
+          creatorName: course.creator
+            ? `${course.creator.first_name} ${course.creator.last_name}`.trim()
+            : null,
+        };
+      }
+      return base;
+    });
   }
 }

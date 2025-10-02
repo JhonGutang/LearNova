@@ -22,18 +22,18 @@ export const resolvers = {
     },
     courses: async (_: any, __: any, context: MyContext) => {
       try {
-        if (!context.session.creatorId) return null;
-        return await courseService.getAll(context.session.creatorId);
+        console.log(context.session.role)
+        if(!context.session.role) return null
+        if(context.session.role === "STUDENT") {
+          return await courseService.getAll();
+        }
+        
+        if(context.session.role = "CREATOR") {
+          if (!context.session.creatorId) return null;
+          return await courseService.getAll(context.session.creatorId);
+        }
       } catch (error) {
         throw new Error(`Internal server error: ${error}`);
-      }
-    },
-    coursesWithCreator: async () => {
-      try {
-        return await courseService.getAllWithCreator();
-      } catch (error) {
-        console.error('Error getting courses with creator:', error);
-        throw new Error('Internal server error');
       }
     },
     courseWithCreator: async (_: any, args: { id: string, title: string }) => {
