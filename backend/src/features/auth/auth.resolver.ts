@@ -1,4 +1,4 @@
-import { LoginInput, Status } from "../../generated/graphql";
+import { ChangePasswordInput, LoginInput, Status } from "../../generated/graphql";
 import { AuthService } from "./auth.service";
 import prisma from "../../config/prisma";
 import { MyContext } from "../../types/context";
@@ -29,6 +29,21 @@ export const resolvers = {
                     message: "Invalid credentials"
                 };
             }
+        },
+        changePassword: async (_: any, args: { input: ChangePasswordInput }) => {
+            const isSuccess = await authService.changePassword(args.input)
+            if(isSuccess) {
+                return {
+                    status: Status.Success,
+                    message: "Password Changed"
+                };
+            } else {
+                return {
+                    status: Status.Error,
+                    message: "Password Change Failed"
+                };
+            }
         }
+        
     }
 }

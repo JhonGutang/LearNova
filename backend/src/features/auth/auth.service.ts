@@ -1,25 +1,25 @@
-import { LoginInput, UserProfile } from "../../generated/graphql";
+import { ChangePasswordInput, LoginInput, UserProfile } from "../../generated/graphql";
 import bcrypt from "bcrypt";
 import { MyContext } from "../../types/context";
 
 interface AuthServiceInterface {
   getCurrentUserProfile(userId: number, role: string): Promise<UserProfile | null >
   authenticateUser(input: LoginInput, context: MyContext): Promise<Boolean>;
+  changePassword(input: ChangePasswordInput): Promise<Boolean>;
 }
 
 function normalizeCreatorProfile(creator: any, user: any): UserProfile {
   return {
     __typename: "CreatorProfile",
     id: creator.id,
-    user_id: user.id,
-    first_name: creator.first_name,
-    last_name: creator.last_name,
-    middle_name: creator.middle_name,
+    userId: user.id,
+    firstName: creator.firstName,
+    lastName: creator.lastName,
+    middleName: creator.middleName,
     email: user.email,
     phone: creator.phone,
     address: creator.address,
-    created_at: creator.created_at,
-    updated_at: creator.updated_at,
+    createdAt: creator.createdAt,
   };
 }
 
@@ -27,15 +27,15 @@ function normalizeStudentProfile(student: any, user: any): UserProfile {
   return {
     __typename: "StudentProfile",
     id: student.id,
-    user_id: user.id,
-    first_name: student.first_name,
-    last_name: student.last_name,
-    middle_name: student.middle_name,
+    userId: user.id,
+    firstName: student.firstName,
+    lastName: student.lastName,
+    middleName: student.middleName,
     email: user.email,
     phone: student.phone,
     address: student.address,
-    created_at: student.created_at,
-    updated_at: student.updated_at,
+    createdAt: student.createdAt,
+
   };
 }
 
@@ -119,5 +119,24 @@ export class AuthService implements AuthServiceInterface {
     }
 
     return false;
+  }
+
+  async changePassword(input: ChangePasswordInput): Promise<Boolean> {
+    const user = await this.prisma.user.findUnique({
+      where: { email: input.email },
+    });
+
+    if (!user) {
+      return false;
+    }
+
+    const hashedPassword = await bcrypt.hash(input.password, 10);
+
+    await this.prisma.user.update({
+      where: { email: input.email },
+      data: { password: hashedPassword },
+    });
+
+    return true;
   }
 }

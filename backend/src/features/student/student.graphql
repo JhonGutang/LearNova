@@ -1,22 +1,9 @@
 
 
-type StudentProfile {
-  id: Int!
-  user_id: Int!
-  first_name: String!
-  last_name: String!
-  middle_name: String
-  email: String!
-  phone: String!
-  address: String!
-  created_at: DateTime
-  updated_at: DateTime
-}
-
 input CreateStudentInput  {
-    first_name: String!
-    last_name: String!
-    middle_name: String
+    firstName: String!
+    lastName: String!
+    middleName: String
     email: String!
     phone: String!
     address: String!

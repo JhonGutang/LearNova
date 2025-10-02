@@ -1,28 +1,26 @@
 
 type CreatorProfile {
   id: Int!
-  user_id: Int!
-  first_name: String!
-  last_name: String!
-  middle_name: String
+  userId: Int!
+  firstName: String!
+  lastName: String!
+  middleName: String
   email: String!
   phone: String!
   address: String!
-  created_at: DateTime
-  updated_at: DateTime
+  createdAt: DateTime
 }
 
 type StudentProfile {
   id: Int!
-  user_id: Int!
-  first_name: String!
-  last_name: String!
-  middle_name: String
+  userId: Int!
+  firstName: String!
+  lastName: String!
+  middleName: String
   email: String!
   phone: String!
   address: String!
-  created_at: DateTime
-  updated_at: DateTime
+  createdAt: DateTime
 }
 
 
@@ -35,6 +33,11 @@ input LoginInput {
     email: String!
     password: String!
     role: Role!
+}
+
+input ChangePasswordInput {
+    email: String!
+    password: String!
 }
 
 enum Status{
@@ -50,10 +53,12 @@ type AuthResult {
 
 union UserProfile = CreatorProfile | StudentProfile
 
+
 type Query {
     user: UserProfile
 }
 
 type Mutation {
     login(input: LoginInput): AuthResult
+    changePassword(input: ChangePasswordInput): AuthResult
 }
