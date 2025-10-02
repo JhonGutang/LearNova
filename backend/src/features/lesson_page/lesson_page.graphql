@@ -2,11 +2,10 @@ scalar JSON
 
 type LessonPage {
   id: Int!
-  lesson_id: Int!
-  page_number: Int!
-  content_json: JSON!
-  created_at: DateTime!
-  updated_at: DateTime!
+  lessonId: Int!
+  pageNumber: Int!
+  contentJson: JSON!
+  createdAt: DateTime!
 }
 
 type Query {

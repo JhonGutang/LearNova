@@ -39,3 +39,11 @@ export interface CourseWithLessons extends Course {
     status: string;
     createdAt: string;
 }
+
+export interface LessonPages {
+    id: number,
+    lessonId: number,
+    pageNumber: number,
+    contentJson: string
+    createdAt: string
+}

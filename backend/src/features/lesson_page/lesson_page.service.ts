@@ -13,21 +13,44 @@ export interface LessonPageServiceInterface {
 
 export class LessonPageService implements LessonPageServiceInterface {
     async getLessonPages(lessonId: number): Promise<LessonPage[]> {
-        return await prisma.lesson_Page.findMany({
+        const pages = await prisma.lesson_Page.findMany({
             where: { lesson_id: lessonId }
         });
+        return pages.map(page => ({
+            id: page.id,
+            lessonId: page.lesson_id,
+            pageNumber: page.page_number,
+            contentJson: page.content_json,
+            createdAt: page.created_at,
+        }));
     }
 
     async getLessonPage(id: number): Promise<LessonPage | null> {
-        return await prisma.lesson_Page.findUnique({
+        const page = await prisma.lesson_Page.findUnique({
             where: { id }
         });
+        if (!page) return null;
+        return {
+            id: page.id,
+            lessonId: page.lesson_id,
+            pageNumber: page.page_number,
+            contentJson: page.content_json,
+            createdAt: page.created_at,
+        };
     }
 
     async getLessonByPageNumber(lessonId: number, pageNumber: number): Promise<LessonPage | null> {
-        return await prisma.lesson_Page.findUnique({
+        const page = await prisma.lesson_Page.findUnique({
             where: { lesson_id_page_number: { lesson_id: lessonId, page_number: pageNumber } },
         });
+        if (!page) return null;
+        return {
+            id: page.id,
+            lessonId: page.lesson_id,
+            pageNumber: page.page_number,
+            contentJson: page.content_json,
+            createdAt: page.created_at,
+        };
     }
 
     async reOrderPages(lessonId: number, deletedPageNumber: number): Promise<Boolean> {

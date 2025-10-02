@@ -10,6 +10,7 @@ export const COURSE_WITH_LESSON_QUERY = gql`
       description
       categories
       lessons {
+        id
         title
         description
       }

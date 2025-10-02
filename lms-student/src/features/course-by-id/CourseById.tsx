@@ -13,7 +13,7 @@ interface CourseByIdProps {
 }
 
 const CourseById: React.FC<CourseByIdProps> = ({ courseLink }) => {
-    const { fromSlug } = useRedirectLink();
+    const { fromSlug, redirect, toSlug } = useRedirectLink();
     const { id, title } = fromSlug(courseLink);
     console.log(id)
     const { course, loading, error } = useCourseById(id, title);
@@ -65,6 +65,7 @@ const CourseById: React.FC<CourseByIdProps> = ({ courseLink }) => {
                       <li
                         key={title}
                         className={`flex cursor-pointer items-center justify-between p-3 rounded-lg border transition-colors ${completed ? "bg-green-50 border-green-200" : "bg-white border-gray-200"}`}
+                        onClick={() => redirect(courseLink + "/"  + toSlug(Number(lesson.id), lesson.title))}
                       >
                         <div className="flex items-center gap-3">
                           <div
