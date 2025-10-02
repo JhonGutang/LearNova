@@ -4,8 +4,10 @@ import { LOGIN_STUDENT, CREATE_STUDENT } from "./query";
 import { CustomToast } from "@/shared/CustomToast";
 import { useCallback } from "react";
 import { SignupFormFields } from "@/constants/AuthFormFields";
+import { useRedirectLink } from "@/hooks/useRedirect";
 
 export const useAuth = () => {
+  const {redirect} = useRedirectLink()
   // Mutations for login and registration
   const [LoginStudent, { data: loginData, loading: loginLoading, error: loginError }] =
     ApolloReact.useMutation(LOGIN_STUDENT);
@@ -51,6 +53,9 @@ export const useAuth = () => {
         showToast("error", "Signin Failed", loginResult?.message);
       } else {
         showToast("success", "Signed in Successfully");
+        setTimeout(() => {
+          redirect('/')
+        }, 1500);
       }
     } catch (err) {
       showToast("error", "Signin Failed", (err as any)?.message);

@@ -6,23 +6,20 @@ import { Star } from "lucide-react";
 import { useCoursesWithCreator } from "./useCourses";
 import { useRedirectLink } from "@/hooks/useRedirect";
 import React from "react";
+import FallbackMessage from "@/shared/FallbackMessage";
 
 const Courses: React.FC = () => {
   const { courses, loading, error } = useCoursesWithCreator();
   const { toSlug, redirect } = useRedirectLink()
   if (loading) {
     return (
-      <main className="p-6 flex flex-wrap gap-6">
-        <div>Loading courses...</div>
-      </main>
+      <FallbackMessage message="Loading courses..."/>
     );
   }
 
   if (error) {
     return (
-      <main className="p-6 flex flex-wrap gap-6">
-        <div className="text-red-500">Failed to load courses.</div>
-      </main>
+     <FallbackMessage message="Failed to load courses" isError={true}/>
     );
   }
 
