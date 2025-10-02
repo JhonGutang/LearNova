@@ -4,29 +4,8 @@ import { Course, CourseInput } from "../../generated/graphql";
 type CreateCourseData = CourseInput & { creator_id: number };
 interface CourseServiceInterface {
   create(course: CourseInput): Promise<Course>;
-  getById(courseId: number, creatorId: number): Promise<object | null>;
-  getByIdWithCreator(courseId: number, title: string): Promise<object | null>;
+  getById(courseId: number, title: string, creatorId?: number | null): Promise<object | null>;
   getAll(creatorId?: number): Promise<Course[] | []>;
-}
-
-function normalizeCourseWithCreator(course: any): any {
-  if (!course) return null;
-  return {
-    id: String(course.id),
-    creatorName: `${course.creator?.first_name || ""} ${course.creator?.last_name || ""}`.trim(),
-    creatorMiddleName: course.creator?.middle_name || null,
-    title: course.title,
-    tagline: course.tagline,
-    description: course.description,
-    categories: course.categories?.map((cat: any) => cat.category.name) || [],
-    lessons: course.lessons?.map((lesson: any) => ({
-      title: lesson.title,
-      description: lesson.description,
-    })) || [],
-    status: course.status,
-    createdAt: course.created_at instanceof Date ? course.created_at.toISOString() : course.created_at,
-    updatedAt: course.updated_at instanceof Date ? course.updated_at.toISOString() : course.updated_at,
-  };
 }
 
 export class CourseService implements CourseServiceInterface {
@@ -74,9 +53,20 @@ export class CourseService implements CourseServiceInterface {
     };
   }
 
-    async getById(courseId: number, creatorId: number): Promise<Course | null> {
-      const course = await this.prisma.course.findUnique({
-        where: { id: courseId, creator_id: creatorId },
+    async getById(courseId: number, title: string, creatorId?: number | null): Promise<Course | null> {
+      let whereClause: any = {
+        id: courseId,
+        title: {
+          equals: title,
+          mode: 'insensitive',
+        },
+      };
+      if (creatorId) {
+        whereClause.creator_id = creatorId;
+      }
+
+      const course = await this.prisma.course.findFirst({
+        where: whereClause,
         select: {
           id: true,
           title: true,
@@ -123,34 +113,6 @@ export class CourseService implements CourseServiceInterface {
         })),
       };
     }
-
-  async getByIdWithCreator(courseId: number, title: string): Promise<Course | null> {
-    const course = await this.prisma.course.findUnique({
-      where: { id: courseId },
-      include: {
-        categories: { include: { category: true } },
-        lessons: true,
-        creator: true
-      },
-    });
-
-    if (!course) return null;
-    
-    const normalize = (str: string) =>
-      str
-        .toLowerCase()
-        .replace(/[\s\-]+/g, '')
-        .trim();
-
-    if (
-      course.id !== courseId ||
-      normalize(course.title) !== normalize(title)
-    ) {
-      return null;
-    }
-
-    return normalizeCourseWithCreator(course);
-  }
 
   async getAll(creatorId?: number): Promise<Course[]> {
     const whereClause = creatorId ? { creator_id: creatorId } : {};

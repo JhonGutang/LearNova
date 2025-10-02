@@ -7,15 +7,24 @@ const courseService = new CourseService(prisma);
 
 export const resolvers = {
   Query: {
-    course: async (_: any, args: { id: string }, context: MyContext) => {
-      if (!context.session.creatorId) return null;
+    course: async (_: any, args: { id: string, title: string }, context: MyContext) => {
       try {
         const courseId = parseInt(args.id);
-        const course = await courseService.getById(courseId, context.session.creatorId);
-        if (!course) {
-          throw new Error('Course not found');
+        if (!context.session.role) return null;
+        console.log(context.session.role)
+        if(context.session.role === "STUDENT") {
+          const course = await courseService.getById(courseId, args.title);
+          return course
         }
-        return course;
+
+        if(context.session.role === "CREATOR") {
+          if(!context.session.creatorId) return null
+          const course = await courseService.getById(courseId, args.title, context.session.creatorId);
+          if (!course) {
+            throw new Error('Course not found');
+          }
+          return course
+        }
       } catch (error) {
         throw new Error(`Internal server error: ${error}`);
       }
@@ -36,18 +45,6 @@ export const resolvers = {
         throw new Error(`Internal server error: ${error}`);
       }
     },
-    courseWithCreator: async (_: any, args: { id: string, title: string }) => {
-      try {
-        const courseId = parseInt(args.id);
-        const course = await courseService.getByIdWithCreator(courseId, args.title);
-        if (!course) {
-          throw new Error('Course not found');
-        }
-        return course;
-      } catch (error) {
-        throw new Error(`Internal server error: ${error}`);
-      }
-    }
   },
 
   Mutation: {

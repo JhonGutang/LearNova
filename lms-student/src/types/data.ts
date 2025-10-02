@@ -33,11 +33,9 @@ interface Lesson {
     description: string 
 }
 
-export interface CourseWithCreatorAndLessons extends Course {
-    creatorMiddleName?: string | null;
+export interface CourseWithLessons extends Course {
     description: string;
     lessons: Lesson[];
     status: string;
     createdAt: string;
-    updatedAt: string;
 }

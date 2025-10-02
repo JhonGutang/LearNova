@@ -25,9 +25,8 @@ input CourseInput {
 }
 
 extend type Query {
-  course(id: ID!): Course
+  course(id: ID!, title: String): Course
   courses: [Course!]!
-  courseWithCreator(id: ID!, title: String!): Course
 }
 
 extend type Mutation {

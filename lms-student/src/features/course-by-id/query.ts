@@ -1,11 +1,10 @@
 import { gql } from "@apollo/client";
 
-export const COURSE_WITH_CREATOR_QUERY = gql`
-  query CourseWithCreator($courseWithCreatorId: ID!, $title: String!) {
-    courseWithCreator(id: $courseWithCreatorId, title: $title) {
+export const COURSE_WITH_LESSON_QUERY = gql`
+  query course($courseId: ID!, $title: String!) {
+    course(id: $courseId, title: $title) {
       id
       creatorName
-      creatorMiddleName
       title
       tagline
       description
@@ -16,7 +15,6 @@ export const COURSE_WITH_CREATOR_QUERY = gql`
       }
       status
       createdAt
-      updatedAt
     }
   }
 `;

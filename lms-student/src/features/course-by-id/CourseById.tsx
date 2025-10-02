@@ -4,10 +4,8 @@ import { useRedirectLink } from "@/hooks/useRedirect"
 import { useCourseById } from "./useCourseById"
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { Avatar } from "../../components/ui/avatar";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
 import { ScrollArea } from "../../components/ui/scroll-area";
-import { mockCourse, communityMessages, suggestions } from "@/mock/Courses";
+import { mockCourse } from "@/mock/Courses";
 import CommunityChat from "./components/CommunityChat";
 import Suggestions from "./components/Suggestions";
 interface CourseByIdProps {
@@ -17,7 +15,7 @@ interface CourseByIdProps {
 const CourseById: React.FC<CourseByIdProps> = ({ courseLink }) => {
     const { fromSlug } = useRedirectLink();
     const { id, title } = fromSlug(courseLink);
-
+    console.log(id)
     const { course, loading, error } = useCourseById(id, title);
 
     if (loading) return <div className="p-8">Loading...</div>;
