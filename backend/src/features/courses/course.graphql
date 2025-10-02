@@ -1,14 +1,9 @@
 type Course {
   id: ID!
-  creator_id: Int!
   title: String!
   tagline: String!
-  description: String!
   categories: [String!]!
-  lessons: [Lesson!]!
-  status: String!
-  created_at: String!
-  updated_at: String!
+  createdAt: String!
 }
 
 type CourseWithCreator {
@@ -37,7 +32,7 @@ input CourseInput {
   categories: [String!]!
 }
 
-type Query {
+extend type Query {
   courses: [Course!]!
   coursesByCreator: [Course!]!
   coursesWithCreator: [CourseWithCreator!]!
@@ -45,6 +40,6 @@ type Query {
   courseWithCreator(id: ID!, title: String!): CourseWithCreator
 }
 
-type Mutation {
+extend type Mutation {
   createCourse(input: CourseInput!): Course!
 }

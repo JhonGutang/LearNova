@@ -6,11 +6,8 @@ export const CREATE_COURSE = gql`
             id
             title
             tagline
-            description
             categories
-            status
-            created_at
-            updated_at
+            createdAt
         }
     }
 `;

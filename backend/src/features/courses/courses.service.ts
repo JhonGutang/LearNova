@@ -30,25 +30,6 @@ function normalizeCategories(input: any): any {
   return input;
 }
 
-// Normalization helpers
-function normalizeCourse(course: any): any {
-  if (!course) return null;
-  return {
-    id: String(course.id),
-    creator_id: course.creator_id,
-    title: course.title,
-    tagline: course.tagline,
-    description: course.description,
-    categories: course.categories?.map((cat: any) => cat.category.name) || [],
-    lessons: course.lessons?.map((lesson: any) => ({
-      title: lesson.title,
-      description: lesson.description,
-    })) || [],
-    status: course.status,
-    created_at: course.created_at instanceof Date ? course.created_at.toISOString() : course.created_at,
-    updated_at: course.updated_at instanceof Date ? course.updated_at.toISOString() : course.updated_at,
-  };
-}
 
 function normalizeCourseWithCreator(course: any): any {
   if (!course) return null;
@@ -102,16 +83,17 @@ export class CourseService implements CourseServiceInterface {
         },
       },
       include: {
-        categories: {
-          include: {
-            category: true,
-          },
-        },
-        lessons: true,
+        categories: { include: { category: true } },
       },
     });
 
-    return normalizeCourse(newCourse);
+    return {
+      id: String(newCourse.id),
+      title: newCourse.title,
+      tagline: newCourse.tagline,
+      categories: newCourse.categories.map((cat: any) => cat.category.name),
+      createdAt: newCourse.created_at instanceof Date ? newCourse.created_at.toISOString() : newCourse.created_at,
+    };
   }
 
   async getAll(): Promise<Course[]> {
@@ -176,11 +158,21 @@ export class CourseService implements CourseServiceInterface {
   async getByCreator(creatorId: number): Promise<Course[]> {
     const courses = await this.prisma.course.findMany({
       where: { creator_id: creatorId },
-      include: {
-        categories: { include: { category: true } },
-        lessons: true,
+      select: {
+        id: true,
+        title: true,
+        tagline: true,
+        categories: { select: { category: { select: { name: true } } } },
+        created_at: true,
       },
     });
-    return courses.map(normalizeCourse);
+
+    return courses.map((course: any) => ({
+      id: String(course.id),
+      title: course.title,
+      tagline: course.tagline,
+      categories: course.categories?.map((cat: any) => cat.category.name) || [],
+      createdAt: course.created_at instanceof Date ? course.created_at.toISOString() : course.created_at,
+    }));
   }
 }

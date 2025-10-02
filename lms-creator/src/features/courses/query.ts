@@ -4,14 +4,10 @@ export const GET_COURSES = gql`
   query CoursesByCreator {
     coursesByCreator {
       id
-      creator_id
       title
       tagline
-      description
       categories
-      status
-      created_at
-      updated_at
+      createdAt
     }
   }
 `;

@@ -27,6 +27,7 @@ app.set('port', port);
 const httpServer: Server = http.createServer(app);
 
 // Read GraphQL schemas from files
+const rootTypeDefs = readFileSync(join(__dirname, '../features/root.graphql'), 'utf8');
 const courseTypeDefs = readFileSync(join(__dirname, '../features/courses/course.graphql'), 'utf8');
 const lessonTypeDefs = readFileSync(join(__dirname, '../features/lessons/lesson.graphql'), 'utf8');
 const lessonPageTypeDefs = readFileSync(join(__dirname, '../features/lesson_page/lesson_page.graphql'), 'utf8');
@@ -34,7 +35,7 @@ const creatorTypeDefs = readFileSync(join(__dirname, '../features/creator/creato
 const studentTypeDefs = readFileSync(join(__dirname, '../features/student/student.graphql'), 'utf8');
 const authTypeDefs = readFileSync(join(__dirname, '../features/auth/auth.graphql'), 'utf8');
 // Merge typeDefs and resolvers
-const typeDefs = [courseTypeDefs, lessonTypeDefs, lessonPageTypeDefs, creatorTypeDefs, studentTypeDefs, authTypeDefs] ;
+const typeDefs = [rootTypeDefs, courseTypeDefs, lessonTypeDefs, lessonPageTypeDefs, creatorTypeDefs, studentTypeDefs, authTypeDefs] ;
 const resolvers = [courseResolvers, lessonResolvers, lessonPageResolvers, creatorResolvers, studentResolvers, AuthResolvers];
 
 const server = new ApolloServer({
