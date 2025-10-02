@@ -4,11 +4,10 @@ import { LESSON_PAGES_QUERY, CREATE_OR_UPDATE_LESSON_PAGE_MUTATION, DELETE_LESSO
 // Define the type for a lesson page (based on query.ts)
 export interface LessonPage {
   id: number;
-  lesson_id: number;
-  page_number: number;
-  content_json: string;
-  created_at: string;
-  updated_at: string;
+  lessonId: number;
+  pageNumber: number;
+  contentJson: string;
+  createdAt: string;
 }
 
 interface LessonPagesData {

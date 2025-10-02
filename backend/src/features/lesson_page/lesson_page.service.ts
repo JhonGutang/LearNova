@@ -72,17 +72,24 @@ export class LessonPageService implements LessonPageServiceInterface {
     }
 
     async createLessonPage(input: CreateOrUpdateLessonPageInput): Promise<LessonPage> {
-        return await prisma.lesson_Page.create({
+        const page = await prisma.lesson_Page.create({
             data: {
                 lesson_id: input.lessonId,
                 page_number: input.pageNumber,
                 content_json: input.contentJson,
             }
         });
+        return {
+            id: page.id,
+            lessonId: page.lesson_id,
+            pageNumber: page.page_number,
+            contentJson: page.content_json,
+            createdAt: page.created_at,
+        };
     }
 
     async updateLessonPage(id: number, input: CreateOrUpdateLessonPageInput): Promise<LessonPage> {
-        return await prisma.lesson_Page.update({
+        const page = await prisma.lesson_Page.update({
             where: { id },
             data: {
                 lesson_id: input.lessonId,
@@ -90,6 +97,13 @@ export class LessonPageService implements LessonPageServiceInterface {
                 content_json: input.contentJson,
             }
         });
+        return {
+            id: page.id,
+            lessonId: page.lesson_id,
+            pageNumber: page.page_number,
+            contentJson: page.content_json,
+            createdAt: page.created_at,
+        };
     }
 
     async deleteLessonPage(id: number): Promise<boolean> {

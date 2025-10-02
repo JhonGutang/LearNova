@@ -15,12 +15,12 @@ export function useLessonPagesManager(lessonLink: string) {
   const pages = useMemo(() => {
     if (!lessonPages) return [];
     return [...lessonPages]
-      .sort((a, b) => a.page_number - b.page_number)
+      .sort((a, b) => a.pageNumber - b.pageNumber)
       .map(page => ({
         id: String(page.id),
-        name: `Page ${page.page_number}`,
-        content: page.content_json,
-        pageNumber: page.page_number, // Keep the actual page number
+        name: `Page ${page.pageNumber}`,
+        content: page.contentJson,
+        pageNumber: page.pageNumber, // Keep the actual page number
       }));
   }, [lessonPages]);
 
