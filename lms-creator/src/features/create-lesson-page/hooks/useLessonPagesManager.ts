@@ -141,37 +141,23 @@ export function useLessonPagesManager(lessonLink: string) {
       } else {
         pageNumber = nextPageNumber;
       }
-
-      console.log(pageNumber)
-      
-      console.log('DEBUG - About to send payload:', {
-        lessonId: Number(id),
-        pageNumber,
-        contentJson: content,
-      });
       
       await upsertLessonPage({
         lessonId: Number(id),
         pageNumber,
         contentJson: content,
       });
-      
-      console.log('Save completed - setting status to saved');
       setSaveStatus('saved');
-
       setTimeout(() => {
-        console.log('Auto-hiding saved indicator - setting status to idle');
         setSaveStatus('idle');
       }, 3000);
       
     } catch (error) {
-      console.log('Save failed - setting status to idle');
       setSaveStatus('idle');
       throw error;
     }
   }, [id, upsertLessonPage, activePage, nextPageNumber]);
 
-  // Debug: log fetched lesson pages
   useEffect(() => {
     if (!loading && !error) {
       console.log('Fetched lesson pages:', lessonPages);
