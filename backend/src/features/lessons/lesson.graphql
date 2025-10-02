@@ -1,0 +1,10 @@
+
+input LessonInput {
+    course_id: Int!,
+    title: String!,
+    description: String!,
+}
+
+type Mutation {
+    createLesson(input: LessonInput!): Lesson!
+}
