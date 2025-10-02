@@ -1,5 +1,5 @@
 import prisma from '../../config/prisma';
-import { CourseInput } from '../../generated/graphql';
+import { CourseInput, Status } from '../../generated/graphql';
 import { MyContext } from '../../types/context';
 import { CourseService } from './courses.service';
 
@@ -61,5 +61,25 @@ export const resolvers = {
         throw new Error('Internal server error');
       }
     },
+    enrollCourse:  async (_: any, args: { courseId: number }, context: MyContext)  => {
+      try {
+        console.log(context.session.studentId)
+        if(!context.session.studentId) return null
+        const isSuccess = courseService.enroll(args.courseId, context.session.studentId)
+        if(!isSuccess) {
+          return {
+            status: Status.Error,
+            message: "Enrolling Course Failed"
+          }
+        }
+
+        return {
+          status: Status.Success,
+          message: "Course Enrolled Successfully"
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    }
   },
 };

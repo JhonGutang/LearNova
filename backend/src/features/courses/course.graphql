@@ -29,6 +29,12 @@ extend type Query {
   courses: [Course!]!
 }
 
+type EnrollCourseResponse {
+  status: Status
+  message: String
+}
+
 extend type Mutation {
   createCourse(input: CourseInput!): Course!
+  enrollCourse(courseId: Int): EnrollCourseResponse
 }

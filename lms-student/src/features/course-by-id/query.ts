@@ -19,3 +19,12 @@ export const COURSE_WITH_LESSON_QUERY = gql`
     }
   }
 `;
+
+export const ENROLL_COURSE_MUTATION = gql`
+  mutation EnrollCourse($courseId: Int!) {
+    enrollCourse(courseId: $courseId) {
+      status
+      message
+    }
+  }
+`;

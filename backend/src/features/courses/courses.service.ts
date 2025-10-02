@@ -4,6 +4,7 @@ import { Course, CourseInput } from "../../generated/graphql";
 type CreateCourseData = CourseInput & { creator_id: number };
 interface CourseServiceInterface {
   create(course: CourseInput): Promise<Course>;
+  enroll(courseId: number, studentId: number): Promise<boolean>
   getById(courseId: number, title: string, creatorId?: number | null): Promise<object | null>;
   getAll(creatorId?: number): Promise<Course[] | []>;
 }
@@ -51,6 +52,23 @@ export class CourseService implements CourseServiceInterface {
       categories: newCourse.categories.map((cat: any) => cat.category.name),
       createdAt: newCourse.created_at instanceof Date ? newCourse.created_at.toISOString() : newCourse.created_at,
     };
+  }
+
+  async enroll(courseId: number, studentId: number): Promise<boolean> {
+    try {
+      await this.prisma.enrolled_Course.create({
+        data: {
+          course_id: courseId,
+          student_id: studentId,
+        },
+      });
+      return true;
+    } catch (error: any) {
+      if (error.code === 'P2002') {
+        return false;
+      }
+      return false;
+    }
   }
 
     async getById(courseId: number, title: string, creatorId?: number | null): Promise<Course | null> {

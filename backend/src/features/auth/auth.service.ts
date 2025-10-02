@@ -113,6 +113,7 @@ export class AuthService implements AuthServiceInterface {
       if (context && context.session) {
         context.session.userId = user.id;
         context.session.role = input.role;
+        context.session.studentId = student.id
       }
 
       return true;

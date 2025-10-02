@@ -17,7 +17,7 @@ const CourseById: React.FC<CourseByIdProps> = ({ courseLink }) => {
     const { fromSlug, redirect, toSlug } = useRedirectLink();
     const { id, title } = fromSlug(courseLink);
     console.log(id)
-    const { course, loading, error } = useCourseById(id, title);
+    const { course, loading, error, enrollCourse } = useCourseById(id, title);
 
     if (loading) return <div className="p-8">Loading...</div>;
     if (error) return <div className="p-8">Error loading course.</div>;
@@ -69,6 +69,7 @@ const CourseById: React.FC<CourseByIdProps> = ({ courseLink }) => {
               <Button
                 className="w-full py-2 text-lg font-semibold bg-gradient-to-r from-teal-400 to-teal-600 hover:from-teal-500 hover:to-teal-700 transition-colors shadow"
                 size="lg"
+                onClick={() => enrollCourse(Number(course?.id))}
               >
                 Enroll Now
               </Button>
