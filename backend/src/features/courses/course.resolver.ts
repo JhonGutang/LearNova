@@ -16,17 +16,22 @@ export const resolvers = {
         const courseId = parseInt(args.id);
         if (!context.session.role) return null;
         console.log(context.session.role);
+
         if (context.session.role === "STUDENT") {
-          const course = await courseService.getById(courseId, args.title);
+          const getOptions = context.session.studentId
+            ? { studentId: context.session.studentId }
+            : undefined;
+          const course = await courseService.getById(courseId, args.title, getOptions);
           return course;
         }
 
         if (context.session.role === "CREATOR") {
           if (!context.session.creatorId) return null;
+          const getOptions = { creatorId: context.session.creatorId };
           const course = await courseService.getById(
             courseId,
             args.title,
-            context.session.creatorId
+            getOptions
           );
           if (!course) {
             throw new Error("Course not found");
@@ -61,6 +66,7 @@ export const resolvers = {
         throw new Error("Internal server error");
       }
     },
+    
   },
 
   Mutation: {

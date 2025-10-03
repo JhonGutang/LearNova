@@ -36,6 +36,7 @@ interface Lesson {
 
 export interface CourseWithLessons extends Course {
     description: string;
+    enrolledCourseId: number;
     lessons: Lesson[];
     status: string;
     createdAt: string;

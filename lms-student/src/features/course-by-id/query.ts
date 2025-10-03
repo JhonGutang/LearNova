@@ -9,6 +9,7 @@ export const COURSE_WITH_LESSON_QUERY = gql`
       tagline
       description
       categories
+      enrolledCourseId
       lessons {
         id
         title

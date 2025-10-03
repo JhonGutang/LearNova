@@ -9,7 +9,6 @@ import { mockCourse } from "@/mock/Courses";
 import CommunityChat from "./components/CommunityChat";
 import Suggestions from "./components/Suggestions";
 import { Button } from "@/components/ui/button";
-import { CourseWithLessons } from "@/types/data";
 interface CourseByIdProps {
     courseLink: string
 }
@@ -31,7 +30,7 @@ const CourseById: React.FC<CourseByIdProps> = ({ courseLink }) => {
       }
 
     const handleStartProgress = (enrolledCourseId: number, courseLink: string, lesson) => {
-      startProgress(enrolledCourseId, lesson.id)
+      startProgress(enrolledCourseId, Number(lesson.id))
       redirect(courseLink + "/"  + toSlug(Number(lesson.id), lesson.title))
     }
 
@@ -76,7 +75,7 @@ const CourseById: React.FC<CourseByIdProps> = ({ courseLink }) => {
                 size="lg"
                 onClick={() => enrollCourse(Number(course?.id))}
               >
-                Enroll Now
+                {course?.enrolledCourseId ? "Unenroll" : "Enroll Now"}
               </Button>
             </CardContent>
           </Card>
@@ -98,7 +97,7 @@ const CourseById: React.FC<CourseByIdProps> = ({ courseLink }) => {
                       <li
                         key={title}
                         className={`flex cursor-pointer items-center justify-between p-3 rounded-lg border transition-colors ${completed ? "bg-green-50 border-green-200" : "bg-white border-gray-200"}`}
-                        onClick={() => handleStartProgress(Number(course.id), courseLink, lesson)}
+                        onClick={() => handleStartProgress(Number(course.enrolledCourseId), courseLink, lesson)}
                       >
                         <div className="flex items-center gap-3">
                           <div

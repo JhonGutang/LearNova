@@ -10,6 +10,7 @@ type Course {
   categories: [String!]!
   createdAt: String!
   isEnrolled: Boolean
+  enrolledCourseId: Int
   lessons: [Lesson]
 }
 

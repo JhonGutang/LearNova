@@ -16,7 +16,7 @@ interface CourseServiceInterface {
   getById(
     courseId: number,
     title: string,
-    creatorId?: number | null
+    opts?: GetAllOptions
   ): Promise<Course | null>;
   getAll(opts?: GetAllOptions): Promise<Course[]>;
 }
@@ -165,7 +165,7 @@ export class CourseService implements CourseServiceInterface {
   async getById(
     courseId: number,
     title: string,
-    creatorId?: number | null
+    opts?: GetAllOptions
   ): Promise<Course | null> {
     let whereClause: any = {
       id: courseId,
@@ -174,8 +174,23 @@ export class CourseService implements CourseServiceInterface {
         mode: "insensitive",
       },
     };
-    if (creatorId) {
-      whereClause.creator_id = creatorId;
+
+    // If creatorId is provided in opts, add to whereClause
+    if (opts?.creatorId) {
+      whereClause.creator_id = opts.creatorId;
+    }
+
+    // If studentId is provided, check if the student is enrolled in this course
+    let enrolledCourseId: number | undefined = undefined;
+    if (opts?.studentId) {
+      const enrolled = await this.prisma.enrolled_Course.findFirst({
+        where: {
+          course_id: courseId,
+          student_id: opts.studentId,
+        },
+        select: { id: true },
+      });
+      enrolledCourseId = enrolled ? enrolled.id : undefined;
     }
 
     const course = await this.prisma.course.findFirst({
@@ -206,6 +221,16 @@ export class CourseService implements CourseServiceInterface {
 
     if (!course) return null;
 
+    // If studentId is present, include enrolledCourseId (null if not enrolled)
+    if (opts?.studentId) {
+      return normalizeCourse(course, {
+        includeCreatorName: true,
+        includeLessons: true,
+        enrolledCourseId: enrolledCourseId,
+      });
+    }
+
+    // If creator, just return as before
     return normalizeCourse(course, { includeCreatorName: true, includeLessons: true });
   }
 
