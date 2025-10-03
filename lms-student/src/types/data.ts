@@ -25,6 +25,7 @@ export interface Course {
     title: string;
     tagline?: string;
     categories: string[];
+    isEnrolled: boolean
 }
 
 interface Lesson {

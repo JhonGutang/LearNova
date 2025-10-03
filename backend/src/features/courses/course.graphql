@@ -7,6 +7,7 @@ type Course {
   status: String
   categories: [String!]!
   createdAt: String!
+  isEnrolled: Boolean
   lessons: [Lesson]
 }
 
@@ -27,6 +28,7 @@ input CourseInput {
 extend type Query {
   course(id: ID!, title: String): Course
   courses: [Course!]!
+  enrolledCourses: [Course!]!
 }
 
 type EnrollCourseResponse {

@@ -1,15 +1,16 @@
 import { gql } from "@apollo/client";
 
-export const COURSES_WITH_CREATOR_QUERY = gql`
-  query courses {
-    courses {
+export const ENROLLED_COURSES_QUERY = gql`
+  query EnrolledCourses {
+    enrolledCourses {
       id
       creatorName
       title
       tagline
+      description
+      status
       categories
       createdAt
-      isEnrolled
     }
   }
 `;

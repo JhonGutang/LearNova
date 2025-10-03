@@ -8,6 +8,12 @@ import { useRedirectLink } from "@/hooks/useRedirect";
 import React from "react";
 import FallbackMessage from "@/shared/FallbackMessage";
 
+const EnrolledChip: React.FC = () => (
+  <span className="bg-green-100 text-green-700 text-xs font-semibold px-2 py-0.5 rounded-full border border-green-300">
+    Enrolled
+  </span>
+);
+
 const Courses: React.FC = () => {
   const { courses, loading, error } = useCoursesWithCreator();
   const { toSlug, redirect } = useRedirectLink()
@@ -38,6 +44,7 @@ const Courses: React.FC = () => {
                 tagline={course.tagline}
                 author={course.creatorName}
                 className="w-full"
+                chips={course.isEnrolled ? <EnrolledChip /> : undefined}
               >
                 <div className="flex gap-2">
                   <Button

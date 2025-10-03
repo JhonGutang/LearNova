@@ -15,10 +15,11 @@ import {
   Sidebar as SidebarIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useRedirectLink } from "@/hooks/useRedirect";
 
 const sidebarLinks = [
   { label: "Home", icon: <Home className="w-5 h-5" />, href: "/" },
-  { label: "My Courses", icon: <BookOpen className="w-5 h-5" />, href: "/courses" },
+  { label: "My Courses", icon: <BookOpen className="w-5 h-5" />, href: "/my-courses" },
   { label: "Community", icon: <Users className="w-5 h-5" />, href: "/community" },
   { label: "Calendar", icon: <Calendar className="w-5 h-5" />, href: "/calendar" },
   { label: "Profile", icon: <User className="w-5 h-5" />, href: "/profile" },
@@ -34,6 +35,7 @@ interface SidebarLayoutProps {
 }
 
 const SidebarLayout = ({ children, headerChild }: SidebarLayoutProps) => {
+  const {redirect} = useRedirectLink()
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const sidebarWidth = collapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED;
