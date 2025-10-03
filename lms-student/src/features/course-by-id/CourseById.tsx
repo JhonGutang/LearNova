@@ -9,6 +9,7 @@ import { mockCourse } from "@/mock/Courses";
 import CommunityChat from "./components/CommunityChat";
 import Suggestions from "./components/Suggestions";
 import { Button } from "@/components/ui/button";
+import { CourseWithLessons } from "@/types/data";
 interface CourseByIdProps {
     courseLink: string
 }
@@ -16,8 +17,7 @@ interface CourseByIdProps {
 const CourseById: React.FC<CourseByIdProps> = ({ courseLink }) => {
     const { fromSlug, redirect, toSlug } = useRedirectLink();
     const { id, title } = fromSlug(courseLink);
-    console.log(id)
-    const { course, loading, error, enrollCourse } = useCourseById(id, title);
+    const { course, loading, error, enrollCourse, startProgress } = useCourseById(id, title);
 
     if (loading) return <div className="p-8">Loading...</div>;
     if (error) return <div className="p-8">Error loading course.</div>;
@@ -29,6 +29,11 @@ const CourseById: React.FC<CourseByIdProps> = ({ courseLink }) => {
           </Avatar>
         );
       }
+
+    const handleStartProgress = (enrolledCourseId: number, courseLink: string, lesson) => {
+      startProgress(enrolledCourseId, lesson.id)
+      redirect(courseLink + "/"  + toSlug(Number(lesson.id), lesson.title))
+    }
 
     return (
         <div className="flex flex-col md:flex-row gap-6 p-6 bg-gray-50 min-h-0 h-full">
@@ -93,7 +98,7 @@ const CourseById: React.FC<CourseByIdProps> = ({ courseLink }) => {
                       <li
                         key={title}
                         className={`flex cursor-pointer items-center justify-between p-3 rounded-lg border transition-colors ${completed ? "bg-green-50 border-green-200" : "bg-white border-gray-200"}`}
-                        onClick={() => redirect(courseLink + "/"  + toSlug(Number(lesson.id), lesson.title))}
+                        onClick={() => handleStartProgress(Number(course.id), courseLink, lesson)}
                       >
                         <div className="flex items-center gap-3">
                           <div

@@ -87,7 +87,6 @@ export const resolvers = {
       context: MyContext
     ) => {
       try {
-        console.log(context.session.studentId);
         if (!context.session.studentId) return null;
         const isSuccess = courseService.enroll(
           args.courseId,
@@ -108,5 +107,28 @@ export const resolvers = {
         console.error(error);
       }
     },
-  },
+    startProgress: async (_: any, args: { enrolledCourseId: number, lessonId: number }) => {
+      try {
+        console.log(args.enrolledCourseId, args.lessonId)
+        const isStarted = await courseService.startProgress(args.enrolledCourseId, args.lessonId);
+        if (!isStarted) {
+          return {
+            status: Status.Error,
+            message: "Starting Progress Failed"
+          };
+        }
+
+        return {
+          status: Status.Success,
+          message: "Progress Started Successfully"
+        };
+      } catch (error) {
+        console.error("Error starting progress:", error);
+        return {
+          status: Status.Error,
+          message: "Internal server error"
+        };
+      }
+    },
+  }
 };

@@ -50,14 +50,31 @@ model Enrolled_Course {
   id             Int      @id @default(autoincrement())
   student_id     Int
   course_id      Int
-  progress_level Int      @default(0)
   created_at     DateTime @default(now())
   updated_at     DateTime @updatedAt
 
   student        Student  @relation(fields: [student_id], references: [id])
   course         Course   @relation(fields: [course_id], references: [id])
+  lessonProgress Lesson_Progress[]
 
   @@unique([student_id, course_id])
+}
+
+enum LessonProgressStatus {
+  IN_PROGRESS
+  FINISHED
+}
+
+model Lesson_Progress {
+  id                 Int                   @id @default(autoincrement())
+  enrolled_course_id Int
+  lesson_id          Int
+  status             LessonProgressStatus  @default(IN_PROGRESS)
+  created_at         DateTime              @default(now())
+  updated_at         DateTime              @updatedAt
+
+  enrolledCourse     Enrolled_Course       @relation(fields: [enrolled_course_id], references: [id])
+  lesson             Lesson                @relation(fields: [lesson_id], references: [id])
 }
 
 model Creator {
@@ -123,6 +140,7 @@ model Lesson {
 
   course Course        @relation(fields: [course_id], references: [id])
   pages  Lesson_Page[]
+  lessonProgress Lesson_Progress[]
 }
 
 model Lesson_Page {

@@ -1,3 +1,5 @@
+
+
 type Course {
   id: ID!
   creatorName: String
@@ -31,12 +33,13 @@ extend type Query {
   enrolledCourses: [Course!]!
 }
 
-type EnrollCourseResponse {
+type BaseResponse {
   status: Status
   message: String
 }
 
 extend type Mutation {
   createCourse(input: CourseInput!): Course!
-  enrollCourse(courseId: Int): EnrollCourseResponse
+  enrollCourse(courseId: Int): BaseResponse
+  startProgress(enrolledCourseId: Int, lessonId: Int): BaseResponse
 }

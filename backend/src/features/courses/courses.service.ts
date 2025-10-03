@@ -12,6 +12,7 @@ interface CourseServiceInterface {
   create(course: CreateCourseData): Promise<Course>;
   enroll(courseId: number, studentId: number): Promise<boolean>;
   enrolled(studentId: number): Promise<Course[]>;
+  startProgress(enrolledCourseId: number, lessonId: number): Promise<boolean>;
   getById(
     courseId: number,
     title: string,
@@ -33,7 +34,7 @@ function normalizeLesson(lesson: any) {
 
 function normalizeCourse(
   course: any,
-  opts?: { includeCreatorName?: boolean; includeLessons?: boolean; isEnrolled?: boolean }
+  opts?: { includeCreatorName?: boolean; includeLessons?: boolean; isEnrolled?: boolean; enrolledCourseId?: number }
 ) {
   if (!course) return null;
   const includeCreatorName = opts?.includeCreatorName ?? true;
@@ -73,6 +74,10 @@ function normalizeCourse(
 
   if (typeof opts?.isEnrolled === "boolean") {
     normalized.isEnrolled = opts.isEnrolled;
+  }
+
+  if (typeof opts?.enrolledCourseId !== "undefined") {
+    normalized.enrolledCourseId = opts.enrolledCourseId;
   }
 
   return normalized;
@@ -256,5 +261,20 @@ export class CourseService implements CourseServiceInterface {
         }
       )
     );
+  }
+
+  async startProgress(enrolledCourseId: number, lessonId: number): Promise<boolean> {
+    try {
+      await this.prisma.lesson_Progress.create({
+        data: {
+          enrolled_course_id: enrolledCourseId,
+          lesson_id: lessonId,
+        }
+      });
+      return true;
+    } catch (error) {
+      console.error("Error creating lesson progress:", error);
+      return false;
+    }
   }
 }

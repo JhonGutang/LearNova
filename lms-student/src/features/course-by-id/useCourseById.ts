@@ -1,5 +1,5 @@
 import * as ApolloReact from "@apollo/client/react";
-import { COURSE_WITH_LESSON_QUERY, ENROLL_COURSE_MUTATION } from "./query";
+import { COURSE_WITH_LESSON_QUERY, ENROLL_COURSE_MUTATION, START_PROGRESS_MUTATION } from "./query";
 import { CourseWithLessons } from "@/types/data";
 import { CustomToast } from "@/shared/CustomToast";
 interface CourseWithCreatorData {
@@ -14,10 +14,10 @@ export const useCourseById = (courseId: number | null, title: string) => {
       skip: courseId == null,
     }
   );
-
-  // Implement enrollCourse mutation
   const [enrollCourseMutation, { data: enrollData, loading: enrollLoading, error: enrollError }] =
     ApolloReact.useMutation(ENROLL_COURSE_MUTATION);
+  const [startProgressMutation, { data: startProgressData, loading: startProgressLoading, error: startProgressError }] =
+    ApolloReact.useMutation(START_PROGRESS_MUTATION);
 
   const enrollCourse = async (courseId: number) => {
     try {
@@ -33,6 +33,24 @@ export const useCourseById = (courseId: number | null, title: string) => {
     }
   };
 
+  const startProgress = async (enrolledCourseId: number, lessonId: number) => {
+    try {
+      await startProgressMutation({
+        variables: { enrolledCourseId, lessonId },
+      });
+      CustomToast({
+        type: "success",
+        title: "Progress Started",
+      });
+    } catch (err) {
+      CustomToast({
+        type: "error",
+        title: "Failed to start progress",
+      });
+      throw err;
+    }
+  }
+
   return {
     course: data?.course,
     loading,
@@ -41,5 +59,6 @@ export const useCourseById = (courseId: number | null, title: string) => {
     enrollData,
     enrollLoading,
     enrollError,
+    startProgress,
   };
 };

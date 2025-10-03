@@ -28,3 +28,12 @@ export const ENROLL_COURSE_MUTATION = gql`
     }
   }
 `;
+
+export const START_PROGRESS_MUTATION = gql `
+  mutation StartProgress($enrolledCourseId: Int, $lessonId: Int) {
+  startProgress(enrolledCourseId: $enrolledCourseId, lessonId: $lessonId) {
+    status
+    message
+  }
+}
+`
