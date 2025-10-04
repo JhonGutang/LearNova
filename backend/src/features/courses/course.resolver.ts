@@ -1,9 +1,11 @@
 import prisma from "../../config/prisma";
 import { CourseInput, Status } from "../../generated/graphql";
 import { MyContext } from "../../types/context";
+import { CourseRepository } from "./course.repository";
 import { CourseService } from "./courses.service";
 
-const courseService = new CourseService(prisma);
+const courseRepository = new CourseRepository(prisma);
+const courseService = new CourseService(courseRepository);
 
 export const resolvers = {
   Query: {
@@ -12,47 +14,56 @@ export const resolvers = {
       args: { id: string; title: string },
       context: MyContext
     ) => {
-      try {
-        const courseId = parseInt(args.id);
-        if (!context.session.role) return null;
-        console.log(context.session.role);
+      const { role, studentId, creatorId } = context.session;
+      if (!role) return null;
 
-        if (context.session.role === "STUDENT") {
-          const getOptions = context.session.studentId
-            ? { studentId: context.session.studentId }
-            : undefined;
-          const course = await courseService.getById(courseId, args.title, getOptions);
-          return course;
-        }
+      const courseId = parseInt(args.id);
+      const getOptions =
+        role === "STUDENT"
+          ? studentId
+            ? { studentId }
+            : undefined
+          : role === "CREATOR"
+          ? creatorId
+            ? { creatorId }
+            : null
+          : null;
 
-        if (context.session.role === "CREATOR") {
-          if (!context.session.creatorId) return null;
-          const getOptions = { creatorId: context.session.creatorId };
-          const course = await courseService.getById(
-            courseId,
-            args.title,
-            getOptions
-          );
-          if (!course) {
-            throw new Error("Course not found");
-          }
-          return course;
-        }
-      } catch (error) {
-        throw new Error(`Internal server error: ${error}`);
+      if (getOptions === null) return null;
+
+      const course = await courseService.getSpecificCourse(
+        courseId,
+        args.title,
+        getOptions
+      );
+
+      if (!course && role === "CREATOR") {
+        throw new Error("Course not found");
       }
+
+      return course;
     },
     courses: async (_: any, __: any, context: MyContext) => {
       try {
-        if (!context.session.role) return null;
-        if (context.session.role === "STUDENT") {
-          return await courseService.getAll({ studentId: context.session.studentId });
-        }
+        const { role, studentId, creatorId } = context.session;
+        if (!role) return null;
 
-        if ((context.session.role = "CREATOR")) {
-          if (!context.session.creatorId) return null;
-          return await courseService.getAll({ creatorId: context.session.creatorId });
-        }
+        const getOptions =
+        role === "STUDENT"
+          ? studentId
+            ? { studentId }
+            : undefined
+          : role === "CREATOR"
+          ? creatorId
+            ? { creatorId }
+            : null
+          : null;
+
+      if (getOptions === null) return null;
+      return await courseService.getAllCourses(
+        getOptions
+      );
+
       } catch (error) {
         throw new Error(`Internal server error: ${error}`);
       }
@@ -60,13 +71,12 @@ export const resolvers = {
     enrolledCourses: async (_: any, __: any, context: MyContext) => {
       try {
         if (!context.session.studentId) return null;
-        return await courseService.enrolled(context.session.studentId);
+        return await courseService.getEnrolledCourses(context.session.studentId);
       } catch (error) {
         console.error("Error fetching enrolled courses:", error);
         throw new Error("Internal server error");
       }
     },
-    
   },
 
   Mutation: {
@@ -113,28 +123,34 @@ export const resolvers = {
         console.error(error);
       }
     },
-    startProgress: async (_: any, args: { enrolledCourseId: number, lessonId: number }) => {
+    startProgress: async (
+      _: any,
+      args: { enrolledCourseId: number; lessonId: number }
+    ) => {
       try {
-        console.log(args.enrolledCourseId, args.lessonId)
-        const isStarted = await courseService.startProgress(args.enrolledCourseId, args.lessonId);
+        console.log(args.enrolledCourseId, args.lessonId);
+        const isStarted = await courseService.startProgress(
+          args.enrolledCourseId,
+          args.lessonId
+        );
         if (!isStarted) {
           return {
             status: Status.Error,
-            message: "Starting Progress Failed"
+            message: "Starting Progress Failed",
           };
         }
 
         return {
           status: Status.Success,
-          message: "Progress Started Successfully"
+          message: "Progress Started Successfully",
         };
       } catch (error) {
         console.error("Error starting progress:", error);
         return {
           status: Status.Error,
-          message: "Internal server error"
+          message: "Internal server error",
         };
       }
     },
-  }
+  },
 };

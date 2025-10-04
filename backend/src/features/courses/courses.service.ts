@@ -1,9 +1,10 @@
 import { PrismaClient } from "../../../generated/prisma";
 import { Course, CourseInput } from "../../generated/graphql";
-
+import { normalizeCourse } from "../../utils/courseNormalizer";
+import { CourseRepository } from "./course.repository";
 type CreateCourseData = CourseInput & { creator_id: number };
 
-interface GetAllOptions {
+export interface CourseQueryOptions {
   creatorId?: number;
   studentId?: number;
 }
@@ -11,126 +12,33 @@ interface GetAllOptions {
 interface CourseServiceInterface {
   create(course: CreateCourseData): Promise<Course>;
   enroll(courseId: number, studentId: number): Promise<boolean>;
-  enrolled(studentId: number): Promise<Course[]>;
+  getEnrolledCourses(studentId: number): Promise<Course[]>;
   startProgress(enrolledCourseId: number, lessonId: number): Promise<boolean>;
-  getById(
+  getSpecificCourse(
     courseId: number,
     title: string,
-    opts?: GetAllOptions
+    options?: CourseQueryOptions
   ): Promise<Course | null>;
-  getAll(opts?: GetAllOptions): Promise<Course[]>;
-}
-
-// --- Normalizer helpers ---
-
-function normalizeLesson(lesson: any) {
-  if (!lesson) return undefined;
-  return {
-    id: String(lesson.id),
-    title: lesson.title,
-    description: lesson.description,
-  };
-}
-
-function normalizeCourse(
-  course: any,
-  opts?: { includeCreatorName?: boolean; includeLessons?: boolean; isEnrolled?: boolean; enrolledCourseId?: number }
-) {
-  if (!course) return null;
-  const includeCreatorName = opts?.includeCreatorName ?? true;
-  const includeLessons = opts?.includeLessons ?? true;
-
-  const creatorName =
-    includeCreatorName && course.creator
-      ? `${course.creator.first_name} ${course.creator.last_name}`.trim()
-      : undefined;
-
-  const normalized: any = {
-    id: String(course.id),
-    title: course.title,
-    tagline: course.tagline,
-    description: course.description,
-    status: course.status,
-    categories: course.categories
-      ? course.categories.map((cat: any) =>
-          cat.category ? cat.category.name : cat.name
-        )
-      : [],
-    createdAt:
-      course.created_at instanceof Date
-        ? course.created_at.toISOString()
-        : course.created_at,
-  };
-
-  if (includeCreatorName) {
-    normalized.creatorName = creatorName ?? null;
-  }
-
-  if (includeLessons) {
-    normalized.lessons = course.lessons
-      ? course.lessons.map(normalizeLesson)
-      : [];
-  }
-
-  if (typeof opts?.isEnrolled === "boolean") {
-    normalized.isEnrolled = opts.isEnrolled;
-  }
-
-  if (typeof opts?.enrolledCourseId !== "undefined") {
-    normalized.enrolledCourseId = opts.enrolledCourseId;
-  }
-
-  return normalized;
+  getAllCourses(options?: CourseQueryOptions): Promise<Course[]>;
 }
 
 export class CourseService implements CourseServiceInterface {
-  constructor(private prisma: PrismaClient) {}
+  private prisma = new PrismaClient();
+  constructor(private courseRepository: CourseRepository) {}
 
-  async create(course: CreateCourseData): Promise<Course> {
-    const existingCourse = await this.prisma.course.findUnique({
-      where: { title: course.title },
-    });
+  async create(courseData: CreateCourseData): Promise<Course> {
+    const existingCourse = await this.courseRepository.findByTitle(courseData.title);
 
     if (existingCourse) {
-      throw new Error("Course with this name already exists.");
+      throw new Error('A course with this title already exists.');
     }
-
-    const newCourse = await this.prisma.course.create({
-      data: {
-        title: course.title,
-        creator_id: course.creator_id,
-        tagline: course.tagline,
-        description: course.description,
-        categories: {
-          create: course.categories.map((categoryName) => ({
-            category: {
-              connectOrCreate: {
-                where: {
-                  name: categoryName.toLowerCase(),
-                },
-                create: { name: categoryName.toLowerCase() },
-              },
-            },
-          })),
-        },
-      },
-      include: {
-        categories: { include: { category: true } },
-      },
-    });
-
-    // Only return the normalized course fields as per GraphQL type
+    const newCourse = await this.courseRepository.create(courseData);
     return normalizeCourse(newCourse, { includeCreatorName: false, includeLessons: false });
   }
 
   async enroll(courseId: number, studentId: number): Promise<boolean> {
     try {
-      await this.prisma.enrolled_Course.create({
-        data: {
-          course_id: courseId,
-          student_id: studentId,
-        },
-      });
+      await this.courseRepository.createEnrollment(courseId, studentId)
       return true;
     } catch (error: any) {
       if (error.code === "P2002") {
@@ -140,162 +48,74 @@ export class CourseService implements CourseServiceInterface {
     }
   }
 
-  async enrolled(studentId: number): Promise<Course[]> {
-    const enrolledCourses = await this.prisma.enrolled_Course.findMany({
-      where: {
-        student_id: studentId,
-      },
-      include: {
-        course: {
-          include: {
-            categories: { include: { category: true } },
-            lessons: true,
-            creator: true,
-          },
-        },
-      },
-    });
+  async getEnrolledCourses(studentId: number): Promise<Course[]> {
+    const enrolledCourses = await this.courseRepository.findEnrolledCoursesByStudentId(studentId)
 
-    // Map the enrolled courses to the Course GraphQL type using the normalizer
     return enrolledCourses
       .filter((enrolled) => enrolled.course)
       .map((enrolled) => normalizeCourse(enrolled.course, { includeCreatorName: true, includeLessons: false }));
   }
 
-  async getById(
+  async getSpecificCourse(
     courseId: number,
     title: string,
-    opts?: GetAllOptions
+    options?: CourseQueryOptions
   ): Promise<Course | null> {
-    let whereClause: any = {
-      id: courseId,
-      title: {
-        equals: title,
-        mode: "insensitive",
-      },
-    };
+    // Fetch course data with repository
+    const course = await this.courseRepository.findByIdAndTitle(
+      courseId,
+      title,
+      options?.creatorId
+    );
 
-    // If creatorId is provided in opts, add to whereClause
-    if (opts?.creatorId) {
-      whereClause.creator_id = opts.creatorId;
+    if (!course) {
+      return null;
     }
 
-    // If studentId is provided, check if the student is enrolled in this course
-    let enrolledCourseId: number | undefined = undefined;
-    if (opts?.studentId) {
-      const enrolled = await this.prisma.enrolled_Course.findFirst({
-        where: {
-          course_id: courseId,
-          student_id: opts.studentId,
-        },
-        select: { id: true },
-      });
-      enrolledCourseId = enrolled ? enrolled.id : undefined;
-    }
+    // Handle student-specific logic: check enrollment status
+    if (options?.studentId) {
+      const enrollmentStatus = await this.courseRepository.checkEnrollmentStatus(
+        courseId,
+        options.studentId
+      );
 
-    const course = await this.prisma.course.findFirst({
-      where: whereClause,
-      select: {
-        id: true,
-        title: true,
-        tagline: true,
-        description: true,
-        status: true,
-        categories: { select: { category: { select: { name: true } } } },
-        created_at: true,
-        lessons: {
-          select: {
-            id: true,
-            title: true,
-            description: true,
-          },
-        },
-        creator: {
-          select: {
-            first_name: true,
-            last_name: true,
-          },
-        },
-      },
-    });
-
-    if (!course) return null;
-
-    // If studentId is present, include enrolledCourseId (null if not enrolled)
-    if (opts?.studentId) {
       return normalizeCourse(course, {
         includeCreatorName: true,
         includeLessons: true,
-        enrolledCourseId: enrolledCourseId,
+        enrolledCourseId: enrollmentStatus.enrolledCourseId,
       });
     }
 
-    // If creator, just return as before
-    return normalizeCourse(course, { includeCreatorName: true, includeLessons: true });
+    // Default response (for creators or public access)
+    return normalizeCourse(course, {
+      includeCreatorName: true,
+      includeLessons: true,
+    });
   }
 
-  async getAll(opts: GetAllOptions = {}): Promise<Course[]> {
-    const { creatorId, studentId } = opts;
-
-    const whereClause = creatorId ? { creator_id: creatorId } : {};
-    const select: any = {
-      id: true,
-      title: true,
-      tagline: true,
-      categories: { select: { category: { select: { name: true } } } },
-      created_at: true,
-      creator: { select: { first_name: true, last_name: true } },
-    };
-
-    if (!studentId) {
-      const courses = await this.prisma.course.findMany({
-        where: whereClause,
-        select,
-      });
-
-      return courses.map((course: any) =>
-        normalizeCourse(
-          course,
-          {
-            includeCreatorName: true,
-            includeLessons: false,
-          }
-        )
-      );
-    }
-
-    const courses = await this.prisma.course.findMany({
-      where: whereClause,
-      select: {
-        ...select,
-        enrolledCourses: {
-          where: { student_id: studentId },
-          select: { id: true }, 
-        },
-      },
+  async getAllCourses(options: CourseQueryOptions = {}): Promise<Course[]> {
+    const { creatorId, studentId } = options;
+  
+    // Delegate data fetching to repository
+    const courses = await this.courseRepository.findAllCourses({
+      creatorId,
+      studentId,
     });
 
-    // 2. Map and add isEnrolled
-    return courses.map((course: any) =>
-      normalizeCourse(
-        course,
-        {
-          includeCreatorName: true,
-          includeLessons: false,
-          isEnrolled: Array.isArray(course.enrolledCourses) && course.enrolledCourses.length > 0,
-        }
-      )
-    );
+    // Business logic: Transform data for GraphQL
+    return courses.map((course) => {
+      const isEnrolled = (course.studentsEnrolled?.length ?? 0) >  0 ? true : false
+      return normalizeCourse(course, {
+        includeCreatorName: true,
+        includeLessons: false,
+        isEnrolled,
+      });
+    });
   }
 
   async startProgress(enrolledCourseId: number, lessonId: number): Promise<boolean> {
     try {
-      await this.prisma.lesson_Progress.create({
-        data: {
-          enrolled_course_id: enrolledCourseId,
-          lesson_id: lessonId,
-        }
-      });
+      await this.courseRepository.createLessonProgress(enrolledCourseId, lessonId)
       return true;
     } catch (error) {
       console.error("Error creating lesson progress:", error);

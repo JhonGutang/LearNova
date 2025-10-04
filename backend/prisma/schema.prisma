@@ -111,7 +111,7 @@ model Course {
   categories  Course_Category[]
   lessons     Lesson[]
   creator     Creator           @relation(fields: [creator_id], references: [id])
-  enrolledCourses Enrolled_Course[]
+  studentsEnrolled Enrolled_Course[]
 }
 
 model Category {

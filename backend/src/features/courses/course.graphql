@@ -11,7 +11,14 @@ type Course {
   createdAt: String!
   isEnrolled: Boolean
   enrolledCourseId: Int
+  studentsEnrolled: [StudentsEnrolled] 
   lessons: [Lesson]
+}
+
+type StudentsEnrolled {
+  id: ID!
+  studentId: ID!
+  course_id: ID!
 }
 
 
