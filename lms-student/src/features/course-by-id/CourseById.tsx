@@ -9,6 +9,7 @@ import { mockCourse } from "@/mock/Courses";
 import CommunityChat from "./components/CommunityChat";
 import Suggestions from "./components/Suggestions";
 import { Button } from "@/components/ui/button";
+import { Lesson } from "@/types/data";
 interface CourseByIdProps {
     courseLink: string
 }
@@ -29,7 +30,7 @@ const CourseById: React.FC<CourseByIdProps> = ({ courseLink }) => {
         );
       }
 
-    const handleStartProgress = (enrolledCourseId: number, courseLink: string, lesson) => {
+    const handleStartProgress = (enrolledCourseId: number, courseLink: string, lesson: Lesson) => {
       startProgress(enrolledCourseId, Number(lesson.id))
       redirect(courseLink + "/"  + toSlug(Number(lesson.id), lesson.title))
     }
@@ -42,8 +43,8 @@ const CourseById: React.FC<CourseByIdProps> = ({ courseLink }) => {
           <Card className="w-full shadow-lg border-0 bg-white">
             <CardHeader className="flex flex-row items-center gap-6 pb-0">
               <AvatarWithImage
-                src={course?.teacher?.avatar || mockCourse.teacher.avatar}
-                alt={course?.teacher?.name || mockCourse.teacher.name}
+                src={course?.creatorName || mockCourse.teacher.avatar}
+                alt={course?.creatorName || mockCourse.teacher.name}
                 className="w-16 h-16 border-2 border-primary shadow"
               />
               <div>
@@ -61,8 +62,8 @@ const CourseById: React.FC<CourseByIdProps> = ({ courseLink }) => {
               <p className="text-gray-700 mb-4 text-base leading-relaxed">{course?.description}</p>
               <div className="flex items-center gap-3 mb-4">
                 <AvatarWithImage
-                  src={course?.teacher?.avatar || mockCourse.teacher.avatar}
-                  alt={course?.teacher?.name || mockCourse.teacher.name}
+                  src={course?.creatorName || mockCourse.teacher.avatar}
+                  alt={course?.creatorName || mockCourse.teacher.name}
                   className="w-8 h-8"
                 />
                 <div>
@@ -91,8 +92,8 @@ const CourseById: React.FC<CourseByIdProps> = ({ courseLink }) => {
                   {course?.lessons.map((lesson, idx) => {
                     // Fallbacks for missing data
                     const title = lesson.title ?? `Lesson ${idx + 1}`;
-                    const completed = typeof lesson.completed === "boolean" ? lesson.completed : false;
-                    const duration = lesson.duration ?? "Unknown duration";
+                    const completed = lesson.progress && lesson.progress.status === "FINISHED";
+                    const duration = lesson.progress?.completedAt ?? "Unknown duration";
                     return (
                       <li
                         key={title}

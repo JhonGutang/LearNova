@@ -3,9 +3,10 @@ import { CourseInput, Status } from "../../generated/graphql";
 import { MyContext } from "../../types/context";
 import { CourseRepository } from "./course.repository";
 import { CourseService } from "./courses.service";
-
+import { LessonRepository } from "../lessons/lesson.repository";
 const courseRepository = new CourseRepository(prisma);
-const courseService = new CourseService(courseRepository);
+const lessonRepository = new LessonRepository(prisma);
+const courseService = new CourseService(courseRepository, lessonRepository);
 
 export const resolvers = {
   Query: {

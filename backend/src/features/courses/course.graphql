@@ -26,7 +26,7 @@ type Lesson {
   id: ID!
   title: String!
   description: String!
-  status: LessonProgressStatus
+  progress: LessonProgress
 }
 
 enum LessonProgressStatus {
@@ -35,10 +35,11 @@ enum LessonProgressStatus {
 }
 
 type LessonProgress {
-  id: ID!
-  enrolledCourseId: ID!
-  lessonId: ID!
-  status: LessonProgressStatus!
+  id: ID
+  enrolledCourseId: ID
+  lessonId: ID
+  status: LessonProgressStatus
+  completedAt: String
 }
 
 input CourseInput {

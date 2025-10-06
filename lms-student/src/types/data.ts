@@ -28,10 +28,17 @@ export interface Course {
     isEnrolled: boolean
 }
 
-interface Lesson {
+export interface Lesson {
     id?: string | number
     title: string
     description: string 
+    progress: LessonProgress
+}
+
+interface LessonProgress {
+    id?: string
+    status?: string
+    completedAt: string
 }
 
 export interface CourseWithLessons extends Course {

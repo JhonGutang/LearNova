@@ -1,7 +1,7 @@
-import { PrismaClient } from "../../../generated/prisma";
-import { Course, CourseInput, LessonProgress } from "../../generated/graphql";
+import { Course, CourseInput, Lesson, LessonProgress } from "../../generated/graphql";
 import { normalizeCourse } from "../../utils/courseNormalizer";
 import { CourseRepository } from "./course.repository";
+import { LessonRepository } from "../lessons/lesson.repository";
 type CreateCourseData = CourseInput & { creator_id: number };
 
 export interface CourseQueryOptions {
@@ -30,8 +30,7 @@ interface CourseServiceInterface {
 }
 
 export class CourseService implements CourseServiceInterface {
-  private prisma = new PrismaClient();
-  constructor(private courseRepository: CourseRepository) {}
+  constructor(private courseRepository: CourseRepository, private lessonRepository: LessonRepository) {}
 
   async create(courseData: CreateCourseData): Promise<Course> {
     const existingCourse = await this.courseRepository.findByTitle(courseData.title);
@@ -86,10 +85,19 @@ export class CourseService implements CourseServiceInterface {
         options.studentId
       );
 
+      // Also check lesson progress if enrolledCourseId exists
+      let lessonProgress:LessonProgress[] = [];
+      if (enrollmentStatus.enrolledCourseId) {
+        lessonProgress = await this.lessonRepository.findLessonProgressByEnrollment(
+          enrollmentStatus.enrolledCourseId
+        );
+      }
+
       return normalizeCourse(course, {
         includeCreatorName: true,
         includeLessons: true,
         enrolledCourseId: enrollmentStatus.enrolledCourseId,
+        lessonProgress: lessonProgress, // Pass lesson progress to normalizeCourse
       });
     }
 
@@ -123,7 +131,7 @@ export class CourseService implements CourseServiceInterface {
   async startProgress(enrolledCourseId: number, lessonId: number): Promise<ProgressReponse> {
     try {
 
-      const existingProgress = await this.courseRepository.findLessonProgress({enrolledCourseId, lessonId});
+      const existingProgress = await this.lessonRepository.findLessonProgress({enrolledCourseId, lessonId});
       if (existingProgress) {
         return {
           progressStatus: "IN_PROGRESS",
@@ -131,7 +139,7 @@ export class CourseService implements CourseServiceInterface {
         }
       }
 
-      const newProgress: LessonProgress =  await this.courseRepository.createLessonProgress(enrolledCourseId, lessonId);
+      const newProgress: LessonProgress =  await this.lessonRepository.createLessonProgress(enrolledCourseId, lessonId);
       return {
         progressStatus: "STARTED",
         message: "This lesson is now " + newProgress.status
@@ -145,7 +153,7 @@ export class CourseService implements CourseServiceInterface {
   }
 
   async finishProgress(studentId: number, lessonId: number): Promise<ProgressReponse> {
-    const existingProgress = await this.courseRepository.findLessonProgress({studentId, lessonId});
+    const existingProgress = await this.lessonRepository.findLessonProgress({studentId, lessonId});
   
     if (!existingProgress) {
       return {
@@ -155,7 +163,7 @@ export class CourseService implements CourseServiceInterface {
     }
   
     try {
-      await this.courseRepository.updateLessonProgressStatus(
+      await this.lessonRepository.updateLessonProgressStatus(
         Number(existingProgress.id),
         "FINISHED"
       );

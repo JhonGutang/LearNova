@@ -14,6 +14,10 @@ export const COURSE_WITH_LESSON_QUERY = gql`
         id
         title
         description
+        progress {
+          completedAt
+          status
+        }
       }
       status
       createdAt
@@ -30,14 +34,12 @@ export const ENROLL_COURSE_MUTATION = gql`
   }
 `;
 
-export const START_PROGRESS_MUTATION = gql `
+export const START_PROGRESS_MUTATION = gql`
   mutation StartProgress($enrolledCourseId: Int, $lessonId: Int) {
-  startProgress(enrolledCourseId: $enrolledCourseId, lessonId: $lessonId) {
-    status
-    progressStatus
-    message
+    startProgress(enrolledCourseId: $enrolledCourseId, lessonId: $lessonId) {
+      status
+      progressStatus
+      message
+    }
   }
-}
-`
-
-
+`;

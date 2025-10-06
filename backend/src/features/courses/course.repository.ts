@@ -15,14 +15,11 @@ interface CourseRepositoryInterface {
   ): Promise<Course | null>;
   findEnrolledCoursesByStudentId(studentId: number): Promise<EnrolledCourse[]>
   createEnrollment(courseId: number, studentId: number): Promise<void>
-  createLessonProgress(enrolledCourseId: number, lessonId: number ): Promise<LessonProgress>
-  updateLessonProgressStatus(progressId: number, status: string): Promise<boolean>
   checkEnrollmentStatus(
     courseId: number,
     studentId: number
   ): Promise<EnrollmentStatus>;
   create(courseData: CreateCourseData): Promise<Course>;
-  findLessonProgress(params: { enrolledCourseId?: number; studentId?: number; lessonId: number }): Promise<LessonProgress | null>;
 }
 
 interface EnrollmentStatus {
@@ -191,15 +188,6 @@ export class CourseRepository implements CourseRepositoryInterface {
     });
   }
 
-  async createLessonProgress(enrolledCourseId: number, lessonId: number): Promise<LessonProgress> {
-    return this.prisma.lesson_Progress.create({
-      data: {
-        enrolled_course_id: enrolledCourseId,
-        lesson_id: lessonId,
-      }
-    });
-  }
-
   async checkEnrollmentStatus(
     courseId: number,
     studentId: number
@@ -218,30 +206,5 @@ export class CourseRepository implements CourseRepositoryInterface {
       isEnrolled: enrollment !== null,
       enrolledCourseId: enrollment?.id,
     };
-  }
-
-  async findLessonProgress(options: { enrolledCourseId?: number; studentId?: number; lessonId: number }) {
-    const { enrolledCourseId, studentId, lessonId } = options;
-  
-    return this.prisma.lesson_Progress.findFirst({
-      where: {
-        lesson_id: lessonId,
-        ...(enrolledCourseId
-          ? { enrolled_course_id: enrolledCourseId }
-          : studentId
-          ? { enrolledCourse: { student_id: studentId } }
-          : {} // if neither is provided → returns null
-        )
-      }
-    });
-  }
-  
-
-  async updateLessonProgressStatus(progressId: number, status: string): Promise<boolean> {
-    const result = await this.prisma.lesson_Progress.update({
-      where: { id: progressId },
-      data: { status },
-    });
-    return result !== null;
   }
 }
