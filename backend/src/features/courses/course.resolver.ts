@@ -128,26 +128,59 @@ export const resolvers = {
       args: { enrolledCourseId: number; lessonId: number }
     ) => {
       try {
-        console.log(args.enrolledCourseId, args.lessonId);
         const isStarted = await courseService.startProgress(
           args.enrolledCourseId,
           args.lessonId
         );
-        if (!isStarted) {
+        if (isStarted.progressStatus === "FAILED") {
           return {
             status: Status.Error,
-            message: "Starting Progress Failed",
+            progressStatus: isStarted.progressStatus,
+            message: isStarted.message,
           };
         }
 
         return {
           status: Status.Success,
-          message: "Progress Started Successfully",
+          progressStatus: isStarted.progressStatus,
+          message: isStarted.message,
         };
       } catch (error) {
         console.error("Error starting progress:", error);
         return {
           status: Status.Error,
+          progressStatus: "FAILED",
+          message: "Internal server error",
+        };
+      }
+    },
+    finishProgress: async (
+      _: any,
+      args: { enrolledCourseId: number; lessonId: number }
+    ) => {
+      try {
+        const isStarted = await courseService.finishProgress(
+          args.enrolledCourseId,
+          args.lessonId
+        );
+        if (isStarted.progressStatus === "FAILED") {
+          return {
+            status: Status.Error,
+            progressStatus: isStarted.progressStatus,
+            message: isStarted.message,
+          };
+        }
+
+        return {
+          status: Status.Success,
+          progressStatus: isStarted.progressStatus,
+          message: isStarted.message,
+        };
+      } catch (error) {
+        console.error("Error starting progress:", error);
+        return {
+          status: Status.Error,
+          progressStatus: "FAILED",
           message: "Internal server error",
         };
       }

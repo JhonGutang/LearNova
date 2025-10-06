@@ -1,5 +1,5 @@
 import { PrismaClient } from "../../../generated/prisma";
-import { Course, CourseInput } from "../../generated/graphql";
+import { Course, CourseInput, LessonProgress } from "../../generated/graphql";
 import { normalizeCourse } from "../../utils/courseNormalizer";
 import { CourseRepository } from "./course.repository";
 type CreateCourseData = CourseInput & { creator_id: number };
@@ -9,17 +9,24 @@ export interface CourseQueryOptions {
   studentId?: number;
 }
 
+interface ProgressReponse {
+  progressStatus: string
+  message: string 
+}
+
 interface CourseServiceInterface {
   create(course: CreateCourseData): Promise<Course>;
   enroll(courseId: number, studentId: number): Promise<boolean>;
   getEnrolledCourses(studentId: number): Promise<Course[]>;
-  startProgress(enrolledCourseId: number, lessonId: number): Promise<boolean>;
+  startProgress(enrolledCourseId: number, lessonId: number): Promise<ProgressReponse>;
+  finishProgress(enrolledCourseId: number, lessonId: number): Promise<ProgressReponse>;
   getSpecificCourse(
     courseId: number,
     title: string,
     options?: CourseQueryOptions
   ): Promise<Course | null>;
   getAllCourses(options?: CourseQueryOptions): Promise<Course[]>;
+
 }
 
 export class CourseService implements CourseServiceInterface {
@@ -113,13 +120,53 @@ export class CourseService implements CourseServiceInterface {
     });
   }
 
-  async startProgress(enrolledCourseId: number, lessonId: number): Promise<boolean> {
+  async startProgress(enrolledCourseId: number, lessonId: number): Promise<ProgressReponse> {
     try {
-      await this.courseRepository.createLessonProgress(enrolledCourseId, lessonId)
-      return true;
+
+      const existingProgress = await this.courseRepository.findLessonProgress(enrolledCourseId, lessonId);
+      if (existingProgress) {
+        return {
+          progressStatus: "IN_PROGRESS",
+          message: "This lesson is already " + existingProgress.status
+        }
+      }
+
+      const newProgress: LessonProgress =  await this.courseRepository.createLessonProgress(enrolledCourseId, lessonId);
+      return {
+        progressStatus: "STARTED",
+        message: "This lesson is now " + newProgress.status
+      };
     } catch (error) {
-      console.error("Error creating lesson progress:", error);
-      return false;
+      return {
+        progressStatus: "FAILED",
+        message: "Error creating lesson progress: " + error
+      };
+    }
+  }
+
+  async finishProgress(enrolledCourseId: number, lessonId: number): Promise<ProgressReponse> {
+    const existingProgress = await this.courseRepository.findLessonProgress(enrolledCourseId, lessonId);
+    if (!existingProgress) {
+      return {
+        progressStatus: "FAILED",
+        message: "User doesnt have progress with this lesson"
+      }
+    }
+
+    try {
+      await this.courseRepository.updateLessonProgressStatus(
+        Number(existingProgress.id),
+        "FINISHED"
+      );
+      return {
+        progressStatus: "FINISHED",
+        message: "Lesson progress marked as FINISHED"
+      };
+    } catch (error) {
+      return {
+        progressStatus: "FAILED",
+        message: "Error updating lesson progress: " + error
+      };
     }
   }
 }

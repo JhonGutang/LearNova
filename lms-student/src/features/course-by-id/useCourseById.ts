@@ -6,6 +6,16 @@ interface CourseWithCreatorData {
   course: CourseWithLessons;
 }
 
+export interface BaseResponse {
+  status: "SUCCESS" | "FAILED"
+  progressStatus: "IN_PROGRESS" | "STARTED" | "FINISHED" | "FAILED";
+  message: string
+}
+
+interface StartProgressResponse {
+  startProgress: BaseResponse
+}
+
 export const useCourseById = (courseId: number | null, title: string) => {
   const { data, loading, error, refetch } = ApolloReact.useQuery<CourseWithCreatorData>(
     COURSE_WITH_LESSON_QUERY,
@@ -17,7 +27,8 @@ export const useCourseById = (courseId: number | null, title: string) => {
   const [enrollCourseMutation, { data: enrollData, loading: enrollLoading, error: enrollError }] =
     ApolloReact.useMutation(ENROLL_COURSE_MUTATION);
   const [startProgressMutation, { data: startProgressData, loading: startProgressLoading, error: startProgressError }] =
-    ApolloReact.useMutation(START_PROGRESS_MUTATION);
+    ApolloReact.useMutation<StartProgressResponse>(START_PROGRESS_MUTATION);
+
 
   const enrollCourse = async (courseId: number) => {
     try {
@@ -35,9 +46,13 @@ export const useCourseById = (courseId: number | null, title: string) => {
 
   const startProgress = async (enrolledCourseId: number, lessonId: number) => {
     try {
-      await startProgressMutation({
+      const response = await startProgressMutation({
         variables: { enrolledCourseId, lessonId },
       });
+
+      if(response.data?.startProgress.progressStatus === "IN_PROGRESS") {
+        return
+      }
       CustomToast({
         type: "success",
         title: "Progress Started",
@@ -51,6 +66,8 @@ export const useCourseById = (courseId: number | null, title: string) => {
     }
   }
 
+  
+
   return {
     course: data?.course,
     loading,
@@ -59,6 +76,6 @@ export const useCourseById = (courseId: number | null, title: string) => {
     enrollData,
     enrollLoading,
     enrollError,
-    startProgress,
+    startProgress
   };
 };

@@ -28,6 +28,18 @@ type Lesson {
   description: String!
 }
 
+enum LessonProgressStatus {
+  IN_PROGRESS
+  FINISHED
+}
+
+type LessonProgress {
+  id: ID!
+  enrolledCourseId: ID!
+  lessonId: ID!
+  status: LessonProgressStatus!
+}
+
 input CourseInput {
   title: String!
   tagline: String!
@@ -46,8 +58,15 @@ type BaseResponse {
   message: String
 }
 
+type ProgressResponse {
+  status: Status
+  message: String
+  progressStatus: String
+}
+
 extend type Mutation {
   createCourse(input: CourseInput!): Course!
   enrollCourse(courseId: Int): BaseResponse
-  startProgress(enrolledCourseId: Int, lessonId: Int): BaseResponse
+  startProgress(enrolledCourseId: Int, lessonId: Int): ProgressResponse
+  finishProgress(enrolledCourseId: Int, lessonId: Int): ProgressResponse
 }

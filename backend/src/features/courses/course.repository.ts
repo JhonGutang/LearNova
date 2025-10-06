@@ -1,7 +1,7 @@
 // features/course/course.repository.ts
 
 import { PrismaClient } from "@prisma/client";
-import { CourseInput } from "../../generated/graphql";
+import { CourseInput, LessonProgress } from "../../generated/graphql";
 import { Course } from "../../generated/graphql";
 
 type CreateCourseData = CourseInput & { creator_id: number };
@@ -15,12 +15,14 @@ interface CourseRepositoryInterface {
   ): Promise<Course | null>;
   findEnrolledCoursesByStudentId(studentId: number): Promise<EnrolledCourse[]>
   createEnrollment(courseId: number, studentId: number): Promise<void>
-  createLessonProgress(enrolledCourseId: number, lessonId: number ): Promise<void>
+  createLessonProgress(enrolledCourseId: number, lessonId: number ): Promise<LessonProgress>
+  updateLessonProgressStatus(progressId: number, status: string): Promise<boolean>
   checkEnrollmentStatus(
     courseId: number,
     studentId: number
   ): Promise<EnrollmentStatus>;
   create(courseData: CreateCourseData): Promise<Course>;
+  findLessonProgress(enrolledCourseId: number, lessonId: number): Promise<LessonProgress | null>
 }
 
 interface EnrollmentStatus {
@@ -189,7 +191,7 @@ export class CourseRepository implements CourseRepositoryInterface {
     });
   }
 
-  async createLessonProgress(enrolledCourseId: number, lessonId: number): Promise<void> {
+  async createLessonProgress(enrolledCourseId: number, lessonId: number): Promise<LessonProgress> {
     return this.prisma.lesson_Progress.create({
       data: {
         enrolled_course_id: enrolledCourseId,
@@ -216,5 +218,22 @@ export class CourseRepository implements CourseRepositoryInterface {
       isEnrolled: enrollment !== null,
       enrolledCourseId: enrollment?.id,
     };
+  }
+
+  async findLessonProgress(enrolledCourseId: number, lessonId: number): Promise<LessonProgress | null> {
+    return this.prisma.lesson_Progress.findFirst({
+      where: {
+        enrolled_course_id: enrolledCourseId,
+        lesson_id: lessonId,
+      },
+    }) 
+  }
+
+  async updateLessonProgressStatus(progressId: number, status: string): Promise<boolean> {
+    const result = await this.prisma.lesson_Progress.update({
+      where: { id: progressId },
+      data: { status },
+    });
+    return result !== null;
   }
 }

@@ -34,7 +34,10 @@ export const START_PROGRESS_MUTATION = gql `
   mutation StartProgress($enrolledCourseId: Int, $lessonId: Int) {
   startProgress(enrolledCourseId: $enrolledCourseId, lessonId: $lessonId) {
     status
+    progressStatus
     message
   }
 }
 `
+
+
