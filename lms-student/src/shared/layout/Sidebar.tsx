@@ -1,7 +1,6 @@
 'use client';
 
 import React, { ReactNode, useState } from "react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Home,
@@ -35,7 +34,7 @@ interface SidebarLayoutProps {
 }
 
 const SidebarLayout = ({ children, headerChild }: SidebarLayoutProps) => {
-  const {redirect} = useRedirectLink()
+  const { redirect } = useRedirectLink();
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const sidebarWidth = collapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED;
@@ -64,14 +63,17 @@ const SidebarLayout = ({ children, headerChild }: SidebarLayoutProps) => {
           {sidebarLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
-              <Link
+              <button
                 key={link.href}
-                href={link.href}
-                className={`group flex items-center gap-3 rounded-lg text-base font-medium transition-all px-3 py-2
+                type="button"
+                onClick={() => redirect(link.href)}
+                className={`w-full group flex items-center gap-3 rounded-lg text-base font-medium transition-all px-3 py-2
                   ${isActive ? "bg-teal-100 text-teal-700 shadow-inner" : "text-gray-700 hover:bg-teal-50 hover:text-teal-600"}
                   ${collapsed ? "justify-center" : ""}
+                  focus:outline-none
                 `}
                 tabIndex={0}
+                aria-current={isActive ? "page" : undefined}
               >
                 <span
                   className={`flex items-center justify-center transition-colors ${
@@ -85,7 +87,7 @@ const SidebarLayout = ({ children, headerChild }: SidebarLayoutProps) => {
                 {!collapsed && (
                   <span className="transition-opacity duration-200">{link.label}</span>
                 )}
-              </Link>
+              </button>
             );
           })}
         </nav>
