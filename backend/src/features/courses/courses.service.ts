@@ -19,7 +19,7 @@ interface CourseServiceInterface {
   enroll(courseId: number, studentId: number): Promise<boolean>;
   getEnrolledCourses(studentId: number): Promise<Course[]>;
   startProgress(enrolledCourseId: number, lessonId: number): Promise<ProgressReponse>;
-  finishProgress(enrolledCourseId: number, lessonId: number): Promise<ProgressReponse>;
+  finishProgress(studentId: number, lessonId: number): Promise<ProgressReponse>;
   getSpecificCourse(
     courseId: number,
     title: string,
@@ -123,7 +123,7 @@ export class CourseService implements CourseServiceInterface {
   async startProgress(enrolledCourseId: number, lessonId: number): Promise<ProgressReponse> {
     try {
 
-      const existingProgress = await this.courseRepository.findLessonProgress(enrolledCourseId, lessonId);
+      const existingProgress = await this.courseRepository.findLessonProgress({enrolledCourseId, lessonId});
       if (existingProgress) {
         return {
           progressStatus: "IN_PROGRESS",
@@ -144,20 +144,22 @@ export class CourseService implements CourseServiceInterface {
     }
   }
 
-  async finishProgress(enrolledCourseId: number, lessonId: number): Promise<ProgressReponse> {
-    const existingProgress = await this.courseRepository.findLessonProgress(enrolledCourseId, lessonId);
+  async finishProgress(studentId: number, lessonId: number): Promise<ProgressReponse> {
+    const existingProgress = await this.courseRepository.findLessonProgress({studentId, lessonId});
+  
     if (!existingProgress) {
       return {
         progressStatus: "FAILED",
-        message: "User doesnt have progress with this lesson"
-      }
+        message: "User doesn't have progress with this lesson"
+      };
     }
-
+  
     try {
       await this.courseRepository.updateLessonProgressStatus(
         Number(existingProgress.id),
         "FINISHED"
       );
+  
       return {
         progressStatus: "FINISHED",
         message: "Lesson progress marked as FINISHED"
@@ -169,4 +171,5 @@ export class CourseService implements CourseServiceInterface {
       };
     }
   }
+  
 }

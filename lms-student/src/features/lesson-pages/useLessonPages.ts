@@ -22,10 +22,10 @@ export const useLessonPages = (id: number | null) => {
       }
     );
 
-    const finishProgress = async (enrolledCourseId: number, lessonId: number) => {
+    const finishProgress = async (lessonId: number) => {
       try {
         const response = await finishProgressMutation({
-          variables: { enrolledCourseId, lessonId },
+          variables: { lessonId },
         });
   
         if (response.data?.finishProgress.progressStatus === "FINISHED") {

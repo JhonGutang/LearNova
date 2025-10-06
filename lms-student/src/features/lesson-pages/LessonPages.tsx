@@ -5,15 +5,17 @@ import FallbackMessage from "@/shared/FallbackMessage";
 import DOMPurify from "dompurify";
 import React, { useState } from "react";
 import Navigation from "./components/Navigation";
+import { redirect } from "next/dist/server/api-utils";
 
 interface LessonPagesProps {
   lessonLink: string;
+  courseLink: string;
 }
 
-const LessonPages: React.FC<LessonPagesProps> = ({ lessonLink }) => {
-  const { fromSlug } = useRedirectLink();
+const LessonPages: React.FC<LessonPagesProps> = ({ lessonLink, courseLink }) => {
+  const { fromSlug, redirect } = useRedirectLink();
   const { id } = fromSlug(lessonLink);
-  const { lessonPages, loading, error } = useLessonPages(id);
+  const { lessonPages, loading, error, finishProgress } = useLessonPages(id);
   const [currentPage, setCurrentPage] = useState(0);
 
   if (!id) {
@@ -43,6 +45,13 @@ const LessonPages: React.FC<LessonPagesProps> = ({ lessonLink }) => {
     setCurrentPage((prev) => (prev < totalPages - 1 ? prev + 1 : prev));
   };
 
+  const handleFinishLesson = () => {
+    finishProgress(id)
+    setTimeout(() => {
+      redirect("/" + courseLink)
+    }, 1500);
+  }
+
   const page = pagesArray[currentPage];
 
   if (!page) {
@@ -61,7 +70,7 @@ const LessonPages: React.FC<LessonPagesProps> = ({ lessonLink }) => {
           />
         </div>
       </div>
-     <Navigation currentPage={currentPage} goToNextPage={goToNextPage} goToPrevPage={goToPrevPage} totalPages={totalPages}/>
+     <Navigation handleFinishLesson={handleFinishLesson} currentPage={currentPage} goToNextPage={goToNextPage} goToPrevPage={goToPrevPage} totalPages={totalPages}/>
     </div>
   );
 };

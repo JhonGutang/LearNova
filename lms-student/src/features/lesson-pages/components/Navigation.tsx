@@ -5,21 +5,23 @@ interface NavigationProps {
     goToNextPage: () => void,
     currentPage: number,
     totalPages: number,
+    handleFinishLesson: () => void
 }
 
 const Navigation: React.FC<NavigationProps> = ({
     goToPrevPage,
     goToNextPage,
     currentPage,
-    totalPages
+    totalPages,
+    handleFinishLesson
 }) => {
     const isLastPage = currentPage === totalPages - 1;
     const sendAlert = () => {
-      alert('final page')
+      
     }
     const handleNextOrFinish = () => {
         if (isLastPage) {
-            sendAlert();
+            handleFinishLesson()
         } else {
             goToNextPage();
         }

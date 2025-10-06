@@ -26,6 +26,7 @@ type Lesson {
   id: ID!
   title: String!
   description: String!
+  status: LessonProgressStatus
 }
 
 enum LessonProgressStatus {
@@ -68,5 +69,5 @@ extend type Mutation {
   createCourse(input: CourseInput!): Course!
   enrollCourse(courseId: Int): BaseResponse
   startProgress(enrolledCourseId: Int, lessonId: Int): ProgressResponse
-  finishProgress(enrolledCourseId: Int, lessonId: Int): ProgressResponse
+  finishProgress(lessonId: Int): ProgressResponse
 }

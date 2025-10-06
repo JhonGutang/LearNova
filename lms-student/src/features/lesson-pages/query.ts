@@ -13,8 +13,8 @@ export const LESSON_PAGES_QUERY = gql`
 `;
 
 export const FINISH_PROGRESS_MUTATION = gql`
-  mutation FinishProgress($enrolledCourseId: Int, $lessonId: Int) {
-    finishProgress(enrolledCourseId: $enrolledCourseId, lessonId: $lessonId) {
+  mutation FinishProgress($lessonId: Int) {
+    finishProgress(lessonId: $lessonId) {
       status
       message
       progressStatus

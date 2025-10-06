@@ -22,7 +22,7 @@ interface CourseRepositoryInterface {
     studentId: number
   ): Promise<EnrollmentStatus>;
   create(courseData: CreateCourseData): Promise<Course>;
-  findLessonProgress(enrolledCourseId: number, lessonId: number): Promise<LessonProgress | null>
+  findLessonProgress(params: { enrolledCourseId?: number; studentId?: number; lessonId: number }): Promise<LessonProgress | null>;
 }
 
 interface EnrollmentStatus {
@@ -220,14 +220,22 @@ export class CourseRepository implements CourseRepositoryInterface {
     };
   }
 
-  async findLessonProgress(enrolledCourseId: number, lessonId: number): Promise<LessonProgress | null> {
+  async findLessonProgress(options: { enrolledCourseId?: number; studentId?: number; lessonId: number }) {
+    const { enrolledCourseId, studentId, lessonId } = options;
+  
     return this.prisma.lesson_Progress.findFirst({
       where: {
-        enrolled_course_id: enrolledCourseId,
         lesson_id: lessonId,
-      },
-    }) 
+        ...(enrolledCourseId
+          ? { enrolled_course_id: enrolledCourseId }
+          : studentId
+          ? { enrolledCourse: { student_id: studentId } }
+          : {} // if neither is provided → returns null
+        )
+      }
+    });
   }
+  
 
   async updateLessonProgressStatus(progressId: number, status: string): Promise<boolean> {
     const result = await this.prisma.lesson_Progress.update({

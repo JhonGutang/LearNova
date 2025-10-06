@@ -156,13 +156,22 @@ export const resolvers = {
     },
     finishProgress: async (
       _: any,
-      args: { enrolledCourseId: number; lessonId: number }
+      args: { lessonId: number },
+      context: MyContext
     ) => {
       try {
+        const { studentId } = context.session
+
+        if(!studentId) return {
+          status: Status.Error,
+          message: "Student not found",
+        }
+
         const isStarted = await courseService.finishProgress(
-          args.enrolledCourseId,
+          studentId,
           args.lessonId
         );
+
         if (isStarted.progressStatus === "FAILED") {
           return {
             status: Status.Error,
