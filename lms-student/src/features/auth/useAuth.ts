@@ -54,7 +54,7 @@ export const useAuth = () => {
       } else {
         showToast("success", "Signed in Successfully");
         setTimeout(() => {
-          redirect('/')
+          redirect('/home')
         }, 1500);
       }
     } catch (err) {

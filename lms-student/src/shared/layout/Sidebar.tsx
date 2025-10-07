@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { useRedirectLink } from "@/hooks/useRedirect";
 
 const sidebarLinks = [
-  { label: "Home", icon: <Home className="w-5 h-5" />, href: "/" },
+  { label: "Home", icon: <Home className="w-5 h-5" />, href: "/home" },
   { label: "My Courses", icon: <BookOpen className="w-5 h-5" />, href: "/my-courses" },
   { label: "Community", icon: <Users className="w-5 h-5" />, href: "/community" },
   { label: "Calendar", icon: <Calendar className="w-5 h-5" />, href: "/calendar" },
@@ -40,22 +40,30 @@ const SidebarLayout = ({ children, headerChild }: SidebarLayoutProps) => {
   const sidebarWidth = collapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED;
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-teal-50 to-white">
+    <div className="flex h-screen bg-gradient-to-br from-gray-100 to-white">
       {/* Sidebar */}
       <aside
         className={`hidden md:flex flex-col bg-white border-r shadow-lg transition-all duration-200 ${collapsed ? "w-18" : "w-60"}`}
         style={{ width: sidebarWidth }}
       >
-        {/* Brand/Logo */}
-        <div className="h-20 flex items-center justify-center border-b bg-gradient-to-r from-teal-600 to-teal-500">
-          <div className="flex items-center gap-2">
-            <GraduationCap className="w-8 h-8 text-white" />
+        {/* Brand/Logo and Collapse/Expand Button side by side */}
+        <div className={`h-20 flex items-center px-4 ${collapsed ? "justify-center" : ""}`}>
+          <div className={`flex items-center gap-2 ${collapsed ? "" : "w-full"}`}>
             {!collapsed && (
-              <span className="text-2xl font-extrabold text-white tracking-wide">
-                Learnify
+              <span className="text-2xl font-extrabold text-black tracking-wide text-left">
+                LearNova
               </span>
             )}
           </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setCollapsed((prev) => !prev)}
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            className={`border border-gray-200 bg-gray-100 hover:bg-gray-200 cursor-pointer ml-2 ${collapsed ? "ml-0" : ""}`}
+          >
+            <SidebarIcon className="w-6 h-6 text-black" />
+          </Button>
         </div>
 
         {/* Navigation */}
@@ -68,9 +76,10 @@ const SidebarLayout = ({ children, headerChild }: SidebarLayoutProps) => {
                 type="button"
                 onClick={() => redirect(link.href)}
                 className={`w-full group flex items-center gap-3 rounded-lg text-base font-medium transition-all px-3 py-2
-                  ${isActive ? "bg-teal-100 text-teal-700 shadow-inner" : "text-gray-700 hover:bg-teal-50 hover:text-teal-600"}
+                  ${isActive ? "bg-black/10 text-black shadow-inner" : "text-gray-800 hover:bg-black/5 hover:text-black"}
                   ${collapsed ? "justify-center" : ""}
                   focus:outline-none
+                  cursor-pointer
                 `}
                 tabIndex={0}
                 aria-current={isActive ? "page" : undefined}
@@ -78,8 +87,8 @@ const SidebarLayout = ({ children, headerChild }: SidebarLayoutProps) => {
                 <span
                   className={`flex items-center justify-center transition-colors ${
                     isActive
-                      ? "text-teal-700"
-                      : "text-teal-500 group-hover:text-teal-600"
+                      ? "text-black"
+                      : "text-gray-500 group-hover:text-black"
                   }`}
                 >
                   {link.icon}
@@ -94,17 +103,17 @@ const SidebarLayout = ({ children, headerChild }: SidebarLayoutProps) => {
 
         {/* User Profile (bottom) */}
         <div
-          className={`px-4 py-3 border-t bg-gradient-to-r from-teal-50 to-white flex items-center gap-3 ${
+          className={`px-4 py-3 border-t bg-gradient-to-r from-gray-100 to-white flex items-center gap-3 ${
             collapsed ? "justify-center px-2" : ""
           }`}
         >
           <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-full bg-teal-200 flex items-center justify-center font-bold text-teal-700 text-lg">
+            <div className="w-9 h-9 rounded-full bg-black/10 flex items-center justify-center font-bold text-black text-lg">
               U
             </div>
             {!collapsed && (
               <div className="flex flex-col">
-                <span className="font-semibold text-gray-800 text-sm">Username</span>
+                <span className="font-semibold text-gray-900 text-sm">Username</span>
                 <span className="text-xs text-gray-500">Student</span>
               </div>
             )}
@@ -132,17 +141,8 @@ const SidebarLayout = ({ children, headerChild }: SidebarLayoutProps) => {
             width: `calc(100vw - ${sidebarWidth}px)`,
           }}
         >
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setCollapsed((prev) => !prev)}
-            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-            className="mr-4 border border-teal-100 bg-teal-50 hover:bg-teal-100 cursor-pointer"
-          >
-            <SidebarIcon className="w-6 h-6 text-teal-600" />
-          </Button>
           <div className="flex flex-1 items-center justify-between">
-            <h1 className="text-2xl font-bold text-teal-700 tracking-tight">
+            <h1 className="text-2xl font-bold text-black tracking-tight">
               {sidebarLinks.find((l) => l.href === pathname)?.label || "Dashboard"}
             </h1>
             {/* Optional header child */}
@@ -153,7 +153,7 @@ const SidebarLayout = ({ children, headerChild }: SidebarLayoutProps) => {
         </header>
 
         {/* Main content */}
-        <main className="flex-1 pt-20 p-6 bg-gradient-to-br from-white to-teal-50 overflow-auto">
+        <main className="flex-1 pt-20 p-6 bg-gradient-to-br from-white to-gray-100 overflow-auto">
           {children}
         </main>
       </div>

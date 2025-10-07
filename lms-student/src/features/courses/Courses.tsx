@@ -31,7 +31,7 @@ const Courses: React.FC = () => {
 
   return (
     <>
-      <main className="p-6 flex flex-wrap gap-6 justify-start">
+      <main className="p-6 flex flex-wrap gap-6 justify-center items-center min-h-[60vh]">
         {courses?.length ? (
           courses.map((course) => (
             <div
@@ -48,24 +48,17 @@ const Courses: React.FC = () => {
               >
                 <div className="flex gap-2">
                   <Button
-                    className="cursor-pointer bg-teal-600 hover:bg-teal-700 text-white"
+                    className={`cursor-pointer bg-black hover:bg-gray-900 text-white`}
                     onClick={() => redirect(toSlug(Number(course.id), course.title))}
                   >
-                    View
-                  </Button>
-                  <Button
-                    className="cursor-pointer bg-yellow-400 hover:bg-yellow-500 text-white"
-                    variant="secondary"
-                    aria-label="Add to Favorites"
-                  >
-                    <Star className="w-5 h-5" />
+                    {course.isEnrolled ? "View Course" : "Enroll Now"}
                   </Button>
                 </div>
               </CoursesCardView>
             </div>
           ))
         ) : (
-          <div>No courses found.</div>
+          <div className="w-full flex justify-center items-center min-h-[30vh]">No courses found.</div>
         )}
       </main>
     </>
