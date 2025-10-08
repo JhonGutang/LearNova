@@ -45,6 +45,7 @@ model Student {
   user                User                 @relation(fields: [user_id], references: [id])
   enrolledCourses     Enrolled_Course[]
   posts               Post[]               // Added: relation to Post
+  reactions           Reaction[]           // Added: relation to Reaction
 }
 
 model Enrolled_Course {
@@ -159,12 +160,25 @@ model Lesson_Page {
 
 
 model Post {
-  id         Int      @id @default(autoincrement())
+  id         Int        @id @default(autoincrement())
   student_id Int
   topic      String
   content    String
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
 
-  student    Student  @relation(fields: [student_id], references: [id]) // Added: relation to Student
+  student    Student    @relation(fields: [student_id], references: [id]) // relation to Student
+  reactions  Reaction[] // relation to Reaction
+}
+
+model Reaction {
+  id         Int      @id @default(autoincrement())
+  post_id    Int
+  student_id Int
+  liked      Boolean
+
+  post       Post     @relation(fields: [post_id], references: [id])
+  student    Student  @relation(fields: [student_id], references: [id])
+
+  @@unique([post_id, student_id]) // Each student can react once per post
 }

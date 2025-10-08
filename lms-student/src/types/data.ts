@@ -62,6 +62,7 @@ export interface Post {
     owner: PostOwner
     topic: string;
     content: string;
+    hasLiked: boolean;
     createdAt: string;
 }
 
@@ -70,3 +71,8 @@ interface PostOwner {
     firstName: string
     lastName: string
 }
+
+export interface ReactPostInput {
+    postId: string;
+    isLiked: boolean;
+  }

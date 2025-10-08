@@ -6,11 +6,18 @@ interface PrismaClientLike {
     create: (args: any) => Promise<any>;
     findMany: (args?: any) => Promise<any[]>;
   };
+  reaction?: {
+    upsert: (args: any) => Promise<any>;
+    create: (args: any) => Promise<any>;
+    findUnique: (args: any) => Promise<any | null>;
+    update: (args: any) => Promise<any>;
+  };
 }
 
 interface PostServiceInterface {
   createPost(input: PostInput, studentId: number): Promise<Post>;
   getPosts(): Promise<Post[]>;
+  reactPost(postId: number, studentId: number, liked: boolean): Promise<void>;
 }
 
 export class PostService implements PostServiceInterface {
@@ -47,10 +54,20 @@ export class PostService implements PostServiceInterface {
     };
   }
 
-  async getPosts(): Promise<Post[]> {
+  /**
+   * Get all posts, including whether the current user (studentId) has liked each post.
+   * @param studentId - The ID of the current student (optional, for hasLiked)
+   */
+  async getPosts(studentId?: number): Promise<Post[]> {
     const posts = await this.prisma.post.findMany({
       include: {
-        student: true
+        student: true,
+        reactions: studentId
+          ? {
+              where: { student_id: studentId },
+              select: { liked: true }
+            }
+          : false
       },
       orderBy: {
         created_at: "desc"
@@ -66,7 +83,39 @@ export class PostService implements PostServiceInterface {
         id: String(post.student.id),
         firstName: post.student.first_name,
         lastName: post.student.last_name,
-      }
+      },
+      hasLiked: studentId
+        ? (post.reactions && post.reactions.length > 0 ? !!post.reactions[0].liked : false)
+        : false
     }));
+  }
+
+  /**
+   * React to a post (like or unlike).
+   * Stores postId, studentId, and liked boolean in the Reaction table.
+   * If a reaction already exists for this post/student, it updates it.
+   * Otherwise, it creates a new reaction.
+   */
+  async reactPost(postId: number, studentId: number, liked: boolean): Promise<void> {
+    if (!this.prisma.reaction) {
+      throw new Error("Prisma client does not support reactions");
+    }
+
+    await this.prisma.reaction.upsert({
+      where: {
+        post_id_student_id: {
+          post_id: postId,
+          student_id: studentId,
+        }
+      },
+      update: {
+        liked: liked
+      },
+      create: {
+        post: { connect: { id: postId } },
+        student: { connect: { id: studentId } },
+        liked: liked
+      }
+    });
   }
 }

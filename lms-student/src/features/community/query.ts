@@ -11,6 +11,7 @@ const POST_FRAGMENT = gql`
     topic
     content
     createdAt
+    hasLiked
   }
 `;
 
@@ -28,6 +29,15 @@ export const CREATE_POST_MUTATION = gql`
   mutation CreatePost($input: PostInput!) {
     createPost(input: $input) {
       ...PostFragment
+    }
+  }
+`;
+
+export const REACT_POST_MUTATION = gql`
+  mutation ReactPost($input: ReactPostInput!) {
+    reactPost(input: $input) {
+      message
+      type
     }
   }
 `;

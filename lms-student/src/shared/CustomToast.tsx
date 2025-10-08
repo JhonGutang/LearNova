@@ -2,7 +2,7 @@ import { toast } from "sonner";
 
 type CustomToastProps = {
   type?: "success" | "error" | "info" | "warning";
-  title: string;
+  title?: string;
   description?: string;
   onClose?: () => void;
 };
@@ -28,55 +28,39 @@ export function CustomToast({
   // Fallback to info if type is not recognized
   const toastClass = colorClasses[type] || colorClasses.info;
 
+  // Helper to get the main message for the toast
+  const getMessage = () => {
+    // Prefer title, fallback to description, fallback to empty string
+    return title ?? description ?? "";
+  };
+
   // Map type to sonner's toast function, always apply color class
   const showToast = () => {
+    const message = getMessage();
+    const options = {
+      description: title ? description : undefined, // If title is present, description is secondary
+      onAutoClose: onClose,
+      onDismiss: onClose,
+      className: toastClass,
+    };
+
     switch (type) {
       case "success":
-        toast.success(title, {
-          description,
-          onAutoClose: onClose,
-          onDismiss: onClose,
-          className: toastClass,
-        });
+        toast.success(message, options);
         break;
       case "error":
-        toast.error(title, {
-          description,
-          onAutoClose: onClose,
-          onDismiss: onClose,
-          className: toastClass,
-        });
+        toast.error(message, options);
         break;
       case "warning":
         toast.warning
-          ? toast.warning(title, {
-              description,
-              onAutoClose: onClose,
-              onDismiss: onClose,
-              className: toastClass,
-            })
-          : toast(title, {
-              description,
-              onAutoClose: onClose,
-              onDismiss: onClose,
-              className: toastClass,
-            });
+          ? toast.warning(message, options)
+          : toast(message, options);
         break;
       case "info":
       default:
         toast.info
-          ? toast.info(title, {
-              description,
-              onAutoClose: onClose,
-              onDismiss: onClose,
-              className: toastClass,
-            })
-          : toast(title, {
-              description,
-              onAutoClose: onClose,
-              onDismiss: onClose,
-              className: toastClass,
-            });
+          ? toast.info(message, options)
+          : toast(message, options);
         break;
     }
   };
