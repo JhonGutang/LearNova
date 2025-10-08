@@ -1,64 +1,11 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
+import { useRedirectLink } from "@/hooks/useRedirect"
 import { Clock, Users, Star, ArrowRight } from "lucide-react"
-
+import { landingPageCourses as courses } from "@/mock/Courses"
 const CourseSection: React.FC = () => {
-    const courses = [
-        {
-          title: "Web Development Fundamentals",
-          description: "Master HTML, CSS, and JavaScript to build modern, responsive websites from scratch.",
-          image: "/web-development-coding-screen.png",
-          duration: "12 weeks",
-          students: "2,450",
-          rating: "4.8",
-          level: "Beginner",
-        },
-        {
-          title: "Data Science & Analytics",
-          description: "Learn Python, statistics, and machine learning to extract insights from data.",
-          image: "/data-science-analytics-charts.jpg",
-          duration: "16 weeks",
-          students: "1,890",
-          rating: "4.9",
-          level: "Intermediate",
-        },
-        {
-          title: "Digital Marketing Mastery",
-          description: "Comprehensive guide to SEO, social media, content marketing, and analytics.",
-          image: "/digital-marketing-strategy.png",
-          duration: "10 weeks",
-          students: "3,120",
-          rating: "4.7",
-          level: "Beginner",
-        },
-        {
-          title: "UI/UX Design Principles",
-          description: "Create beautiful, user-friendly interfaces with modern design tools and techniques.",
-          image: "/ui-ux-wireframes.png",
-          duration: "14 weeks",
-          students: "1,650",
-          rating: "4.9",
-          level: "Intermediate",
-        },
-        {
-          title: "Business Management",
-          description: "Essential skills for leading teams, managing projects, and driving business growth.",
-          image: "/business-management-team.jpg",
-          duration: "8 weeks",
-          students: "2,780",
-          rating: "4.6",
-          level: "Beginner",
-        },
-        {
-          title: "Mobile App Development",
-          description: "Build native iOS and Android apps using React Native and modern development tools.",
-          image: "/mobile-app-development.png",
-          duration: "18 weeks",
-          students: "1,420",
-          rating: "4.8",
-          level: "Advanced",
-        },
-      ]
+  const {redirect} = useRedirectLink()
+    
     return (
         <section id="courses" className="py-20 md:py-32">
         <div className="container mx-auto px-4">
@@ -82,10 +29,13 @@ const CourseSection: React.FC = () => {
                 >
                   <CardHeader className="p-0">
                     <div className="relative overflow-hidden">
+                      {/* Implement the image */}
                       <img
                         src={course.image || "/placeholder.svg"}
                         alt={course.title}
                         className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
+                        loading="lazy"
+                        style={{ background: "#f3f4f6" }}
                       />
                       <div className="absolute top-4 right-4 bg-accent text-accent-foreground px-3 py-1 rounded-full text-sm font-medium">
                         {course.level}
@@ -111,7 +61,7 @@ const CourseSection: React.FC = () => {
                     </div>
                   </CardContent>
                   <CardFooter className="p-6 pt-0">
-                    <Button className="w-full bg-teal-800 group/btn hover:bg-teal-700 hover:text-white hover:scale-105 transition-transform duration-200">
+                    <Button onClick={() => redirect('/signin')} className=" cursor-pointer w-full bg-teal-800 group/btn hover:bg-teal-700 hover:text-white hover:scale-105 transition-transform duration-200">
                       Enroll Now
                       <ArrowRight className="ml-2 group-hover/btn:translate-x-1 transition-transform" size={16} />
                     </Button>
@@ -125,6 +75,7 @@ const CourseSection: React.FC = () => {
               <Button
                 size="lg"
                 variant="outline"
+                onClick={() => redirect('/signin')}
                 className="hover:bg-teal-800 hover:text-white hover:scale-105 transition-all duration-200 bg-transparent"
               >
                 View All Courses

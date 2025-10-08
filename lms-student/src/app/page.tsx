@@ -48,7 +48,7 @@ export default function LandingPage() {
                   : "text-teal-800 hover:text-teal-700"
               }`}
             >
-              EduLearn
+              LearNova
             </a>
 
             {/* Desktop Navigation */}

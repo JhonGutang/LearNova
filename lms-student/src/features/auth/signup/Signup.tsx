@@ -99,7 +99,7 @@ const Signup: React.FC = () => {
                             : field.type
                         }
                         placeholder={field.placeholder}
-                        className={`block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 pl-3 py-2 ${
+                        className={`block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-600 focus:ring-teal-600 pl-3 py-2 ${
                           errors[field.id] ? "border-red-500" : ""
                         } ${isPasswordField ? "pr-10" : ""}`}
                         value={form[field.id] || ""}
@@ -141,7 +141,7 @@ const Signup: React.FC = () => {
           {/* Move the login link and the Sign Up button outside the scrollable form */}
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-md transition-colors disabled:opacity-60 mt-4"
+            className="w-full bg-teal-800 hover:bg-teal-700 text-white font-semibold py-2 rounded-md transition-colors disabled:opacity-60 mt-4 shadow-lg shadow-teal-800/25"
             disabled={registerLoading}
             onClick={handleSubmit}
           >
@@ -151,7 +151,7 @@ const Signup: React.FC = () => {
             Already have an account?
             <a
               onClick={redirectToSignin}
-              className="font-semibold text-blue-600 hover:underline cursor-pointer"
+              className="font-semibold text-teal-800 hover:text-teal-700 hover:underline cursor-pointer"
             >
               Sign In
             </a>

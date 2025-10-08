@@ -105,3 +105,62 @@ export const suggestions = [
   { title: "Explore Extra Resources", description: "Check out recommended articles and videos.", icon: "/window.svg" },
   { title: "Ask a Mentor", description: "Get help from experienced mentors.", icon: "/vercel.svg" },
 ];
+
+
+
+export const landingPageCourses = [
+  {
+    title: "Web Development Fundamentals",
+    description: "Master HTML, CSS, and JavaScript to build modern, responsive websites from scratch.",
+    image: "https://i.pinimg.com/736x/2b/c1/c9/2bc1c9c6efc3c194e67f30bfb0aa5e22.jpg",
+    duration: "12 weeks",
+    students: "2,450",
+    rating: "4.8",
+    level: "Beginner",
+  },
+  {
+    title: "Data Science & Analytics",
+    description: "Learn Python, statistics, and machine learning to extract insights from data.",
+    image: "https://i.pinimg.com/1200x/75/88/44/758844b51ffd60e3be7184a0a655e833.jpg",
+    duration: "16 weeks",
+    students: "1,890",
+    rating: "4.9",
+    level: "Intermediate",
+  },
+  {
+    title: "Digital Marketing Mastery",
+    description: "Comprehensive guide to SEO, social media, content marketing, and analytics.",
+    image: "https://i.pinimg.com/736x/b0/41/ab/b041abab5f12ce21f693f0bf2e1f895b.jpg",
+    duration: "10 weeks",
+    students: "3,120",
+    rating: "4.7",
+    level: "Beginner",
+  },
+  {
+    title: "UI/UX Design Principles",
+    description: "Create beautiful, user-friendly interfaces with modern design tools and techniques.",
+    image: "https://i.pinimg.com/1200x/85/56/be/8556bec4499f2964ca3553a83c5fdc9b.jpg",
+    duration: "14 weeks",
+    students: "1,650",
+    rating: "4.9",
+    level: "Intermediate",
+  },
+  {
+    title: "Business Management",
+    description: "Essential skills for leading teams, managing projects, and driving business growth.",
+    image: "https://i.pinimg.com/1200x/44/09/f3/4409f36659f44eb7bca9acc5c46ffb9e.jpg",
+    duration: "8 weeks",
+    students: "2,780",
+    rating: "4.6",
+    level: "Beginner",
+  },
+  {
+    title: "Mobile App Development",
+    description: "Build native iOS and Android apps using React Native and modern development tools.",
+    image: "https://i.pinimg.com/736x/dd/4d/0d/dd4d0d30b5e88285ca9938867731ccb6.jpg",
+    duration: "18 weeks",
+    students: "1,420",
+    rating: "4.8",
+    level: "Advanced",
+  },
+]

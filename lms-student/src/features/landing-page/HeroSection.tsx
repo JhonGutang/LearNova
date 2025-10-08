@@ -1,8 +1,10 @@
 import React from "react";
 import { ArrowRight, BookOpen, Users, Award } from "lucide-react"
 import { Button } from "@/components/ui/button";
+import { useRedirectLink } from "@/hooks/useRedirect";
 
 const HeroSection: React.FC = () => {
+  const {redirect} = useRedirectLink()
     return (
         <section id="home" className="relative min-h-screen flex items-center justify-center pt-16 overflow-hidden">
           {/* Background Pattern */}
@@ -25,6 +27,7 @@ const HeroSection: React.FC = () => {
               {/* CTA Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-300">
                 <Button
+                onClick={() => redirect('/signin')}
                   size="lg"
                   className="text-lg bg-teal-800 hover:scale-105 transition-transform duration-200 shadow-lg hover:shadow-xl"
                 >
@@ -32,6 +35,7 @@ const HeroSection: React.FC = () => {
                   <ArrowRight className="ml-2" size={20} />
                 </Button>
                 <Button
+                onClick={() => redirect('/signin')}
                   size="lg"
                   variant="outline"
                   className="text-lg hover:scale-105 transition-transform duration-200 hover:bg-primary hover:text-primary-foreground bg-transparent"

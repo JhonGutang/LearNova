@@ -89,7 +89,7 @@ export default function Signin() {
             )}
             <Button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer"
+              className="w-full bg-teal-800 hover:bg-teal-700 cursor-pointer shadow-lg shadow-teal-800/25"
               disabled={loginLoading}
             >
               {loginLoading ? "Logging in..." : "Login"}
@@ -106,7 +106,7 @@ export default function Signin() {
       </Card>
       <div className="mt-2 text-sm text-gray-500">
         Don't have an account yet?{" "}
-        <a onClick={redirectToSignup} className="font-semibold text-blue-600 hover:underline cursor-pointer">
+        <a onClick={redirectToSignup} className="font-semibold text-teal-800 hover:text-teal-700 hover:underline cursor-pointer">
           Sign Up
         </a>
       </div>

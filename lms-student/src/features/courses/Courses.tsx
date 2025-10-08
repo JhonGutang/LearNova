@@ -7,6 +7,7 @@ import { useCoursesWithCreator } from "./useCourses";
 import { useRedirectLink } from "@/hooks/useRedirect";
 import React from "react";
 import FallbackMessage from "@/shared/FallbackMessage";
+import Banner from "@/features/ads/Banner"; // Import the Banner
 
 const EnrolledChip: React.FC = () => (
   <span className="bg-green-100 text-green-700 text-xs font-semibold px-2 py-0.5 rounded-full border border-green-300">
@@ -16,7 +17,8 @@ const EnrolledChip: React.FC = () => (
 
 const Courses: React.FC = () => {
   const { courses, loading, error } = useCoursesWithCreator();
-  const { toSlug, redirect } = useRedirectLink()
+  const { toSlug, redirect } = useRedirectLink();
+
   if (loading) {
     return (
       <FallbackMessage message="Loading courses..."/>
@@ -31,6 +33,10 @@ const Courses: React.FC = () => {
 
   return (
     <>
+      {/* Banner at the top */}
+      <div className="px-6 pt-6">
+        <Banner />
+      </div>
       <main className="p-6 flex flex-wrap gap-6 justify-center items-center min-h-[60vh]">
         {courses?.length ? (
           courses.map((course) => (
@@ -48,7 +54,7 @@ const Courses: React.FC = () => {
               >
                 <div className="flex gap-2">
                   <Button
-                    className={`cursor-pointer bg-black hover:bg-gray-900 text-white`}
+                    className={`cursor-pointer bg-teal-800 hover:bg-teal-700 text-white shadow-lg shadow-teal-800/25`}
                     onClick={() => redirect(toSlug(Number(course.id), course.title))}
                   >
                     {course.isEnrolled ? "View Course" : "Enroll Now"}

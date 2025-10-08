@@ -72,7 +72,7 @@ const CourseById: React.FC<CourseByIdProps> = ({ courseLink }) => {
                 </div>
               </div>
               <Button
-                className="w-full py-2 text-lg font-semibold bg-gradient-to-r from-teal-400 to-teal-600 hover:from-teal-500 hover:to-teal-700 transition-colors shadow"
+                className="w-full py-2 text-lg font-semibold bg-teal-800 hover:bg-teal-700 transition-colors shadow-lg shadow-teal-800/25"
                 size="lg"
                 onClick={() => enrollCourse(Number(course?.id))}
               >

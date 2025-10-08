@@ -19,7 +19,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
     <div className="flex min-h-screen bg-gray-100 p-8 md:p-0 items-center justify-center">
       <div className="flex w-full overflow-hidden rounded-3xl bg-white shadow-xl max-w-[80vw] mx-auto min-h-[500px]">
         {/* Left Side (Image and Text) */}
-        <div className="hidden md:flex flex-col items-center justify-center bg-blue-600 w-[55%] p-10 relative">
+        <div className="hidden md:flex flex-col items-center justify-center bg-teal-800 w-[55%] p-10 relative">
           {/* Background shapes and effects */}
           <div className="absolute inset-0 z-0">
             {leftImage ? (

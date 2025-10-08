@@ -50,7 +50,7 @@ const SidebarLayout = ({ children, headerChild }: SidebarLayoutProps) => {
         <div className={`h-20 flex items-center px-4 ${collapsed ? "justify-center" : ""}`}>
           <div className={`flex items-center gap-2 ${collapsed ? "" : "w-full"}`}>
             {!collapsed && (
-              <span className="text-2xl font-extrabold text-black tracking-wide text-left">
+              <span className="text-2xl font-extrabold text-teal-800 tracking-wide text-left">
                 LearNova
               </span>
             )}
@@ -76,7 +76,7 @@ const SidebarLayout = ({ children, headerChild }: SidebarLayoutProps) => {
                 type="button"
                 onClick={() => redirect(link.href)}
                 className={`w-full group flex items-center gap-3 rounded-lg text-base font-medium transition-all px-3 py-2
-                  ${isActive ? "bg-black/10 text-black shadow-inner" : "text-gray-800 hover:bg-black/5 hover:text-black"}
+                  ${isActive ? "bg-teal-800 text-white shadow-lg shadow-teal-800/25" : "text-gray-800 hover:bg-teal-100 hover:text-teal-800"}
                   ${collapsed ? "justify-center" : ""}
                   focus:outline-none
                   cursor-pointer
@@ -87,8 +87,8 @@ const SidebarLayout = ({ children, headerChild }: SidebarLayoutProps) => {
                 <span
                   className={`flex items-center justify-center transition-colors ${
                     isActive
-                      ? "text-black"
-                      : "text-gray-500 group-hover:text-black"
+                      ? "text-white"
+                      : "text-gray-500 group-hover:text-teal-800"
                   }`}
                 >
                   {link.icon}
@@ -142,7 +142,7 @@ const SidebarLayout = ({ children, headerChild }: SidebarLayoutProps) => {
           }}
         >
           <div className="flex flex-1 items-center justify-between">
-            <h1 className="text-2xl font-bold text-black tracking-tight">
+            <h1 className="text-2xl font-bold text-teal-800 tracking-tight">
               {sidebarLinks.find((l) => l.href === pathname)?.label || "Dashboard"}
             </h1>
             {/* Optional header child */}

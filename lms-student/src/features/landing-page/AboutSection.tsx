@@ -26,7 +26,7 @@ const AboutSection: React.FC = () => {
           {/* Section Header */}
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold mb-4 text-balance">
-              About <span className="text-teal-800">EduLearn</span>
+              About <span className="text-teal-800">LearNova</span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
               We're on a mission to revolutionize online education and empower learners worldwide.
@@ -39,7 +39,7 @@ const AboutSection: React.FC = () => {
             <div className="relative group">
               <div className="absolute inset-0 bg-primary/20 rounded-lg transform rotate-3 group-hover:rotate-6 transition-transform duration-300" />
               <img
-                src="/modern-classroom-collaboration.png"
+                src="https://i.pinimg.com/736x/f3/0f/1a/f30f1af2734083512703028f62146d2e.jpg"
                 alt="Students learning together"
                 className="relative rounded-lg shadow-xl w-full h-auto transform group-hover:scale-105 transition-transform duration-300"
               />

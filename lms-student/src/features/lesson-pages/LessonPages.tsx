@@ -61,7 +61,7 @@ const LessonPages: React.FC<LessonPagesProps> = ({ lessonLink, courseLink }) => 
   return (
     <div>
       <div key={page.id || currentPage} className="p-10">
-        <div className="border-2 border-teal-500 min-h-[70vh] p-10 rounded-2xl ">
+        <div className="border-2 border-teal-800 min-h-[70vh] p-10 rounded-2xl ">
           <div
             className="prose"
             dangerouslySetInnerHTML={{

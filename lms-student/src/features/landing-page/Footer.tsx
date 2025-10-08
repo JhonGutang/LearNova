@@ -42,7 +42,7 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
           {/* Brand Column */}
           <div className="col-span-2 md:col-span-1">
-            <h3 className="text-2xl font-bold mb-4">EduLearn</h3>
+            <h3 className="text-2xl font-bold mb-4">LearNova</h3>
             <p className="text-primary-foreground/80 text-sm leading-relaxed mb-4">
               Empowering learners worldwide with quality education and innovative learning experiences.
             </p>
@@ -133,7 +133,7 @@ export function Footer() {
         <div className="pt-8 border-t border-primary-foreground/20">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-primary-foreground/80 text-sm text-center md:text-left">
-              © {new Date().getFullYear()} EduLearn. All rights reserved.
+              © {new Date().getFullYear()} LearNova. All rights reserved.
             </p>
             <p className="text-primary-foreground/80 text-sm text-center md:text-right">
               Made with ❤️ for learners everywhere

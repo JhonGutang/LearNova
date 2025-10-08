@@ -14,7 +14,7 @@ interface CardViewProps {
 }
 
 const CARD_WIDTH = 320;
-const CARD_HEIGHT = 430; // Set a fixed height for consistency
+const CARD_HEIGHT = 430;
 
 const CoursesCardView: React.FC<CardViewProps> = ({
   courseName,
@@ -48,7 +48,7 @@ const CoursesCardView: React.FC<CardViewProps> = ({
     >
       {/* Course Image Section */}
       <div
-        className="relative h-48 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-700 rounded-t-xl overflow-hidden"
+        className="relative h-48 bg-gradient-to-br from-teal-800 via-teal-700 to-teal-600 rounded-t-xl overflow-hidden"
         style={{
           minWidth: CARD_WIDTH,
           maxWidth: CARD_WIDTH,
