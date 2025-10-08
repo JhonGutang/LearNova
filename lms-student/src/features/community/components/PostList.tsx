@@ -2,14 +2,13 @@
 
 import React from "react";
 import PostCard from "./PostCard";
-import { CommunityPost } from "@/types/community";
+import { Post } from "@/types/data";
 
 interface PostListProps {
-  posts: CommunityPost[];
-  onReact: (postId: string, reactionType: 'like' | 'dislike') => void;
+  posts: Post[];
 }
 
-const PostList: React.FC<PostListProps> = ({ posts, onReact }) => {
+const PostList: React.FC<PostListProps> = ({ posts }) => {
   if (posts.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow-sm border p-8 text-center">
@@ -27,7 +26,7 @@ const PostList: React.FC<PostListProps> = ({ posts, onReact }) => {
   return (
     <div className="space-y-4">
       {posts.map((post) => (
-        <PostCard key={post.id} post={post} onReact={onReact} />
+        <PostCard key={post.id} post={post} />
       ))}
     </div>
   );

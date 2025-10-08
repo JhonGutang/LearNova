@@ -1,18 +1,16 @@
 "use client";
 
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { X } from "lucide-react";
 import { CreatePostData } from "@/types/community";
 
 interface CreatePostModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: CreatePostData) => void;
+  onSubmit: (data: CreatePostData) => Promise<void>;
 }
 
 const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose, onSubmit }) => {
@@ -20,13 +18,22 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose, onSu
     topic: "",
     content: "",
   });
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.topic.trim() && formData.content.trim()) {
-      onSubmit(formData);
-      setFormData({ topic: "", content: "" });
-      onClose();
+      setIsSubmitting(true);
+      try {
+        await onSubmit(formData);
+        setFormData({ topic: "", content: "" });
+        onClose();
+      } catch (error) {
+        console.error('Error submitting post:', error);
+        // Error handling is done in the parent component
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -46,20 +53,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose, onSu
         }}
       >
         <DialogHeader>
-          <div className="flex items-center justify-between">
-            <DialogTitle className="text-xl font-semibold text-gray-800">Create New Post</DialogTitle>
-            <DialogClose asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleCancel}
-                className="text-gray-500 hover:text-gray-700"
-                aria-label="Close"
-              >
-                <X className="w-5 h-5" />
-              </Button>
-            </DialogClose>
-          </div>
+          <DialogTitle className="text-xl font-semibold text-gray-800">Create New Post</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
@@ -94,16 +88,18 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose, onSu
           <DialogFooter className="flex gap-3 pt-4">
             <Button
               type="submit"
-              className="bg-teal-800 hover:bg-teal-700 text-white px-6 py-2"
+              disabled={isSubmitting}
+              className=" cursor-pointer bg-teal-800 hover:bg-teal-700 text-white px-6 py-2 disabled:opacity-50"
             >
-              Post to Community
+              {isSubmitting ? "Posting..." : "Post to Community"}
             </Button>
             <DialogClose asChild>
               <Button
                 type="button"
                 variant="outline"
                 onClick={handleCancel}
-                className="px-6 py-2"
+                disabled={isSubmitting}
+                className="cursor-pointer px-6 py-2 disabled:opacity-50"
               >
                 Cancel
               </Button>

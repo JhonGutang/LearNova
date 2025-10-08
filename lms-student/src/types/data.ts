@@ -56,3 +56,17 @@ export interface LessonPages {
     contentJson: string
     createdAt: string
 }
+
+export interface Post {
+    id: string;
+    owner: PostOwner
+    topic: string;
+    content: string;
+    createdAt: string;
+}
+
+interface PostOwner {
+    id: string
+    firstName: string
+    lastName: string
+}
