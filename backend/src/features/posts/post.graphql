@@ -1,0 +1,28 @@
+scalar DateTime
+
+type Post {
+  id: ID!
+  owner: PostOwner!
+  topic: String!
+  content: String!
+  createdAt: DateTime!
+}
+
+type PostOwner {
+    id: ID!
+    firstName: String!
+    lastName: String!
+}
+
+input PostInput {
+  topic: String!
+  content: String!
+}
+
+type Query {
+  posts: [Post!]!
+}
+
+type Mutation {
+  createPost(input: PostInput!): Post!
+}

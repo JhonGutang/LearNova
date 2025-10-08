@@ -19,6 +19,7 @@ import { resolvers as lessonPageResolvers } from '../features/lesson_page/lesson
 import { resolvers as creatorResolvers } from '../features/creator/creator.resolver';
 import { resolvers as studentResolvers} from '../features/student/student.resolver';
 import { resolvers as AuthResolvers } from '../features/auth/auth.resolver';
+import { resolvers as PostResolver } from '../features/posts/post.resolver';
 dotenv.config();
 
 const port = normalizePort(process.env.PORT || '3000');
@@ -34,9 +35,10 @@ const lessonPageTypeDefs = readFileSync(join(__dirname, '../features/lesson_page
 const creatorTypeDefs = readFileSync(join(__dirname, '../features/creator/creator.graphql'), 'utf8');
 const studentTypeDefs = readFileSync(join(__dirname, '../features/student/student.graphql'), 'utf8');
 const authTypeDefs = readFileSync(join(__dirname, '../features/auth/auth.graphql'), 'utf8');
+const postTypeDefs = readFileSync(join(__dirname, '../features/posts/post.graphql'), 'utf8');
 // Merge typeDefs and resolvers
-const typeDefs = [rootTypeDefs, courseTypeDefs, lessonTypeDefs, lessonPageTypeDefs, creatorTypeDefs, studentTypeDefs, authTypeDefs] ;
-const resolvers = [courseResolvers, lessonResolvers, lessonPageResolvers, creatorResolvers, studentResolvers, AuthResolvers];
+const typeDefs = [rootTypeDefs, courseTypeDefs, lessonTypeDefs, lessonPageTypeDefs, creatorTypeDefs, studentTypeDefs, authTypeDefs, postTypeDefs] ;
+const resolvers = [courseResolvers, lessonResolvers, lessonPageResolvers, creatorResolvers, studentResolvers, AuthResolvers, PostResolver];
 
 const server = new ApolloServer({
   typeDefs,

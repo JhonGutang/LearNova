@@ -44,6 +44,7 @@ model Student {
 
   user                User                 @relation(fields: [user_id], references: [id])
   enrolledCourses     Enrolled_Course[]
+  posts               Post[]               // Added: relation to Post
 }
 
 model Enrolled_Course {
@@ -154,4 +155,16 @@ model Lesson_Page {
   lesson Lesson @relation(fields: [lesson_id], references: [id], onDelete: Cascade)
 
   @@unique([lesson_id, page_number])
+}
+
+
+model Post {
+  id         Int      @id @default(autoincrement())
+  student_id Int
+  topic      String
+  content    String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  student    Student  @relation(fields: [student_id], references: [id]) // Added: relation to Student
 }
