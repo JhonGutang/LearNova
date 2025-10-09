@@ -65,6 +65,7 @@ export interface Post {
     hasLiked: boolean;
     createdAt: string;
     comments: Comment[]
+    reactionCount: number;
 }
 
 interface PostOwner {

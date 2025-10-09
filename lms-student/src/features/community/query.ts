@@ -12,6 +12,7 @@ const POST_FRAGMENT = gql`
     content
     createdAt
     hasLiked
+    reactionCount
     comments {
       id
       owner

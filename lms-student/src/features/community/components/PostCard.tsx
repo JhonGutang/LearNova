@@ -82,10 +82,16 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
             stroke={isActive ? "#0f766e" : "currentColor"}
           />
           <span>{isActive ? "Liked" : "Like"}</span>
+          {/* Reaction Count */}
+          {typeof post.reactionCount === "number" && post.reactionCount > 0 && (
+            <span className="ml-2 text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full">
+              {post.reactionCount}
+            </span>
+          )}
         </button>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="flex items-center gap-1 text-gray-500 hover:text-teal-700 font-medium transition-colors focus:outline-none"
+          className="cursor-pointer flex items-center gap-1 text-gray-500 hover:text-teal-700 font-medium transition-colors focus:outline-none"
           aria-label="View comments"
           type="button"
         >

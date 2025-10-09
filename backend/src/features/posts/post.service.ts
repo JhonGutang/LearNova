@@ -54,20 +54,12 @@ export class PostService implements PostServiceInterface {
     };
   }
 
-  /**
-   * Get all posts, including whether the current user (studentId) has liked each post.
-   * @param studentId - The ID of the current student (optional, for hasLiked)
-   */
+
   async getPosts(studentId?: number): Promise<Post[]> {
     const posts = await this.prisma.post.findMany({
       include: {
         student: true,
-        reactions: studentId
-          ? {
-              where: { student_id: studentId },
-              select: { liked: true }
-            }
-          : false,
+        reactions: true, // Always include all reactions to count them
         comments: {
           include: {
             student: {
@@ -86,8 +78,20 @@ export class PostService implements PostServiceInterface {
     });
 
     return posts.map((post: any) => {
-      console.log(`Processing post ${post.id}, comments:`, post.comments);
-      
+      // Calculate reactionCount (number of liked reactions)
+      const reactionCount = post.reactions
+        ? post.reactions.filter((reaction: any) => reaction.liked).length
+        : 0;
+
+      // Determine if the current student has liked the post
+      let hasLiked = false;
+      if (studentId && post.reactions) {
+        const userReaction = post.reactions.find(
+          (reaction: any) => reaction.student_id === studentId
+        );
+        hasLiked = !!(userReaction && userReaction.liked);
+      }
+
       const mappedPost = {
         id: String(post.id),
         topic: post.topic,
@@ -98,24 +102,19 @@ export class PostService implements PostServiceInterface {
           firstName: post.student.first_name,
           lastName: post.student.last_name,
         },
-        hasLiked: studentId
-          ? (post.reactions && post.reactions.length > 0 ? !!post.reactions[0].liked : false)
-          : false,
+        hasLiked,
         comments: post.comments
           ? post.comments.map((comment: any) => {
-              console.log(`Mapping comment:`, comment);
               const mappedComment = {
                 id: String(comment.id),
                 comment: comment.comment,
                 owner: comment.student ? `${comment.student.first_name} ${comment.student.last_name}` : ""
               };
-              console.log(`Mapped comment:`, mappedComment);
               return mappedComment;
             })
-          : []
+          : [],
+        reactionCount
       };
-      
-      console.log(`Final mapped post ${post.id}:`, mappedPost);
       return mappedPost;
     });
   }
