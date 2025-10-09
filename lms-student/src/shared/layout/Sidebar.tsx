@@ -9,8 +9,8 @@ import {
   LogOut,
   GraduationCap,
   Users,
-  Calendar,
-  Settings,
+  Trophy,
+  HelpCircle,
   Sidebar as SidebarIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -18,11 +18,11 @@ import { useRedirectLink } from "@/hooks/useRedirect";
 
 const sidebarLinks = [
   { label: "Home", icon: <Home className="w-5 h-5" />, href: "/home" },
-  { label: "My Courses", icon: <BookOpen className="w-5 h-5" />, href: "/my-courses" },
+  { label: "Courses", icon: <BookOpen className="w-5 h-5" />, href: "/courses" },
   { label: "Community", icon: <Users className="w-5 h-5" />, href: "/community" },
-  { label: "Calendar", icon: <Calendar className="w-5 h-5" />, href: "/calendar" },
+  { label: "Achievements", icon: <Trophy className="w-5 h-5" />, href: "/achievements" },
   { label: "Profile", icon: <User className="w-5 h-5" />, href: "/profile" },
-  { label: "Settings", icon: <Settings className="w-5 h-5" />, href: "/settings" },
+  { label: "Help & Support", icon: <HelpCircle className="w-5 h-5" />, href: "/help" },
 ];
 
 const SIDEBAR_WIDTH_EXPANDED = 240;
@@ -108,13 +108,13 @@ const SidebarLayout = ({ children, headerChild }: SidebarLayoutProps) => {
           }`}
         >
           <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-full bg-black/10 flex items-center justify-center font-bold text-black text-lg">
-              U
+            <div className="w-9 h-9 rounded-full bg-teal-600 flex items-center justify-center font-bold text-white text-sm">
+              SJ
             </div>
             {!collapsed && (
               <div className="flex flex-col">
-                <span className="font-semibold text-gray-900 text-sm">Username</span>
-                <span className="text-xs text-gray-500">Student</span>
+                <span className="font-semibold text-gray-900 text-sm">Sarah Johnson</span>
+                <span className="text-xs text-gray-500">Level 12 • 2,450 XP</span>
               </div>
             )}
           </div>
@@ -142,13 +142,26 @@ const SidebarLayout = ({ children, headerChild }: SidebarLayoutProps) => {
           }}
         >
           <div className="flex flex-1 items-center justify-between">
-            <h1 className="text-2xl font-bold text-teal-800 tracking-tight">
-              {sidebarLinks.find((l) => l.href === pathname)?.label || "Dashboard"}
-            </h1>
-            {/* Optional header child */}
-            {headerChild && (
-              <div className="ml-6 flex items-center">{headerChild}</div>
-            )}
+            <div>
+              <h1 className="text-2xl font-bold text-teal-800 tracking-tight">
+                {sidebarLinks.find((l) => l.href === pathname)?.label || "Dashboard"}
+              </h1>
+              {pathname === "/home" && (
+                <p className="text-sm text-gray-600 mt-1">Welcome back, ready to learn something new?</p>
+              )}
+            </div>
+            <div className="flex items-center gap-4">
+              {pathname === "/home" && (
+                <div className="flex items-center gap-2 bg-orange-100 text-orange-700 px-3 py-1 rounded-full">
+                  <Trophy className="w-4 h-4" />
+                  <span className="text-sm font-medium">5 Day Streak</span>
+                </div>
+              )}
+              {/* Optional header child */}
+              {headerChild && (
+                <div className="ml-6 flex items-center">{headerChild}</div>
+              )}
+            </div>
           </div>
         </header>
 

@@ -24,8 +24,12 @@ export interface Course {
     creatorName: string;
     title: string;
     tagline?: string;
+    description?: string;
+    status?: string;
     categories: string[];
-    isEnrolled: boolean
+    createdAt?: string;
+    isEnrolled?: boolean;
+    enrolledCourseId?: number;
 }
 
 export interface Lesson {

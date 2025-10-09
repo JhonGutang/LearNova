@@ -2,7 +2,6 @@
 
 import CoursesCardView from "@/shared/CoursesCardView";
 import { Button } from "@/components/ui/button";
-import { Star } from "lucide-react";
 import { useCoursesWithCreator } from "./useCourses";
 import { useRedirectLink } from "@/hooks/useRedirect";
 import React from "react";
@@ -31,72 +30,37 @@ const Courses: React.FC = () => {
     );
   }
 
-  // Separate enrolled and available courses
-  const enrolledCourses = courses?.filter((course) => course.isEnrolled) || [];
-  const availableCourses = courses?.filter((course) => !course.isEnrolled) || [];
+  // If there are no courses at all
+  if (!courses || courses.length === 0) {
+    return (
+      <div className="min-h-screen bg-white w-full">
+        <div className="px-4 pt-6 md:px-6 max-w-7xl mx-auto w-full">
+          <Banner />
+        </div>
+        <main className="px-4 py-6 md:px-6 min-h-[60vh] max-w-7xl mx-auto w-full">
+          <div className="w-full flex justify-center items-center min-h-[10vh] text-gray-500">
+            No courses found.
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white w-full">
-      {/* Banner at the top */}
-      <div className="px-4 pt-6 md:px-6 max-w-7xl mx-auto w-full">
-        <Banner />
-      </div>
       <main className="px-4 py-6 md:px-6 min-h-[60vh] max-w-7xl mx-auto w-full">
-        {/* Enrolled Courses Section */}
-        <section className="mb-10">
-          <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-semibold text-teal-800 mb-4">Enrolled Courses</h2>
-          <Button onClick={() => redirect("/my-courses")} className="bg-teal-800 hover:bg-teal-700 text-white cursor-pointer">View All</Button>
-          </div>
-          {enrolledCourses.length > 0 ? (
-            <div className="w-[75vw] overflow-x-auto">
-              <div
-                className="flex gap-6 pb-2 hide-scrollbar"
-                style={{
-                  WebkitOverflowScrolling: 'touch',
-                  minWidth: 0,
-                  maxWidth: "100%",
-                }}
-              >
-                {enrolledCourses.map((course) => (
-                  <div
-                    key={course.id}
-                    className="flex-shrink-0"
-                    style={{ width: 330, maxWidth: "90vw" }}
-                  >
-                    <CoursesCardView
-                      courseName={course.title}
-                      tagline={course.tagline}
-                      author={course.creatorName}
-                      className="w-full"
-                      chips={<EnrolledChip />}
-                    >
-                      <div className="flex gap-2">
-                        <Button
-                          className={`cursor-pointer bg-teal-800 hover:bg-teal-700 text-white shadow-lg shadow-teal-800/25`}
-                          onClick={() => redirect(toSlug(Number(course.id), course.title))}
-                        >
-                          View Course
-                        </Button>
-                      </div>
-                    </CoursesCardView>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <div className="w-full flex justify-center items-center min-h-[10vh] text-gray-500">
-              You are not enrolled in any courses yet.
-            </div>
-          )}
-        </section>
-
-        {/* Available Courses Section */}
         <section>
-          <h2 className="text-2xl font-semibold text-teal-800 mb-4">Available Courses</h2>
-          {availableCourses.length > 0 ? (
+          <div className="flex justify-end items-center mb-4">
+            <Button
+              onClick={() => redirect("/my-courses")}
+              className="bg-teal-800 hover:bg-teal-700 text-white cursor-pointer"
+            >
+              View All
+            </Button>
+          </div>
+          {courses.length > 0 ? (
             <div className="flex flex-wrap gap-6 justify-center">
-              {availableCourses.map((course) => (
+              {courses.map((course) => (
                 <div
                   key={course.id}
                   className="flex"
@@ -107,22 +71,17 @@ const Courses: React.FC = () => {
                     tagline={course.tagline}
                     author={course.creatorName}
                     className="w-full"
-                  >
-                    <div className="flex gap-2">
-                      <Button
-                        className={`cursor-pointer bg-teal-800 hover:bg-teal-700 text-white shadow-lg shadow-teal-800/25`}
-                        onClick={() => redirect(toSlug(Number(course.id), course.title))}
-                      >
-                        Enroll Now
-                      </Button>
-                    </div>
-                  </CoursesCardView>
+                    chips={course.isEnrolled ? <EnrolledChip /> : undefined}
+                    isEnrolled={course.isEnrolled}
+                    onEnrollClick={() => redirect("courses/" + toSlug(Number(course.id), course.title))}
+                    onViewClick={() => redirect("courses/" + toSlug(Number(course.id), course.title))}
+                  />
                 </div>
               ))}
             </div>
           ) : (
             <div className="w-full flex justify-center items-center min-h-[10vh] text-gray-500">
-              No available courses found.
+              No courses found.
             </div>
           )}
         </section>

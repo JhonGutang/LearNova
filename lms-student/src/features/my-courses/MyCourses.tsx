@@ -41,16 +41,9 @@ const MyCourses = () => {
                             tagline={course.tagline}
                             author={course.creatorName}
                             className="w-full"
-                        >
-                            <div className="flex gap-2">
-                                <Button
-                                    className="cursor-pointer bg-teal-600 hover:bg-teal-700 text-white"
-                                    onClick={() => redirect(toSlug(Number(course.id), course.title))}
-                                >
-                                    View
-                                </Button>
-                            </div>
-                        </CoursesCardView>
+                            isEnrolled={true}
+                            onViewClick={() => redirect(toSlug(Number(course.id), course.title))}
+                        />
                     </div>
                 ))
             ) : (

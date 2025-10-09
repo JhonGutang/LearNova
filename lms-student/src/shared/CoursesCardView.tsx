@@ -1,5 +1,6 @@
 import React from "react";
 import { Star } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface CardViewProps {
   courseName?: string;
@@ -11,6 +12,9 @@ interface CardViewProps {
   rating?: number;
   reviewCount?: number;
   imageUrl?: string;
+  isEnrolled?: boolean;
+  onEnrollClick?: () => void;
+  onViewClick?: () => void;
 }
 
 const CARD_WIDTH = 320;
@@ -23,9 +27,12 @@ const CoursesCardView: React.FC<CardViewProps> = ({
   className = "",
   children,
   chips,
-  rating = 5,
+  rating = 4.8,
   reviewCount = 123,
   imageUrl,
+  isEnrolled = false,
+  onEnrollClick,
+  onViewClick,
 }) => {
   return (
     <div
@@ -46,36 +53,69 @@ const CoursesCardView: React.FC<CardViewProps> = ({
         flexDirection: "column",
       }}
     >
-      {/* Course Image Section */}
+      {/* Upper Visual Section - Tech Icons */}
       <div
-        className="relative h-48 bg-gradient-to-br from-teal-800 via-teal-700 to-teal-600 rounded-t-xl overflow-hidden"
+        className="relative bg-gradient-to-br from-orange-400 via-orange-500 to-orange-600 rounded-t-xl flex items-center justify-center p-8"
         style={{
           minWidth: CARD_WIDTH,
           maxWidth: CARD_WIDTH,
           width: CARD_WIDTH,
-          height: 192, // 48 * 4 = 192px
+          height: 200, // Larger section for icons
         }}
       >
-        {imageUrl ? (
-          <img
-            src={imageUrl}
-            alt={courseName || "Course"}
-            className="w-full h-full object-cover"
-            style={{ minHeight: "100%", minWidth: "100%" }}
-          />
-        ) : (
-          <img
-            src="https://i.ibb.co/v43WTV3H/geto.jpg"
-            alt="Course"
-            className="w-full h-full object-cover"
-            style={{ minHeight: "100%", minWidth: "100%" }}
-          />
-        )}
+        {/* HTML5 Logo - Main center icon */}
+        <div className="relative z-10">
+          <div className="w-16 h-16 bg-orange-500 rounded-lg shadow-lg flex items-center justify-center transform rotate-12">
+            <span className="text-white font-bold text-2xl">5</span>
+          </div>
+        </div>
+
+        {/* Surrounding Tech Icons */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          {/* Left side icons */}
+          <div className="absolute left-8 top-8 space-y-2">
+            <div className="w-8 h-8 bg-orange-400 rounded flex items-center justify-center">
+              <div className="w-4 h-1 bg-white rounded"></div>
+              <div className="w-4 h-1 bg-white rounded ml-1"></div>
+              <div className="w-4 h-1 bg-white rounded ml-1"></div>
+            </div>
+            <div className="w-8 h-8 bg-orange-400 rounded flex items-center justify-center">
+              <div className="w-4 h-1 bg-white rounded"></div>
+              <div className="w-4 h-1 bg-white rounded ml-1"></div>
+              <div className="w-4 h-1 bg-white rounded ml-1"></div>
+            </div>
+          </div>
+
+          {/* Right side icons */}
+          <div className="absolute right-8 top-8 space-y-2">
+            <div className="w-8 h-8 bg-orange-400 rounded flex items-center justify-center">
+              <span className="text-white font-bold text-sm">j</span>
+            </div>
+            <div className="w-8 h-8 bg-orange-400 rounded flex items-center justify-center">
+              <div className="w-4 h-1 bg-white rounded"></div>
+              <div className="w-4 h-1 bg-white rounded ml-1"></div>
+              <div className="w-4 h-1 bg-white rounded ml-1"></div>
+            </div>
+            <div className="w-8 h-8 bg-orange-400 rounded flex items-center justify-center">
+              <div className="w-3 h-3 border-l-2 border-white"></div>
+            </div>
+          </div>
+
+          {/* Bottom right icons */}
+          <div className="absolute right-8 bottom-8 space-y-2">
+            <div className="w-8 h-8 bg-orange-600 rounded flex items-center justify-center">
+              <span className="text-white font-bold text-xs">.S</span>
+            </div>
+            <div className="w-8 h-8 bg-yellow-400 rounded flex items-center justify-center">
+              <span className="text-black font-bold text-xs">ä</span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Content Section */}
+      {/* Lower Text Section */}
       <div
-        className="flex-1 px-6 py-4 flex flex-col"
+        className="flex-1 px-6 py-6 flex flex-col justify-between"
         style={{
           minWidth: CARD_WIDTH,
           maxWidth: CARD_WIDTH,
@@ -85,48 +125,32 @@ const CoursesCardView: React.FC<CardViewProps> = ({
           flexDirection: "column",
         }}
       >
-        {/* Top: Title, Chips, Author */}
-        <div>
-          {/* Course Title and Chips */}
-          <div className="flex items-start justify-between mb-2">
-            <h2 className="text-xl font-bold text-gray-900 flex-1 truncate">
-              {courseName || "Course Title"}
-            </h2>
-            {chips && (
-              <div className="ml-2 flex items-center">{chips}</div>
-            )}
-          </div>
-
-          {/* Author */}
-          {author && (
-            <p className="text-sm text-gray-600 mb-1 truncate">{author}</p>
-          )}
+        {/* Title and Description */}
+        <div className="mb-4">
+          <h2 className="text-xl font-bold text-gray-900 mb-2">
+            {courseName || "Web Development Bootcamp"}
+          </h2>
+          <p className="text-sm text-gray-700 leading-relaxed">
+            {tagline || "Complete guide to modern web development"}
+          </p>
         </div>
 
-        {/* Description and Rating: put closer together */}
-        <div className="mt-2 flex flex-col gap-2">
-          {/* Description */}
-          {tagline && (
-            <p className="text-sm text-gray-700 leading-relaxed line-clamp-3 mb-0">
-              {tagline}
-            </p>
-          )}
-
-          {/* Rating Section */}
-          <div className="flex items-center mt-1">
-            <span className="text-lg font-semibold text-gray-900 mr-2">{rating}</span>
-            <div className="flex space-x-1 mr-2">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  className={`w-4 h-4 ${
-                    i < rating ? "text-yellow-400 fill-current" : "text-gray-300"
-                  }`}
-                />
-              ))}
-            </div>
-            <span className="text-sm text-gray-600">({reviewCount})</span>
+        {/* Rating and Enrollment Button */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <Star className="w-4 h-4 text-yellow-400 fill-current mr-1" />
+            <span className="text-gray-900 font-semibold">{rating}</span>
           </div>
+          <Button
+            onClick={isEnrolled ? onViewClick : onEnrollClick}
+            className={`cursor-pointer text-sm px-4 py-2 ${
+              isEnrolled 
+                ? "bg-teal-600 hover:bg-teal-700 text-white" 
+                : "bg-teal-800 hover:bg-teal-700 text-white"
+            }`}
+          >
+            {isEnrolled ? "View Course" : "Enroll"}
+          </Button>
         </div>
 
         {/* Action Button */}

@@ -1,12 +1,12 @@
 import React from "react";
 import SidebarLayout from "@/shared/layout/Sidebar";
 import HeaderContents from "@/shared/HeaderContents";
-import Courses from "@/features/courses/Courses";
+import { DashboardLayout } from "@/features/dashboard";
 
 const Homepage: React.FC = () => {
   return (
       <SidebarLayout headerChild={<HeaderContents />}>
-        <Courses/>
+        <DashboardLayout />
       </SidebarLayout>
   );
 };
