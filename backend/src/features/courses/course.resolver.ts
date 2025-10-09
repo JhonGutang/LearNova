@@ -1,5 +1,5 @@
 import prisma from "../../config/prisma";
-import { CourseInput, Status } from "../../generated/graphql";
+import { CourseInput, ResponseStatus } from "../../generated/graphql";
 import { MyContext } from "../../types/context";
 import { CourseRepository } from "./course.repository";
 import { CourseService } from "./courses.service";
@@ -105,19 +105,19 @@ export const resolvers = {
     ) => {
       try {
         if (!context.session.studentId) return null;
-        const isSuccess = courseService.enroll(
+        const isSuccess = await courseService.enroll(
           args.courseId,
           context.session.studentId
         );
         if (!isSuccess) {
           return {
-            status: Status.Error,
+            status: ResponseStatus.Error,
             message: "Enrolling Course Failed",
           };
         }
 
         return {
-          status: Status.Success,
+          status: ResponseStatus.Success,
           message: "Course Enrolled Successfully",
         };
       } catch (error) {
@@ -135,21 +135,21 @@ export const resolvers = {
         );
         if (isStarted.progressStatus === "FAILED") {
           return {
-            status: Status.Error,
+            status: ResponseStatus.Error,
             progressStatus: isStarted.progressStatus,
             message: isStarted.message,
           };
         }
 
         return {
-          status: Status.Success,
+          status: ResponseStatus.Success,
           progressStatus: isStarted.progressStatus,
           message: isStarted.message,
         };
       } catch (error) {
         console.error("Error starting progress:", error);
         return {
-          status: Status.Error,
+          status: ResponseStatus.Error,
           progressStatus: "FAILED",
           message: "Internal server error",
         };
@@ -164,7 +164,7 @@ export const resolvers = {
         const { studentId } = context.session
 
         if(!studentId) return {
-          status: Status.Error,
+          status: ResponseStatus.Error,
           message: "Student not found",
         }
 
@@ -175,21 +175,21 @@ export const resolvers = {
 
         if (isStarted.progressStatus === "FAILED") {
           return {
-            status: Status.Error,
+            status: ResponseStatus.Error,
             progressStatus: isStarted.progressStatus,
             message: isStarted.message,
           };
         }
 
         return {
-          status: Status.Success,
+          status: ResponseStatus.Success,
           progressStatus: isStarted.progressStatus,
           message: isStarted.message,
         };
       } catch (error) {
         console.error("Error starting progress:", error);
         return {
-          status: Status.Error,
+          status: ResponseStatus.Error,
           progressStatus: "FAILED",
           message: "Internal server error",
         };

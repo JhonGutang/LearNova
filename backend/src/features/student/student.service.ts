@@ -5,15 +5,14 @@ import bcrypt from 'bcrypt'
 function normalizeStudentProfile(student: any, user: any): StudentProfile {
     return {
         id: student.id,
-        user_id: user.id,
-        first_name: student.first_name,
-        last_name: student.last_name,
-        middle_name: student.middle_name,
+        userId: user.id,
+        firstName: student.first_name,
+        lastName: student.last_name,
+        middleName: student.middle_name,
         email: user.email,
         phone: student.phone,
         address: student.address,
-        created_at: student.created_at,
-        updated_at: student.updated_at,
+        createdAt: student.created_at,
     };
 }
 
@@ -37,9 +36,9 @@ export class StudentService implements StudentServiceInterface {
                 role: "STUDENT",
                 student: {
                     create: {
-                        first_name: input.first_name,
-                        last_name: input.last_name,
-                        middle_name: input.middle_name,
+                        first_name: input.firstName,
+                        last_name: input.lastName,
+                        middle_name: input.middleName,
                         phone: input.phone,
                         address: input.address,
                     }

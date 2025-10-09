@@ -76,13 +76,13 @@ export const useAuth = () => {
     }
     const input: studentCreateInput = {
       email: form.email,
-      first_name: form["first-name"],
-      last_name: form["last-name"],
+      firstName: form["first-name"],
+      lastName: form["last-name"],
       phone: form.phone,
       address: form.address,
       password: form.password,
     };
-    if (form["middle-name"]) input.middle_name = form["middle-name"];
+    if (form["middle-name"]) input.middleName = form["middle-name"];
     try {
       const response = await CreateStudent({ variables: { input } });
       const registerResult = (response.data as any)?.createStudent;

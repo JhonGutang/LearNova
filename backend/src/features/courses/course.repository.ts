@@ -180,7 +180,7 @@ export class CourseRepository implements CourseRepositoryInterface {
   }
 
   async createEnrollment(courseId: number, studentId: number): Promise<void> {
-    this.prisma.enrolled_Course.create({
+    await this.prisma.enrolled_Course.create({
       data: {
         course_id: courseId,
         student_id: studentId,

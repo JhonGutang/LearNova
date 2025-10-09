@@ -1,5 +1,5 @@
 import prisma from "../../config/prisma";
-import { CreateStudentInput, Status } from "../../generated/graphql";
+import { CreateStudentInput, ResponseStatus } from "../../generated/graphql";
 import { StudentService } from "./student.service";
 
 const studentService = new StudentService(prisma)
@@ -10,13 +10,13 @@ export const resolvers = {
             const student = studentService.create(args.input);
             if(!student) {
                 return {
-                    status: Status.Error,
+                    status: ResponseStatus.Error,
                     message: "Student creation failed"
                 }
             }
 
             return {
-                status: Status.Success,
+                status: ResponseStatus.Success,
                 message: "Student Created Successfully"
             }
         }
