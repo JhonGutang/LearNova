@@ -74,9 +74,13 @@ export class StudentService implements StudentServiceInterface {
     }
 
     private async getCoursesInProgress(studentId: number) {
-        // Fetch enrolled courses with course details
+        // Fetch only 2 enrolled courses with updated lesson progress
         const enrolledCourses = await this.prisma.enrolled_Course.findMany({
             where: { student_id: studentId },
+            orderBy: {
+                updated_at: 'desc'
+            },
+            take: 2,
             include: {
                 course: {
                     include: {
@@ -89,21 +93,25 @@ export class StudentService implements StudentServiceInterface {
 
         return enrolledCourses.map((enrolled: any) => {
             const totalLessons = enrolled.course.lessons.length;
-            const completedLessons = enrolled.lessonProgress.filter(
+            const finishedLessons = enrolled.lessonProgress.filter(
                 (progress: any) => progress.status === 'FINISHED'
             ).length;
+
+            // Consider course 'not finished' if not all lessons are finished
+            const notFinished = finishedLessons < totalLessons;
             
             const progressPercentage = totalLessons > 0 
-                ? (completedLessons / totalLessons) * 100 
+                ? (finishedLessons / totalLessons) * 100 
                 : 0;
 
             return {
-                courseId: enrolled.course.id, // Attach the course id as courseId
+                courseId: enrolled.course.id,
                 title: enrolled.course.title,
                 tagline: enrolled.course.tagline,
-                progressPercentage: Math.round(progressPercentage * 100) / 100 // Round to 2 decimal places
+                progressPercentage: Math.round(progressPercentage * 100) / 100,
+                notFinished // flag if the course is not finished
             };
-        });
+        }).filter((enrolled: any) => enrolled.notFinished); // return only not finished
     }
 
     private async getRandomCourseRecommendations(studentId: number, limit: number = 5) {

@@ -16,7 +16,7 @@ const DashboardLayout: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto pt-7">
       {/* Welcome Banner */}
-      <WelcomeBanner />
+      <WelcomeBanner userName={studentDetails?.firstName}  level={studentDetails?.level} xp={studentDetails?.exp} />
       
       {/* Stats Cards */}
       <StatsCards />
