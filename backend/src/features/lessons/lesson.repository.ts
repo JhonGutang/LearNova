@@ -45,16 +45,33 @@ export class LessonRepository implements LessonRepositoryInterface {
   }): Promise<LessonProgress | null> {
     const { enrolledCourseId, studentId, lessonId } = options;
 
+    // Validate input to avoid ambiguous queries
+    if (!enrolledCourseId && !studentId) {
+      throw new Error("Either enrolledCourseId or studentId must be provided");
+    }
+
+    const whereClause: any = {
+      lesson_id: lessonId,
+    };
+
+    if (enrolledCourseId) {
+      whereClause.enrolled_course_id = enrolledCourseId;
+    } else if (studentId) {
+      whereClause.enrolledCourse = { student_id: studentId };
+    }
+
+    // Use select only (no need for include if we're using select for the same relation)
     return this.prisma.lesson_Progress.findFirst({
-      where: {
-        lesson_id: lessonId,
-        ...(enrolledCourseId
-          ? { enrolled_course_id: enrolledCourseId }
-          : studentId
-          ? { enrolledCourse: { student_id: studentId } }
-          : {}),
+      where: whereClause,
+      select: {
+        status: true,
+        lesson: {
+          select: {
+            exp: true,
+          },
+        },
       },
-    });
+    }) as Promise<LessonProgress | null>;
   }
 
   async findLessonProgressByEnrollment(

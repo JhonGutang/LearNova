@@ -2,6 +2,8 @@ import { Course, CourseInput, Lesson, LessonProgress } from "../../generated/gra
 import { normalizeCourse } from "../../utils/courseNormalizer";
 import { CourseRepository } from "./course.repository";
 import { LessonRepository } from "../lessons/lesson.repository";
+import { LevelSystemService } from "../level_system/level_system.service"; // Import Level System Service
+
 type CreateCourseData = CourseInput & { creator_id: number };
 
 export interface CourseQueryOptions {
@@ -30,7 +32,11 @@ interface CourseServiceInterface {
 }
 
 export class CourseService implements CourseServiceInterface {
-  constructor(private courseRepository: CourseRepository, private lessonRepository: LessonRepository) {}
+  constructor(
+    private courseRepository: CourseRepository, 
+    private lessonRepository: LessonRepository,
+    private levelSystemService: LevelSystemService // Inject LevelSystemService
+  ) {}
 
   async create(courseData: CreateCourseData): Promise<Course> {
     const existingCourse = await this.courseRepository.findByTitle(courseData.title);
@@ -161,16 +167,43 @@ export class CourseService implements CourseServiceInterface {
         message: "User doesn't have progress with this lesson"
       };
     }
+
+    if (
+      existingProgress.status &&
+      existingProgress.status.toUpperCase() === "FINISHED"
+    ) {
+      return {
+        progressStatus: "FINISHED",
+        message: "Lesson progress is already marked as FINISHED.",
+      };
+    }
   
     try {
       await this.lessonRepository.updateLessonProgressStatus(
         Number(existingProgress.id),
         "FINISHED"
       );
-  
+      let expGained: number | undefined = undefined;
+      if (
+        (existingProgress as any).lesson &&
+        typeof (existingProgress as any).lesson.exp === "number"
+      ) {
+        expGained = (existingProgress as any).lesson.exp;
+      }
+
+      let levelUpResult = null;
+      if (typeof expGained === "number" && expGained > 0) {
+        levelUpResult = await this.levelSystemService.levelUp(studentId, expGained);
+      }
+
+      let message = "Lesson progress marked as FINISHED";
+      if (levelUpResult) {
+        message += ` and student awarded ${expGained} EXP.`;
+      }
+
       return {
         progressStatus: "FINISHED",
-        message: "Lesson progress marked as FINISHED"
+        message
       };
     } catch (error) {
       return {

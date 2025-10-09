@@ -56,6 +56,8 @@ model Student {
   last_name   String
   middle_name String?
   phone       String
+  level       Int      @default(1)
+  exp         Int      @default(0)
   address     String
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
@@ -65,6 +67,14 @@ model Student {
   posts               Post[]
   reactions           Reaction[]
   comments            Comment[]
+}
+
+model Level_Threshold {
+  id           Int    @id @default(autoincrement())
+  level        Int
+  exp_required Int
+  title        String
+  description  String
 }
 
 model Enrolled_Course {
@@ -155,6 +165,7 @@ model Lesson {
   course_id   Int
   title       String
   description String
+  exp         Int      @default(50)
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 

@@ -66,15 +66,14 @@ export class StudentService implements StudentServiceInterface {
             id: student.id.toString(),
             firstName: student.first_name,
             lastName: student.last_name,
-            level: 1, // Default level since it's not in schema
-            exp: 0, // Default exp since it's not in schema
+            level: student.level, 
+            exp: student.exp,
             coursesInProgress,
             courseRecommendations
         };
     }
 
     private async getCoursesInProgress(studentId: number) {
-        // Fetch only 2 enrolled courses with updated lesson progress
         const enrolledCourses = await this.prisma.enrolled_Course.findMany({
             where: { student_id: studentId },
             orderBy: {
@@ -97,7 +96,6 @@ export class StudentService implements StudentServiceInterface {
                 (progress: any) => progress.status === 'FINISHED'
             ).length;
 
-            // Consider course 'not finished' if not all lessons are finished
             const notFinished = finishedLessons < totalLessons;
             
             const progressPercentage = totalLessons > 0 
@@ -109,41 +107,36 @@ export class StudentService implements StudentServiceInterface {
                 title: enrolled.course.title,
                 tagline: enrolled.course.tagline,
                 progressPercentage: Math.round(progressPercentage * 100) / 100,
-                notFinished // flag if the course is not finished
+                notFinished 
             };
-        }).filter((enrolled: any) => enrolled.notFinished); // return only not finished
+        }).filter((enrolled: any) => enrolled.notFinished); 
     }
 
     private async getRandomCourseRecommendations(studentId: number, limit: number = 5) {
-        // Get enrolled course IDs to exclude them from recommendations
         const enrolledCourseIds = await this.prisma.enrolled_Course.findMany({
             where: { student_id: studentId },
             select: { course_id: true }
         });
 
         const enrolledIds = enrolledCourseIds.map((ec: any) => ec.course_id);
-
-        // Get random courses that the student hasn't enrolled in
         const randomCourses = await this.prisma.course.findMany({
             where: {
                 id: {
                     notIn: enrolledIds
                 },
-                status: 'PUBLISHED' // Only recommend published courses
+                status: 'PUBLISHED'
             },
             take: limit,
             orderBy: {
-                id: 'desc' // This is a simple way to get "random" courses
-                // In production, you might want to use a more sophisticated randomization
+                id: 'desc' 
             }
         });
 
         return randomCourses.map((course: any) => ({
-            courseId: course.id, // Attach the course id to the recommendation
+            courseId: course.id, 
             title: course.title,
             tagline: course.tagline,
-            rate: Math.random() * 5 // Random rating between 0-5 for demo purposes
-            // In production, this could be based on actual ratings/reviews
+            rate: Math.random() * 5 
         }));
     }
 }

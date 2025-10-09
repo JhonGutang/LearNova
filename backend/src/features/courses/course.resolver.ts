@@ -4,9 +4,11 @@ import { MyContext } from "../../types/context";
 import { CourseRepository } from "./course.repository";
 import { CourseService } from "./courses.service";
 import { LessonRepository } from "../lessons/lesson.repository";
+import { LevelSystemService } from "../level_system/level_system.service";
 const courseRepository = new CourseRepository(prisma);
 const lessonRepository = new LessonRepository(prisma);
-const courseService = new CourseService(courseRepository, lessonRepository);
+const levelSystemService = new LevelSystemService(prisma)
+const courseService = new CourseService(courseRepository, lessonRepository, levelSystemService);
 
 export const resolvers = {
   Query: {
