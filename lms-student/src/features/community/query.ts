@@ -12,6 +12,11 @@ const POST_FRAGMENT = gql`
     content
     createdAt
     hasLiked
+    comments {
+      id
+      owner
+      comment
+    }
   }
 `;
 
@@ -36,8 +41,22 @@ export const CREATE_POST_MUTATION = gql`
 export const REACT_POST_MUTATION = gql`
   mutation ReactPost($input: ReactPostInput!) {
     reactPost(input: $input) {
+      status
       message
-      type
+    }
+  }
+`;
+
+export const CREATE_COMMENT_MUTATION = gql`
+  mutation CreateComment($comment: String!, $postId: String!) {
+    createComment(comment: $comment, postId: $postId) {
+      status
+      message
+      comment {
+        id
+        owner
+        comment
+      }
     }
   }
 `;

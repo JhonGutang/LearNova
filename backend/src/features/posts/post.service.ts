@@ -1,4 +1,4 @@
-import { PostInput, Post } from "../../generated/graphql";
+import { PostInput, Post, Comment } from "../../generated/graphql";
 import { formatDateToMDY12Hour } from "../../utils/dateFormatter";
 
 interface PrismaClientLike {
@@ -67,27 +67,57 @@ export class PostService implements PostServiceInterface {
               where: { student_id: studentId },
               select: { liked: true }
             }
-          : false
+          : false,
+        comments: {
+          include: {
+            student: {
+              select: {
+                id: true,
+                first_name: true,
+                last_name: true
+              }
+            }
+          }
+        }
       },
       orderBy: {
         created_at: "desc"
       }
     });
 
-    return posts.map((post: any) => ({
-      id: String(post.id),
-      topic: post.topic,
-      content: post.content,
-      createdAt: formatDateToMDY12Hour(new Date(post.created_at)),
-      owner: {
-        id: String(post.student.id),
-        firstName: post.student.first_name,
-        lastName: post.student.last_name,
-      },
-      hasLiked: studentId
-        ? (post.reactions && post.reactions.length > 0 ? !!post.reactions[0].liked : false)
-        : false
-    }));
+    return posts.map((post: any) => {
+      console.log(`Processing post ${post.id}, comments:`, post.comments);
+      
+      const mappedPost = {
+        id: String(post.id),
+        topic: post.topic,
+        content: post.content,
+        createdAt: formatDateToMDY12Hour(new Date(post.created_at)),
+        owner: {
+          id: String(post.student.id),
+          firstName: post.student.first_name,
+          lastName: post.student.last_name,
+        },
+        hasLiked: studentId
+          ? (post.reactions && post.reactions.length > 0 ? !!post.reactions[0].liked : false)
+          : false,
+        comments: post.comments
+          ? post.comments.map((comment: any) => {
+              console.log(`Mapping comment:`, comment);
+              const mappedComment = {
+                id: String(comment.id),
+                comment: comment.comment,
+                owner: comment.student ? `${comment.student.first_name} ${comment.student.last_name}` : ""
+              };
+              console.log(`Mapped comment:`, mappedComment);
+              return mappedComment;
+            })
+          : []
+      };
+      
+      console.log(`Final mapped post ${post.id}:`, mappedPost);
+      return mappedPost;
+    });
   }
 
   /**

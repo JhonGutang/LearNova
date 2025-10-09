@@ -1,4 +1,4 @@
-import { ChangePasswordInput, LoginInput, Status } from "../../generated/graphql";
+import { ChangePasswordInput, LoginInput, ResponseStatus } from "../../generated/graphql";
 import { AuthService } from "./auth.service";
 import prisma from "../../config/prisma";
 import { MyContext } from "../../types/context";
@@ -20,12 +20,12 @@ export const resolvers = {
             const isAuthenticated = await authService.authenticateUser(args.input, context);
             if (isAuthenticated) {
                 return {
-                    status: Status.Success,
+                    status: ResponseStatus.Success,
                     message: "Login successful"
                 };
             } else {
                 return {
-                    status: Status.Error,
+                    status: ResponseStatus.Error,
                     message: "Invalid credentials"
                 };
             }
@@ -34,12 +34,12 @@ export const resolvers = {
             const isSuccess = await authService.changePassword(args.input)
             if(isSuccess) {
                 return {
-                    status: Status.Success,
+                    status: ResponseStatus.Success,
                     message: "Password Changed"
                 };
             } else {
                 return {
-                    status: Status.Error,
+                    status: ResponseStatus.Error,
                     message: "Password Change Failed"
                 };
             }
@@ -49,12 +49,12 @@ export const resolvers = {
               context.session.destroy((error: any) => {
                 if (error) {
                   resolve({
-                    status: Status.Error,
+                    status: ResponseStatus.Error,
                     message: "Session Destruction Failed: " + error
                   });
                 } else {
                   resolve({
-                    status: Status.Success,
+                    status: ResponseStatus.Success,
                     message: "Session Destroyed"
                   });
                 }

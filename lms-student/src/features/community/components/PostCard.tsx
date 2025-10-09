@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Post } from "@/types/data";
 import { ThumbsUp, MessageCircle } from "lucide-react";
 import { usePosts } from "../usePost";
+import PostModal from "./PostModal";
 
 interface PostCardProps {
   post: Post;
@@ -12,6 +13,7 @@ interface PostCardProps {
 const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const { handleReactPost } = usePosts();
   const [isLiking, setIsLiking] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const getInitials = (name: string) => {
     return name
@@ -50,12 +52,18 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
       </div>
 
       {/* Topic */}
-      <div className="mb-3">
+      <div 
+        className="mb-3 cursor-pointer hover:bg-gray-50 p-2 -m-2 rounded transition-colors"
+        onClick={() => setIsModalOpen(true)}
+      >
         <h3 className="text-lg font-semibold text-gray-900">{post.topic}</h3>
       </div>
 
       {/* Content */}
-      <div className="mb-4">
+      <div 
+        className="mb-4 cursor-pointer hover:bg-gray-50 p-2 -m-2 rounded transition-colors"
+        onClick={() => setIsModalOpen(true)}
+      >
         <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{post.content}</p>
       </div>
 
@@ -76,14 +84,27 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
           <span>{isActive ? "Liked" : "Like"}</span>
         </button>
         <button
+          onClick={() => setIsModalOpen(true)}
           className="flex items-center gap-1 text-gray-500 hover:text-teal-700 font-medium transition-colors focus:outline-none"
           aria-label="View comments"
           type="button"
         >
           <MessageCircle className="w-5 h-5" />
           <span>Comment</span>
+          {post.comments && post.comments.length > 0 && (
+            <span className="ml-1 text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">
+              {post.comments.length}
+            </span>
+          )}
         </button>
       </div>
+      
+      {/* Post Modal */}
+      <PostModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        post={post}
+      />
     </div>
   );
 };

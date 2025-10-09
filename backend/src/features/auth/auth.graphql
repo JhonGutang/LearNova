@@ -1,4 +1,3 @@
-
 type CreatorProfile {
   id: Int!
   userId: Int!
@@ -23,43 +22,41 @@ type StudentProfile {
   createdAt: DateTime
 }
 
-
 enum Role {
-    CREATOR
-    STUDENT
+  CREATOR
+  STUDENT
 }
 
 input LoginInput {
-    email: String!
-    password: String!
-    role: Role!
+  email: String!
+  password: String!
+  role: Role!
 }
 
 input ChangePasswordInput {
-    email: String!
-    password: String!
+  email: String!
+  password: String!
 }
 
-enum Status{
-    SUCCESS
-    ERROR
+enum ResponseStatus {
+  SUCCESS
+  ERROR
 }
 
-type AuthResult {
-    status: Status
-    message: String!
-
+type BaseResponse {
+  status: ResponseStatus
+  message: String
 }
+
 
 union UserProfile = CreatorProfile | StudentProfile
 
-
 type Query {
-    user: UserProfile
+  user: UserProfile
 }
 
 type Mutation {
-    login(input: LoginInput): AuthResult
-    changePassword(input: ChangePasswordInput): AuthResult
-    logout: AuthResult
+  login(input: LoginInput): BaseResponse
+  changePassword(input: ChangePasswordInput): BaseResponse
+  logout: BaseResponse
 }

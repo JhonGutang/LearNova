@@ -10,16 +10,6 @@ input CreateStudentInput  {
     password: String!
 }
 
-enum Status {
-    SUCCESS
-    ERROR
-}
-
-type AuthResult {
-    status: Status
-    message: String
-}
-
 type Mutation {
-    createStudent(input: CreateStudentInput): AuthResult
+    createStudent(input: CreateStudentInput): BaseResponse
 }

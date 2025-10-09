@@ -1,0 +1,20 @@
+type Comment {
+  id: ID!
+  owner: String!
+  comment: String!
+  student: StudentProfile
+}
+
+type CreateCommentResponse {
+  status: ResponseStatus
+  message: String
+  comment: Comment
+}
+
+extend type Query {
+  comments(postId: String): [Comment!]!
+}
+
+extend type Mutation {
+  createComment(comment: String, postId: String): CreateCommentResponse!
+}

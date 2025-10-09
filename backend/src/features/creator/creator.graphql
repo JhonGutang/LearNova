@@ -16,17 +16,6 @@ input CreateCreatorProfileInput {
   address: String!
 }
 
-enum Status {
-  SUCCESS
-  ERROR
-}
-
-type AuthResult {
-  status: Status!
-  message: String!
-}
-
-
 type Query {
   creator(id: Int!): CreatorProfile
   creators: [CreatorProfile!]!

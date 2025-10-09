@@ -64,6 +64,7 @@ export interface Post {
     content: string;
     hasLiked: boolean;
     createdAt: string;
+    comments: Comment[]
 }
 
 interface PostOwner {
@@ -76,3 +77,9 @@ export interface ReactPostInput {
     postId: string;
     isLiked: boolean;
   }
+
+export interface Comment {
+    id: string
+    owner: string
+    comment: string
+}

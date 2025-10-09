@@ -1,8 +1,26 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+/*
+  Prisma Model Relationships:
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+  - User has a one-to-one relationship with either Creator or Student (polymorphic via role).
+  - Student and Creator both reference User via user_id (one-to-one).
+  - Creator has many Courses.
+  - Course belongs to one Creator.
+  - Course has many Lessons and many Course_Category (for categories).
+  - Category has many Course_Category (for courses).
+  - Course_Category is a join table for many-to-many between Course and Category.
+  - Student can enroll in many Courses via Enrolled_Course (many-to-many).
+  - Enrolled_Course references both Student and Course.
+  - Enrolled_Course has many Lesson_Progress (tracks progress per lesson per enrollment).
+  - Lesson belongs to one Course and has many Lesson_Pages and Lesson_Progress.
+  - Lesson_Page belongs to one Lesson.
+  - Student can create many Posts.
+  - Post belongs to one Student and has many Reactions and Comments.
+  - Reaction is a join table for Student and Post (tracks like/dislike, unique per student/post).
+  - Comment belongs to one Student and one Post.
+  - Student can have many Reactions and Comments.
+
+  See each model's relation fields for details.
+*/
 
 generator client {
   provider = "prisma-client-js"
@@ -44,8 +62,9 @@ model Student {
 
   user                User                 @relation(fields: [user_id], references: [id])
   enrolledCourses     Enrolled_Course[]
-  posts               Post[]               // Added: relation to Post
-  reactions           Reaction[]           // Added: relation to Reaction
+  posts               Post[]
+  reactions           Reaction[]
+  comments            Comment[]
 }
 
 model Enrolled_Course {
@@ -93,7 +112,6 @@ model Creator {
   user                User                 @relation(fields: [user_id], references: [id])
   courses             Course[]
 }
-
 
 enum Status {
   PUBLISHED
@@ -158,7 +176,6 @@ model Lesson_Page {
   @@unique([lesson_id, page_number])
 }
 
-
 model Post {
   id         Int        @id @default(autoincrement())
   student_id Int
@@ -167,8 +184,9 @@ model Post {
   created_at DateTime   @default(now())
   updated_at DateTime   @updatedAt
 
-  student    Student    @relation(fields: [student_id], references: [id]) // relation to Student
-  reactions  Reaction[] // relation to Reaction
+  student    Student    @relation(fields: [student_id], references: [id])
+  reactions  Reaction[]
+  comments   Comment[]
 }
 
 model Reaction {
@@ -180,5 +198,17 @@ model Reaction {
   post       Post     @relation(fields: [post_id], references: [id])
   student    Student  @relation(fields: [student_id], references: [id])
 
-  @@unique([post_id, student_id]) // Each student can react once per post
+  @@unique([post_id, student_id])
+}
+
+model Comment {
+  id         Int      @id @default(autoincrement())
+  post_id    Int
+  student_id Int
+  comment    String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  post       Post     @relation(fields: [post_id], references: [id])
+  student    Student  @relation(fields: [student_id], references: [id])
 }

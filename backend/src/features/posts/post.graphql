@@ -7,6 +7,7 @@ type Post {
   content: String!
   createdAt: DateTime!
   hasLiked: Boolean
+  comments: [Comment!]
 }
 
 type PostOwner {
@@ -29,12 +30,7 @@ type Query {
   posts: [Post!]!
 }
 
-type ReactPostResponse {
-    type: String
-    message: String
-}
-
 type Mutation {
   createPost(input: PostInput!): Post!
-  reactPost(input: ReactPostInput): ReactPostResponse!
+  reactPost(input: ReactPostInput): BaseResponse!
 }

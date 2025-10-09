@@ -55,13 +55,8 @@ extend type Query {
   enrolledCourses: [Course!]!
 }
 
-type BaseResponse {
-  status: Status
-  message: String
-}
-
 type ProgressResponse {
-  status: Status
+  status: ResponseStatus
   message: String
   progressStatus: String
 }

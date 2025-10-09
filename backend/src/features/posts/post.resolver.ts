@@ -1,5 +1,5 @@
 import prisma from "../../config/prisma";
-import { PostInput, ReactPostInput } from "../../generated/graphql";
+import { PostInput, ReactPostInput, ResponseStatus } from "../../generated/graphql";
 import { MyContext } from "../../types/context";
 import { PostService } from "./post.service";
 
@@ -30,21 +30,21 @@ export const resolvers = {
       const { studentId } = context.session;
       if (!studentId) {
         return {
-          type: "ERROR",
+          status: ResponseStatus.Error,
           message: "Not authenticated",
         };
       }
       const { postId, isLiked } = args.input;
       if (!postId || typeof isLiked !== "boolean") {
         return {
-          type: "ERROR",
+          status: ResponseStatus.Error,
           message: "Invalid input",
         };
       }
       await postService.reactPost(Number(postId), studentId, isLiked);
 
       return {
-        type: "SUCCESS",
+        status: ResponseStatus.Success,
         message: isLiked
           ? "Post liked successfully"
           : "Post unliked successfully",
