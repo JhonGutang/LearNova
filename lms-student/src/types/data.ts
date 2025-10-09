@@ -88,3 +88,28 @@ export interface Comment {
     owner: string
     comment: string
 }
+
+
+export interface StudentDetails {
+    id: string;
+    firstName: string;
+    lastName: string;
+    level: number;
+    exp: number;
+    coursesInProgress: CoursesInProgress[]
+    courseRecommendations: CourseRecommendation[]
+}
+
+export  interface CoursesInProgress {
+    courseId: string;
+    title: string;
+    tagline: string;
+    progressPercentage: number;
+}
+
+export interface CourseRecommendation {
+    courseId: String;
+    title: string;
+    tagline: string;
+    rate: number;
+}

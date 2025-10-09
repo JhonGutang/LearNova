@@ -1,13 +1,11 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Star } from 'lucide-react';
 import { useRedirectLink } from '@/hooks/useRedirect';
-import { useCoursesWithCreator } from '@/features/courses/useCourses';
-import { useMyCourses } from '@/features/my-courses/useMyCourses';
-import { Course } from '@/types/data';
+import { CourseRecommendation } from '@/types/data';
 
 // Helper function to generate icon from course title
 const generateIcon = (title: string): string => {
@@ -41,70 +39,20 @@ const generateRating = (title: string): number => {
 };
 
 interface RecommendedCoursesProps {
-  courses?: Course[];
+  courseRecommendation?: CourseRecommendation[];
 }
 
 const RecommendedCourses: React.FC<RecommendedCoursesProps> = ({
-  courses: propCourses
+  courseRecommendation
 }) => {
   const { redirect, toSlug } = useRedirectLink();
-  const { courses: allCourses, loading: coursesLoading, error: coursesError } = useCoursesWithCreator();
-  const { courses: enrolledCourses, loading: enrolledLoading } = useMyCourses();
 
-  // Get unenrolled courses and randomly select 4
-  const recommendedCourses = useMemo(() => {
-    if (!allCourses || !enrolledCourses) return [];
+  // Use the courseRecommendation prop directly, fallback to empty array
+  const courses = courseRecommendation?.slice(0, 4) || [];
 
-    // Get enrolled course IDs
-    const enrolledIds = enrolledCourses.map(course => course.id);
-    
-    // Filter out enrolled courses
-    const unenrolledCourses = allCourses.filter(course => !enrolledIds.includes(course.id));
-    
-    // Shuffle and take first 4
-    const shuffled = [...unenrolledCourses].sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, 4);
-  }, [allCourses, enrolledCourses]);
+  // Loading and error states are not needed since we are not fetching here
 
-  const courses = propCourses || recommendedCourses;
-
-  // Show loading state
-  if (coursesLoading || enrolledLoading) {
-    return (
-      <div className="mb-8">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-semibold text-gray-900">Recommended for You</h3>
-          <Button 
-            variant="ghost" 
-            className="text-teal-600 hover:text-teal-700 hover:bg-teal-50"
-            onClick={() => redirect("/courses")}
-          >
-            View All
-          </Button>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map((i) => (
-            <Card key={i} className="p-4 bg-white border-2 shadow-sm animate-pulse">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="w-12 h-12 bg-gray-200 rounded-lg"></div>
-                  <div className="w-12 h-6 bg-gray-200 rounded-full"></div>
-                </div>
-                <div>
-                  <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                  <div className="h-3 bg-gray-200 rounded mb-2"></div>
-                  <div className="h-3 bg-gray-200 rounded w-16"></div>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  // Show error state
-  if (coursesError) {
+  if (!courses.length) {
     return (
       <div className="mb-8">
         <div className="flex justify-between items-center mb-4">
@@ -118,7 +66,7 @@ const RecommendedCourses: React.FC<RecommendedCoursesProps> = ({
           </Button>
         </div>
         <div className="text-center py-8 text-gray-500">
-          Failed to load recommended courses
+          No recommended courses found.
         </div>
       </div>
     );
@@ -138,34 +86,39 @@ const RecommendedCourses: React.FC<RecommendedCoursesProps> = ({
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {courses.map((course) => (
-          <Card 
-            key={course.id} 
-            className="p-4 bg-white border-2 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-            onClick={() => redirect(`/courses/${toSlug(Number(course.id), course.title)}`)}
-          >
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div className={`w-12 h-12 ${generateIconBg(course.title)} rounded-lg flex items-center justify-center text-white font-bold text-lg`}>
-                  {generateIcon(course.title)}
+        {courses.map((course) => {
+          // Ensure rating is always shown with 1 decimal place
+          const ratingValue = course.rate ?? generateRating(course.title);
+          const ratingDisplay = ratingValue.toFixed(1);
+          return (
+            <Card 
+              key={course.courseId as string} 
+              className="p-4 bg-white border-2 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+              onClick={() => redirect(`/courses/${toSlug(Number(course.courseId), course.title)}`)}
+            >
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className={`w-12 h-12 ${generateIconBg(course.title)} rounded-lg flex items-center justify-center text-white font-bold text-lg`}>
+                    {generateIcon(course.title)}
+                  </div>
+                  <span className="bg-green-100 text-green-700 text-xs font-semibold px-2 py-1 rounded-full">
+                    FREE
+                  </span>
                 </div>
-                <span className="bg-green-100 text-green-700 text-xs font-semibold px-2 py-1 rounded-full">
-                  FREE
-                </span>
-              </div>
-              
-              <div>
-                <h4 className="font-semibold text-gray-900 text-sm mb-1">{course.title}</h4>
-                <p className="text-xs text-gray-600 mb-2">{course.description || course.tagline || 'Learn something new'}</p>
                 
-                <div className="flex items-center gap-1">
-                  <Star className="w-3 h-3 text-yellow-500 fill-current" />
-                  <span className="text-xs text-gray-600">{generateRating(course.title)}</span>
+                <div>
+                  <h4 className="font-semibold text-gray-900 text-sm mb-1">{course.title}</h4>
+                  <p className="text-xs text-gray-600 mb-2">{course.tagline || 'Learn something new'}</p>
+                  
+                  <div className="flex items-center gap-1">
+                    <Star className="w-3 h-3 text-yellow-500 fill-current" />
+                    <span className="text-xs text-gray-600">{ratingDisplay}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          </Card>
-        ))}
+            </Card>
+          );
+        })}
       </div>
     </div>
   );

@@ -10,6 +10,36 @@ input CreateStudentInput  {
     password: String!
 }
 
-type Mutation {
+type StudentDetails {
+    id: ID!
+    firstName: String!
+    lastName: String!
+    level: Int
+    exp: Int
+    coursesInProgress: [CourseInProgress!]!
+    courseRecommendations: [CourseRecommendation!]!
+}
+
+type CourseInProgress {
+    courseId: ID!
+    title: String!
+    tagline: String
+    progressPercentage: Float!
+}
+
+type CourseRecommendation {
+    courseId: ID!
+    title: String!
+    tagline: String
+    rate: Float!
+}
+
+extend type Query {
+    studentDetails: StudentDetails!
+}
+
+extend type Mutation {
     createStudent(input: CreateStudentInput): BaseResponse
 }
+
+

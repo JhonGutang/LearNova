@@ -48,7 +48,6 @@ type BaseResponse {
   message: String
 }
 
-
 union UserProfile = CreatorProfile | StudentProfile
 
 type Query {

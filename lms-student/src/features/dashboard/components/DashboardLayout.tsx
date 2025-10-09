@@ -8,8 +8,11 @@ import QuickActions from './QuickActions';
 import RecommendedCourses from './RecommendedCourses';
 import RecentActivity from './RecentActivity';
 import CommunityHighlights from './CommunityHighlights';
+import { useUserDetails } from '../useUserDetails';
 
 const DashboardLayout: React.FC = () => {
+  const { studentDetails, loading, error } = useUserDetails();
+  
   return (
     <div className="max-w-7xl mx-auto pt-7">
       {/* Welcome Banner */}
@@ -23,7 +26,7 @@ const DashboardLayout: React.FC = () => {
         {/* Continue Learning and Quick Actions together */}
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="flex-1">
-            <ContinueLearning />
+            <ContinueLearning coursesInProgress={studentDetails?.coursesInProgress} />
           </div>
           <div className="w-full lg:w-[340px] flex-shrink-0">
             <QuickActions />
@@ -31,7 +34,7 @@ const DashboardLayout: React.FC = () => {
         </div>
 
         {/* Recommended Courses */}
-        <RecommendedCourses />
+        <RecommendedCourses courseRecommendation={studentDetails?.courseRecommendations} />
 
         {/* Recent Activity and Community Highlights side by side */}
         <div className="flex flex-col lg:flex-row gap-8">
