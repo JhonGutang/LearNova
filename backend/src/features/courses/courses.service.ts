@@ -160,7 +160,7 @@ export class CourseService implements CourseServiceInterface {
 
   async finishProgress(studentId: number, lessonId: number): Promise<ProgressReponse> {
     const existingProgress = await this.lessonRepository.findLessonProgress({studentId, lessonId});
-  
+    console.log(existingProgress)
     if (!existingProgress) {
       return {
         progressStatus: "FAILED",

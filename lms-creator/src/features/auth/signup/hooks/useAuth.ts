@@ -51,9 +51,9 @@ export const useAuth = (
 
     // Prepare input for the mutation
     const input = {
-      first_name: form.firstName,
-      middle_name: form.middleName,
-      last_name: form.lastName,
+      firstName: form.firstName,
+      middleName: form.middleName,
+      lastName: form.lastName,
       password: form.password,
       email: form.email,
       phone: form.phone,

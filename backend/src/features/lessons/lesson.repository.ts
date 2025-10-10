@@ -60,10 +60,11 @@ export class LessonRepository implements LessonRepositoryInterface {
       whereClause.enrolledCourse = { student_id: studentId };
     }
 
-    // Use select only (no need for include if we're using select for the same relation)
+    // Now also select the id
     return this.prisma.lesson_Progress.findFirst({
       where: whereClause,
       select: {
+        id: true,
         status: true,
         lesson: {
           select: {

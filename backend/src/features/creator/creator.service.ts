@@ -11,15 +11,14 @@ import bcrypt from "bcrypt";
 function normalizeCreatorProfile(creator: any, user: any): CreatorProfile {
   return {
     id: creator.id,
-    user_id: user.id,
-    first_name: creator.first_name,
-    last_name: creator.last_name,
-    middle_name: creator.middle_name,
+    userId: user.id,
+    firstName: creator.first_name,
+    lastName: creator.last_name,
+    middleName: creator.middle_name,
     email: user.email,
     phone: creator.phone,
     address: creator.address,
-    created_at: creator.created_at,
-    updated_at: creator.updated_at,
+    createdAt: creator.created_at,
   };
 }
 
@@ -66,9 +65,9 @@ export class CreatorService implements CreatorServiceProps {
         role: Role.Creator,
         creator: {
           create: {
-            first_name: input.first_name,
-            last_name: input.last_name,
-            middle_name: input.middle_name,
+            first_name: input.firstName,
+            last_name: input.lastName,
+            middle_name: input.middleName,
             phone: input.phone,
             address: input.address,
           },
