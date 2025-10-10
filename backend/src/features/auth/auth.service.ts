@@ -1,6 +1,7 @@
-import { ChangePasswordInput, LoginInput, UserProfile } from "../../generated/graphql";
+import { ChangePasswordInput, CreatorProfile, LoginInput, StudentProfile, User, UserProfile } from "../../generated/graphql";
 import bcrypt from "bcrypt";
 import { MyContext } from "../../types/context";
+import { PrismaClient } from "@prisma/client";
 
 interface AuthServiceInterface {
   getCurrentUserProfile(userId: number, role: string): Promise<UserProfile | null >
@@ -8,7 +9,7 @@ interface AuthServiceInterface {
   changePassword(input: ChangePasswordInput): Promise<Boolean>;
 }
 
-function normalizeCreatorProfile(creator: any, user: any): UserProfile {
+function normalizeCreatorProfile(creator: CreatorProfile, user: User): UserProfile {
   return {
     __typename: "CreatorProfile",
     id: creator.id,
@@ -23,7 +24,7 @@ function normalizeCreatorProfile(creator: any, user: any): UserProfile {
   };
 }
 
-function normalizeStudentProfile(student: any, user: any): UserProfile {
+function normalizeStudentProfile(student: StudentProfile, user: User): UserProfile {
   return {
     __typename: "StudentProfile",
     id: student.id,
@@ -41,9 +42,9 @@ function normalizeStudentProfile(student: any, user: any): UserProfile {
 
 
 export class AuthService implements AuthServiceInterface {
-  private prisma: any;
+  private prisma: PrismaClient;
 
-  constructor(prisma: any) {
+  constructor(prisma: PrismaClient) {
     this.prisma = prisma;
   }
 

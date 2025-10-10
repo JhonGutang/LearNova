@@ -6,7 +6,7 @@ const authService = new AuthService(prisma);
 
 export const resolvers = {
     Query: {
-        user: async (_: any, __: any, context: MyContext) => {
+        user: async (_: unknown, __: unknown, context: MyContext) => {
             const { userId, role } = context.session;
             if (userId === undefined || !role) return null;
             return await authService.getCurrentUserProfile(
@@ -16,7 +16,7 @@ export const resolvers = {
         }
     },
     Mutation: {
-        login: async (_: any, args: { input: LoginInput }, context: MyContext) => {
+        login: async (_: unknown, args: { input: LoginInput }, context: MyContext) => {
             const isAuthenticated = await authService.authenticateUser(args.input, context);
             if (isAuthenticated) {
                 return {
@@ -30,7 +30,7 @@ export const resolvers = {
                 };
             }
         },
-        changePassword: async (_: any, args: { input: ChangePasswordInput }) => {
+        changePassword: async (_: unknown, args: { input: ChangePasswordInput }) => {
             const isSuccess = await authService.changePassword(args.input)
             if(isSuccess) {
                 return {
@@ -44,9 +44,9 @@ export const resolvers = {
                 };
             }
         },
-        logout: async (_: any, __: any, context: MyContext) => {
+        logout: async (_: unknown, __: unknown, context: MyContext) => {
             return new Promise((resolve) => {
-              context.session.destroy((error: any) => {
+              context.session.destroy((error: Error | null) => {
                 if (error) {
                   resolve({
                     status: ResponseStatus.Error,

@@ -1,3 +1,9 @@
+type User {
+  id: Int!
+  email: String!
+  
+}
+
 type CreatorProfile {
   id: Int!
   userId: Int!
