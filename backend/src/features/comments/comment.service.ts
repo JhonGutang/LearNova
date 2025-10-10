@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { Comment } from "../../generated/graphql";
-
+import { Comment as CommentDb } from "../../../generated/prisma";
 export interface ICommentService {
   getComments(postId: number): Promise<Comment[]>;
   createComment(params: { comment: string; studentId: number; postId: number }): Promise<Comment | null>;
@@ -26,7 +26,8 @@ export class CommentService implements ICommentService {
         },
       },
     });
-    return comments.map((c: any) => ({
+    type CommentDb = typeof comments[number];
+    return comments.map((c: CommentDb) => ({
       id: c.id.toString(),
       owner: c.student ? `${c.student.first_name} ${c.student.last_name}` : "",
       comment: c.comment,

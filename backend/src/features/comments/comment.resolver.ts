@@ -7,12 +7,12 @@ const commentService = new CommentService(prisma);
 
 export const resolvers = {
     Query: {
-        comments: async (_: any, args: { postId: string }) => {            
+        comments: async (_: unknown, args: { postId: string }) => {            
             return await commentService.getComments(Number(args.postId));
         }
     },
     Mutation: {
-        createComment: async (_: any, args: { comment: string, postId: string }, context: MyContext) => {
+        createComment: async (_: unknown, args: { comment: string, postId: string }, context: MyContext) => {
             const { studentId } = context.session;
             if (!studentId) {
                 return { 
