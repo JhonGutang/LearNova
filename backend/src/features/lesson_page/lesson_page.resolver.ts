@@ -1,6 +1,5 @@
 import { LessonPageService } from "./lesson_page.service";
 import { CreateOrUpdateLessonPageInput } from "../../generated/graphql";
-import prisma from "../../config/prisma";
 const lessonPageService = new LessonPageService();
 
 export const resolvers = {
@@ -32,14 +31,14 @@ export const resolvers = {
       if (!pageToDelete) {
         return false;
       }
-      const { lesson_id, page_number } = pageToDelete;
+      const { lessonId, pageNumber } = pageToDelete;
       const deleted = await lessonPageService.deleteLessonPage(args.id);
 
       if (!deleted) {
         return false;
       }
 
-      return await lessonPageService.reOrderPages(lesson_id, page_number);
+      return await lessonPageService.reOrderPages(lessonId, pageNumber);
     },
   },
 }  
