@@ -32,119 +32,33 @@ const ContactSection: React.FC = () => {
       const contactInfo = [
         {
           icon: Mail,
-          title: "Email Us",
-          content: "support@edulearn.com",
-          link: "mailto:support@edulearn.com",
+          content: "support@learnova.net",
+          link: "mailto:support@learnova.net",
         },
         {
           icon: Phone,
-          title: "Call Us",
           content: "+1 (555) 123-4567",
           link: "tel:+15551234567",
         },
         {
           icon: MapPin,
-          title: "Visit Us",
-          content: "123 Education St, Learning City, LC 12345",
+          content: "123 Learning Road, Education City",
           link: "#",
         },
       ]
     return (
-        <section id="contact" className="py-20 md:py-32 bg-secondary/30">
+        <section id="contact" className="py-20 md:py-32 bg-white">
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
-          {/* Section Header */}
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold mb-4 text-balance">
-              Get In <span className="text-teal-800">Touch</span>
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
-              Have questions? We&apos;d love to hear from you. Send us a message and we&apos;ll respond as soon as possible.
-            </p>
-          </div>
-
           <div className="grid md:grid-cols-2 gap-12">
-            {/* Contact Form */}
-            <div className="bg-card p-8 rounded-lg border border-border shadow-lg">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium mb-2">
-                    Your Name
-                  </label>
-                  <Input
-                    id="name"
-                    name="name"
-                    type="text"
-                    placeholder="John Doe"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    className="hover:border-teal-800 focus:border-teal-800 transition-colors"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium mb-2">
-                    Email Address
-                  </label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="john@example.com"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    className="hover:border-teal-800 focus:border-teal-800 transition-colors"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="subject" className="block text-sm font-medium mb-2">
-                    Subject
-                  </label>
-                  <Input
-                    id="subject"
-                    name="subject"
-                    type="text"
-                    placeholder="How can we help?"
-                    value={formData.subject}
-                    onChange={handleChange}
-                    required
-                    className="hover:border-teal-800 focus:border-teal-800 transition-colors"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium mb-2">
-                    Message
-                  </label>
-                  <Textarea
-                    id="message"
-                    name="message"
-                    placeholder="Tell us more about your inquiry..."
-                    value={formData.message}
-                    onChange={handleChange}
-                    required
-                    rows={5}
-                    className="hover:border-teal-800 focus:border-teal-800 transition-colors resize-none"
-                  />
-                </div>
-                <Button
-                  type="submit"
-                  className="w-full hover:scale-105 transition-transform duration-200 bg-teal-800 text-white hover:bg-teal-900"
-                  size="lg"
-                >
-                  Send Message
-                  <Send className="ml-2" size={18} />
-                </Button>
-              </form>
-            </div>
-
-            {/* Contact Information */}
+            {/* Left Side - Contact Info */}
             <div className="space-y-8">
               <div>
-                <h3 className="text-2xl font-bold mb-4">Contact Information</h3>
-                <p className="text-muted-foreground leading-relaxed mb-8">
-                  Reach out to us through any of these channels. Our team is available Monday through Friday, 9 AM to 6
-                  PM EST.
+                <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800">
+                  Get in Touch
+                </h2>
+                <p className="text-lg text-gray-600 leading-relaxed mb-8">
+                  Have questions about our platform? We&apos;d love to hear from you. Send us a message and we&apos;ll respond as soon as possible.
                 </p>
               </div>
 
@@ -155,29 +69,76 @@ const ContactSection: React.FC = () => {
                     <a
                       key={index}
                       href={info.link}
-                      className="flex items-start gap-4 p-4 rounded-lg bg-card border border-border hover:border-teal-800 hover:shadow-lg transition-all duration-300 group"
+                      className="flex items-center gap-4 p-4 rounded-lg hover:bg-gray-50 transition-all duration-300 group"
                     >
-                      <div className="bg-teal-800/10 w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-teal-800 group-hover:scale-110 transition-all duration-300">
-                        <Icon className="text-teal-800 group-hover:text-white transition-colors duration-300" size={24} />
+                      <div className="bg-teal-100 w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-teal-600 group-hover:scale-110 transition-all duration-300">
+                        <Icon className="text-teal-600 group-hover:text-white transition-colors duration-300" size={24} />
                       </div>
                       <div>
-                        <h4 className="font-semibold mb-1">{info.title}</h4>
-                        <p className="text-muted-foreground text-sm">{info.content}</p>
+                        <p className="text-gray-800 font-medium">{info.content}</p>
                       </div>
                     </a>
                   )
                 })}
               </div>
+            </div>
 
-              {/* Map Placeholder */}
-              <div className="relative h-64 rounded-lg overflow-hidden border border-border group">
-                <img
-                  src="/modern-office-building-map-location.jpg"
-                  alt="Office location"
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-teal-800/20 group-hover:bg-teal-800/30 transition-colors duration-300" />
-              </div>
+            {/* Right Side - Contact Form */}
+            <div className="bg-white p-8 rounded-lg border border-gray-200 shadow-lg">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <Input
+                    name="name"
+                    type="text"
+                    placeholder="Enter your full name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    className="border-gray-300 focus:border-teal-600 focus:ring-teal-600 transition-colors"
+                  />
+                </div>
+                <div>
+                  <Input
+                    name="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    className="border-gray-300 focus:border-teal-600 focus:ring-teal-600 transition-colors"
+                  />
+                </div>
+                <div>
+                  <Input
+                    name="subject"
+                    type="text"
+                    placeholder="What's this about?"
+                    value={formData.subject}
+                    onChange={handleChange}
+                    required
+                    className="border-gray-300 focus:border-teal-600 focus:ring-teal-600 transition-colors"
+                  />
+                </div>
+                <div>
+                  <Textarea
+                    name="message"
+                    placeholder="Tell us more..."
+                    value={formData.message}
+                    onChange={handleChange}
+                    required
+                    rows={5}
+                    className="border-gray-300 focus:border-teal-600 focus:ring-teal-600 transition-colors resize-none"
+                  />
+                </div>
+                <Button
+                  type="submit"
+                  className="w-full bg-teal-600 hover:bg-teal-700 text-white hover:scale-105 transition-all duration-200"
+                  size="lg"
+                >
+                  Send Message
+                  <Send className="ml-2" size={18} />
+                </Button>
+              </form>
             </div>
           </div>
         </div>
