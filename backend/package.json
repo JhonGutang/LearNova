@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "npx ts-node-dev --respawn --transpile-only src\\config\\server.ts",
+    "postbuild": "cp -r src/features dist/features",
     "build": "tsc",
     "prod": "node dist/config/server.js",
     "codegen": "graphql-codegen"
