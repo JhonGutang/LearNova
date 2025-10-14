@@ -21,7 +21,8 @@ import { resolvers as studentResolvers} from '../features/student/student.resolv
 import { resolvers as AuthResolvers } from '../features/auth/auth.resolver';
 import { resolvers as PostResolver } from '../features/posts/post.resolver';
 import { resolvers as CommentResolver } from '../features/comments/comment.resolver';
-dotenv.config();
+const envFile = process.env.NODE_ENV === 'staging' ? '.env.staging' : '.env';
+dotenv.config({ path: envFile });
 
 const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
