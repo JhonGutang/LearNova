@@ -38,7 +38,7 @@ app.use(session({
     httpOnly: true,              // not accessible from JS
     maxAge: 1000 * 60 * 60,      // 1 hour
     secure: false,               // dev only (true in prod w/ HTTPS)
-    sameSite: 'lax',             // good default for CSRF protection
+    sameSite: 'none',             // good default for CSRF protection
   },
 }));
 
