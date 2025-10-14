@@ -1,6 +1,5 @@
 "use client";
 import React, { useCallback, useState } from "react";
-import { SignupFormFields } from "@/constants/AuthFormFields";
 import { useAuth } from "../useAuth";
 import { Eye, EyeOff, BadgeCheck, UserPlus } from "lucide-react";
 import AuthLayout from "@/shared/layout/AuthLayout";
@@ -60,7 +59,12 @@ const Signup: React.FC = () => {
     },
     [form, register]
   );
-  
+
+  // Typed handler for Checkbox state change
+  const handleAgreeCheckedChange = (checked: boolean | "indeterminate") => {
+    setAgree(checked === true);
+  };
+
   return (
     <AuthLayout
       leftTitle="LearNova"
@@ -157,7 +161,11 @@ const Signup: React.FC = () => {
             </div>
           </div>
           <div className="flex items-start gap-2 text-sm text-gray-600">
-            <Checkbox id="agree" checked={agree} onCheckedChange={(v:any)=>setAgree(Boolean(v))} />
+            <Checkbox
+              id="agree"
+              checked={agree}
+              onCheckedChange={handleAgreeCheckedChange}
+            />
             <label htmlFor="agree">I agree to the <span className="underline cursor-pointer">Terms of Service</span> and <span className="underline cursor-pointer">Privacy Policy</span></label>
           </div>
           <button type="submit" className="w-full bg-teal-700 hover:bg-teal-600 text-white font-semibold py-2 rounded-md transition-colors disabled:opacity-60 shadow-lg shadow-teal-700/25 flex items-center justify-center gap-2" disabled={registerLoading}>

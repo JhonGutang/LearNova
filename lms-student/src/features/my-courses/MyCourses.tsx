@@ -3,17 +3,7 @@ import React from "react";
 import { useMyCourses } from "./useMyCourses";
 import CoursesCardView from "@/shared/CoursesCardView";
 import FallbackMessage from "@/shared/FallbackMessage";
-import { Button } from "@/components/ui/button";
 import { useRedirectLink } from "@/hooks/useRedirect";
-
-const CategoryChip: React.FC<{ label: string }> = ({ label }) => (
-    <span
-        className="inline-block bg-teal-100 text-teal-800 text-xs px-2 py-0.5 rounded-full border border-teal-200"
-        style={{ fontWeight: 500 }}
-    >
-        {label}
-    </span>
-);
 
 const MyCourses = () => {
     const { courses, loading, error } = useMyCourses();

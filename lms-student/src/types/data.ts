@@ -108,8 +108,12 @@ export  interface CoursesInProgress {
 }
 
 export interface CourseRecommendation {
-    courseId: String;
+    courseId: string;
     title: string;
     tagline: string;
     rate: number;
+}
+
+export interface Error {
+    message: string;
 }

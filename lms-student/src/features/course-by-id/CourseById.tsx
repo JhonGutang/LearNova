@@ -58,7 +58,7 @@ const CourseById: React.FC<CourseByIdProps> = ({ courseLink }) => {
               </div>
             </CardHeader>
             <CardContent className="pt-2">
-              <div className="text-sm italic mb-2">"{course?.tagline}"</div>
+              <div className="text-sm italic mb-2">&quot;{course?.tagline}&quot;</div>
               <p className="text-gray-700 mb-4 text-base leading-relaxed">{course?.description}</p>
               <div className="flex items-center gap-3 mb-4">
                 <AvatarWithImage

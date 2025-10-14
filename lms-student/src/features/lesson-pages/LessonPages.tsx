@@ -5,7 +5,6 @@ import FallbackMessage from "@/shared/FallbackMessage";
 import DOMPurify from "dompurify";
 import React, { useState } from "react";
 import Navigation from "./components/Navigation";
-import { redirect } from "next/dist/server/api-utils";
 
 interface LessonPagesProps {
   lessonLink: string;
@@ -47,9 +46,9 @@ const LessonPages: React.FC<LessonPagesProps> = ({ lessonLink, courseLink }) => 
 
   const handleFinishLesson = () => {
     finishProgress(id)
-    // setTimeout(() => {
-    //   redirect("/" + courseLink)
-    // }, 1500);
+    setTimeout(() => {
+      redirect("/" + courseLink)
+    }, 1500);
   }
 
   const page = pagesArray[currentPage];

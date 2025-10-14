@@ -23,13 +23,9 @@ const CARD_HEIGHT = 430;
 const CoursesCardView: React.FC<CardViewProps> = ({
   courseName,
   tagline,
-  author,
   className = "",
   children,
-  chips,
   rating = 4.8,
-  reviewCount = 123,
-  imageUrl,
   isEnrolled = false,
   onEnrollClick,
   onViewClick,

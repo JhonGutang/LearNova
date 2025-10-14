@@ -11,7 +11,7 @@ import CommunityHighlights from './CommunityHighlights';
 import { useUserDetails } from '../useUserDetails';
 
 const DashboardLayout: React.FC = () => {
-  const { studentDetails, loading, error } = useUserDetails();
+  const { studentDetails } = useUserDetails();
   
   return (
     <div className="max-w-7xl mx-auto pt-7">

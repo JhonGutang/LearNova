@@ -46,8 +46,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose, onSu
     <Dialog open={isOpen} onOpenChange={(open) => { if (!open) handleCancel(); }}>
       <DialogContent
         className="max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-        onOpenAutoFocus={e => {
-          // Focus the topic input when modal opens
+        onOpenAutoFocus={() => {
           const input = document.getElementById("topic");
           if (input) input.focus();
         }}

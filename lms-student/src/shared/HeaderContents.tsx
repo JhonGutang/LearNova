@@ -11,7 +11,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { X, Sun, Moon } from "lucide-react";
+import { X, Moon } from "lucide-react";
 
 const categories = [
   "All Categories",

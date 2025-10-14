@@ -7,7 +7,6 @@ import {
   User,
   BookOpen,
   LogOut,
-  GraduationCap,
   Users,
   Trophy,
   HelpCircle,

@@ -1,10 +1,11 @@
-import { credentials, Role, studentCreateInput } from "@/types/data";
+import { credentials, Error, Role, studentCreateInput } from "@/types/data";
 import * as ApolloReact from "@apollo/client/react";
 import { LOGIN_STUDENT, CREATE_STUDENT } from "./query";
 import { CustomToast } from "@/shared/CustomToast";
 import { useCallback } from "react";
 import { SignupFormFields } from "@/constants/AuthFormFields";
 import { useRedirectLink } from "@/hooks/useRedirect";
+import { BaseResponse } from "@/types/responses";
 
 export const useAuth = () => {
   const {redirect} = useRedirectLink()
@@ -48,7 +49,7 @@ export const useAuth = () => {
     try {
       input.role = Role.STUDENT;
       const response = await LoginStudent({ variables: { input } });
-      const loginResult = (response.data as any)?.login;
+      const loginResult = (response.data as BaseResponse)?.login;
       if (loginResult?.status === "ERROR") {
         showToast("error", "Signin Failed", loginResult?.message);
       } else {
@@ -58,7 +59,7 @@ export const useAuth = () => {
         }, 1500);
       }
     } catch (err) {
-      showToast("error", "Signin Failed", (err as any)?.message);
+      showToast("error", "Signin Failed", (err as Error)?.message);
       return;
     }
   };
@@ -85,7 +86,7 @@ export const useAuth = () => {
     if (form["middle-name"]) input.middleName = form["middle-name"];
     try {
       const response = await CreateStudent({ variables: { input } });
-      const registerResult = (response.data as any)?.createStudent;
+      const registerResult = (response.data as BaseResponse)?.createStudent;
       if (registerResult?.status === "ERROR") {
         showToast("error", "Signup Failed", registerResult?.message || "An error occurred during signup.");
         return;
@@ -94,12 +95,11 @@ export const useAuth = () => {
         if (onSuccess) onSuccess();
       }
     } catch (err) {
-      showToast("error", "Signup Failed", (err as any)?.message || "An unexpected error occurred.");
+      showToast("error", "Signup Failed", (err as Error)?.message || "An unexpected error occurred.");
       return;
     }
   };
 
-  // Expose API and state (validate is now private)
   return {
     login,
     register,

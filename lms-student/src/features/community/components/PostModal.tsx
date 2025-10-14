@@ -24,9 +24,7 @@ const PostModal: React.FC<PostModalProps> = ({ isOpen, onClose, post }) => {
   const [isLiking, setIsLiking] = useState(false);
   const [isCommenting, setIsCommenting] = useState(false);
   const [commentText, setCommentText] = useState("");
-  const [showReactions, setShowReactions] = useState(false);
 
-  // Mock data for reactions only (comments are now real)
   const mockReactions: MockReaction[] = [
     { type: 'like', count: 12, userReaction: post?.hasLiked },
     { type: 'love', count: 5 },

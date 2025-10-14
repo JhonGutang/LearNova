@@ -1,6 +1,6 @@
 // lib/apolloClient.ts
 
-import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client';
+import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { HttpLink } from '@apollo/client';
 
 const graphqlEndpoint = process.env.NEXT_PUBLIC_GRAPHQL_API_URL || 'http://localhost:3000/graphql';

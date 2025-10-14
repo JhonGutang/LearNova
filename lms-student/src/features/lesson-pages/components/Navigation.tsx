@@ -16,9 +16,6 @@ const Navigation: React.FC<NavigationProps> = ({
     handleFinishLesson
 }) => {
     const isLastPage = currentPage === totalPages - 1;
-    const sendAlert = () => {
-      
-    }
     const handleNextOrFinish = () => {
         if (isLastPage) {
             handleFinishLesson()

@@ -1,5 +1,5 @@
 import { CheckCircle2, Target, Lightbulb, Heart } from "lucide-react"
-
+import Image from "next/image"
 const AboutSection: React.FC = () => {
   const features = [
     {
@@ -29,7 +29,7 @@ const AboutSection: React.FC = () => {
               About <span className="text-teal-800">LearNova</span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
-              We're on a mission to revolutionize online education and empower learners worldwide.
+              We&apos;re on a mission to revolutionize online education and empower learners worldwide.
             </p>
           </div>
 
@@ -38,8 +38,10 @@ const AboutSection: React.FC = () => {
             {/* Image */}
             <div className="relative group">
               <div className="absolute inset-0 bg-primary/20 rounded-lg transform rotate-3 group-hover:rotate-6 transition-transform duration-300" />
-              <img
+              <Image
                 src="https://i.pinimg.com/736x/f3/0f/1a/f30f1af2734083512703028f62146d2e.jpg"
+                width={300}
+                height={300}
                 alt="Students learning together"
                 className="relative rounded-lg shadow-xl w-full h-auto transform group-hover:scale-105 transition-transform duration-300"
               />
@@ -50,7 +52,7 @@ const AboutSection: React.FC = () => {
               <h3 className="text-2xl md:text-3xl font-bold">Empowering Learners Since 2020</h3>
               <p className="text-muted-foreground leading-relaxed">
                 EduLearn was founded with a simple belief: education should be accessible, engaging, and transformative.
-                We've built a platform that combines expert instruction, interactive content, and a supportive community
+                We&apos;ve built a platform that combines expert instruction, interactive content, and a supportive community
                 to help you achieve your goals.
               </p>
               <div className="space-y-3">

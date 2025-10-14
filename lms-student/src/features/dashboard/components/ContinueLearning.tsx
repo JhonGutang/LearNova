@@ -12,13 +12,12 @@ interface ContinueLearningProps {
 }
 
 const ContinueLearning: React.FC<ContinueLearningProps> = ({
-  maxCourses = 2,
   coursesInProgress
 }) => {
   const { redirect, toSlug } = useRedirectLink();
 
   // Helper function to get course icon and color based on title
-  const getCourseIcon = (course: any) => {
+  const getCourseIcon = (course: CoursesInProgress) => {
     const title = course.title?.toLowerCase() || '';
     // No categories in courseInProgress, so only use title
     if (title.includes('javascript') || title.includes('js')) {
@@ -46,7 +45,7 @@ const ContinueLearning: React.FC<ContinueLearningProps> = ({
         <h3 className="text-xl font-semibold text-gray-900 mb-4">Continue Learning</h3>
         <Card className="p-6 bg-white border-0 shadow-sm">
           <div className="text-center text-gray-500">
-            <p>You haven't enrolled in any courses yet.</p>
+            <p>You haven&apos;t enrolled in any courses yet.</p>
             <p className="text-sm mt-1">Browse available courses to get started!</p>
           </div>
         </Card>
@@ -58,7 +57,7 @@ const ContinueLearning: React.FC<ContinueLearningProps> = ({
     <div className="mb-8">
       <h3 className="text-xl font-semibold text-gray-900 mb-4">Continue Learning</h3>
       <div className="space-y-4">
-        {coursesInProgress.map((course, idx) => {
+        {coursesInProgress.map((course) => {
           const { icon, color } = getCourseIcon(course);
           return (
             <Card key={course.title + course.courseId} className="p-6 bg-white border-2 shadow-sm hover:shadow-md transition-shadow">

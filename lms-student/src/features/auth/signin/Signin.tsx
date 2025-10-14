@@ -6,31 +6,32 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Mail, Lock, Waves, Github, BadgeCheck } from "lucide-react"
+import { Mail, Lock, Github, BadgeCheck } from "lucide-react"
 import { useAuth } from "../useAuth"
-import { useRouter } from "next/navigation"
 import AuthLayout from "@/shared/layout/AuthLayout"
+import { Error, Role } from "@/types/data"
+import { useRedirectLink } from "@/hooks/useRedirect"
 
 export default function Signin() {
-  const router = useRouter()
+  const { redirect } = useRedirectLink()
   const { login, loginLoading, loginError } = useAuth()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [formError, setFormError] = useState<string | null>(null)
   const [rememberMe, setRememberMe] = useState<boolean>(false)
 
+  const handleRememberMeChange = (checked: boolean | "indeterminate") => {
+    setRememberMe(checked === true)
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setFormError(null)
     try {
-      await login({ email, password, role: undefined as any }) // role will be set to STUDENT in useAuth
-    } catch (err: any) {
-      setFormError(err?.message || "Login failed")
+      await login({ email, password, role: Role.STUDENT }) 
+    } catch (err: unknown) {
+      setFormError((err as Error)?.message || "Login failed")
     }
-  }
-
-  const redirectToSignup = () => {
-    router.push('/signup')
   }
 
   return (
@@ -121,7 +122,11 @@ export default function Signin() {
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Checkbox id="remember" checked={rememberMe} onCheckedChange={(v:any)=>setRememberMe(Boolean(v))} />
+                  <Checkbox
+                    id="remember"
+                    checked={rememberMe}
+                    onCheckedChange={handleRememberMeChange}
+                  />
                   <Label htmlFor="remember" className="text-sm text-gray-600">Remember me</Label>
                 </div>
               </div>
@@ -152,9 +157,9 @@ export default function Signin() {
               </Button>
             </div>
           </form>
-          <div className="text-sm text-gray-500">
-            Don't have an account?{" "}
-            <a onClick={redirectToSignup} className="font-semibold text-teal-700 hover:underline cursor-pointer">
+          <div className="text-sm text-center text-gray-500">
+            Don&apos;t have an account?{" "}
+            <a onClick={() => redirect("/signup")} className="font-semibold text-teal-700 hover:underline cursor-pointer">
               Sign up
             </a>
           </div>

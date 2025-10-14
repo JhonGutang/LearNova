@@ -26,7 +26,7 @@ const WelcomeBanner: React.FC<WelcomeBannerProps> = ({
       <div>
         <h2 className="text-xl font-bold text-white mb-1">Welcome back, {userName}!</h2>
         <p className="text-xs text-white/80 mb-4">
-          Ready to continue your learning journey? You're doing great!
+          Ready to continue your learning journey? You&apos;re doing great!
         </p>
       </div>
       <div className="flex flex-wrap items-center gap-4">
