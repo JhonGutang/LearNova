@@ -1,69 +1,72 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { useRedirectLink } from "@/hooks/useRedirect"
-import { Clock, Users, Star, ArrowRight } from "lucide-react"
+import { Star, ArrowRight } from "lucide-react"
 import { landingPageCourses as courses } from "@/mock/Courses"
+import Image from "next/image"
+
 const CourseSection: React.FC = () => {
   const {redirect} = useRedirectLink()
     
     return (
-        <section id="courses" className="py-20 md:py-32">
+        <section id="courses" className="py-20 md:py-32 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             {/* Section Header */}
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-5xl font-bold mb-4 text-balance">
-                Explore Our <span className="text-teal-800">Courses</span>
+              <h2 className="text-3xl md:text-5xl font-bold mb-4 text-gray-800">
+                Popular <span className="text-teal-600">Courses</span>
               </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
-                Choose from hundreds of courses across various disciplines, taught by industry experts.
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                Discover our most engaging courses designed to help you master new skills.
               </p>
             </div>
   
             {/* Courses Grid */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            <div className="grid md:grid-cols-3 gap-8 mb-12">
               {courses.map((course, index) => (
                 <Card
                   key={index}
-                  className="overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-2 group border-border hover:border-teal-800"
+                  className="overflow-hidden bg-white hover:shadow-xl transition-all duration-300 hover:-translate-y-2 group border-gray-200 flex flex-col h-full"
                 >
                   <CardHeader className="p-0">
                     <div className="relative overflow-hidden">
-                      {/* Implement the image */}
-                      <img
+                      <Image
                         src={course.image || "/placeholder.svg"}
                         alt={course.title}
+                        width={400}
+                        height={250}
                         className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
                         loading="lazy"
-                        style={{ background: "#f3f4f6" }}
                       />
-                      <div className="absolute top-4 right-4 bg-accent text-accent-foreground px-3 py-1 rounded-full text-sm font-medium">
-                        {course.level}
-                      </div>
                     </div>
                   </CardHeader>
-                  <CardContent className="p-6">
-                    <h3 className="text-xl font-bold mb-2 group-hover:text-teal-800 transition-colors">{course.title}</h3>
-                    <p className="text-muted-foreground text-sm mb-4 leading-relaxed">{course.description}</p>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <div className="flex items-center gap-1">
-                        <Clock size={16} />
-                        <span>{course.duration}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Users size={16} />
-                        <span>{course.students}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Star size={16} className="fill-accent text-accent" />
-                        <span>{course.rating}</span>
-                      </div>
+                  <CardContent className="p-6 flex-1 flex flex-col">
+                    <h3 className="text-xl font-bold mb-2 text-gray-800 group-hover:text-teal-600 transition-colors">{course.title}</h3>
+                    
+                    {/* Rating */}
+                    <div className="flex items-center gap-1 mb-3">
+                      {[...Array(5)].map((_, i) => (
+                        <Star 
+                          key={i} 
+                          size={16} 
+                          className={`${i < Math.floor(parseFloat(course.rating)) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} 
+                        />
+                      ))}
+                      <span className="text-sm text-gray-600 ml-1">{course.rating}</span>
                     </div>
+                    
+                    <p className="text-gray-600 text-sm mb-4 leading-relaxed flex-1">{course.description}</p>
+                    
+                    {/* Price */}
+                    <div className="text-lg font-bold text-teal-600 mb-4">{course.price}</div>
                   </CardContent>
-                  <CardFooter className="p-6 pt-0">
-                    <Button onClick={() => redirect('/signin')} className=" cursor-pointer w-full bg-teal-800 group/btn hover:bg-teal-700 hover:text-white hover:scale-105 transition-transform duration-200">
-                      Enroll Now
-                      <ArrowRight className="ml-2 group-hover/btn:translate-x-1 transition-transform" size={16} />
+                  <CardFooter className="p-6 pt-0 mt-auto">
+                    <Button 
+                      onClick={() => redirect('/signin')} 
+                      className="w-full bg-teal-600 hover:bg-teal-700 text-white hover:scale-105 transition-all duration-200"
+                    >
+                      Read Course
                     </Button>
                   </CardFooter>
                 </Card>
@@ -76,7 +79,7 @@ const CourseSection: React.FC = () => {
                 size="lg"
                 variant="outline"
                 onClick={() => redirect('/signin')}
-                className="hover:bg-teal-800 hover:text-white hover:scale-105 transition-all duration-200 bg-transparent"
+                className="border-gray-300 text-gray-700 hover:bg-gray-50 hover:scale-105 transition-all duration-200 bg-transparent"
               >
                 View All Courses
                 <ArrowRight className="ml-2" size={20} />

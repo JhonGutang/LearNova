@@ -1,74 +1,36 @@
-import { CheckCircle2, Target, Lightbulb, Heart } from "lucide-react"
-import Image from "next/image"
+import { Gamepad2, Users, BarChart3 } from "lucide-react"
+
 const AboutSection: React.FC = () => {
   const features = [
     {
-      icon: Target,
-      title: "Our Mission",
-      description: "To democratize education and make quality learning accessible to everyone, everywhere.",
+      icon: Gamepad2,
+      title: "Gamified Learning",
+      description: "Turn your education into an exciting adventure with points, badges, and achievements that keep you motivated.",
     },
     {
-      icon: Lightbulb,
-      title: "Innovation",
-      description: "Leveraging cutting-edge technology to create engaging and effective learning experiences.",
+      icon: Users,
+      title: "Community Driven",
+      description: "Connect with fellow learners, share knowledge, and grow together in our supportive learning community.",
     },
     {
-      icon: Heart,
-      title: "Student-Centered",
-      description: "Putting learners first with personalized paths, flexible schedules, and dedicated support.",
+      icon: BarChart3,
+      title: "Track Progress",
+      description: "Monitor your learning journey with detailed analytics and personalized insights to reach your goals faster.",
     },
   ]
 
   return (
-    <section id="about" className="py-20 md:py-32 bg-secondary/30">
+    <section id="about" className="py-20 md:py-32 bg-white">
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           {/* Section Header */}
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold mb-4 text-balance">
-              About <span className="text-teal-800">LearNova</span>
+            <h2 className="text-3xl md:text-5xl font-bold mb-4 text-gray-800">
+              Why Choose <span className="text-teal-600">LearNova?</span>
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
-              We&apos;re on a mission to revolutionize online education and empower learners worldwide.
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              We&apos;ve reimagined online learning by combining education with gamification, resulting in an engaging experience that keeps you motivated and entertained.
             </p>
-          </div>
-
-          {/* Content Grid */}
-          <div className="grid md:grid-cols-2 gap-12 items-center mb-16">
-            {/* Image */}
-            <div className="relative group">
-              <div className="absolute inset-0 bg-primary/20 rounded-lg transform rotate-3 group-hover:rotate-6 transition-transform duration-300" />
-              <Image
-                src="https://i.pinimg.com/736x/f3/0f/1a/f30f1af2734083512703028f62146d2e.jpg"
-                width={300}
-                height={300}
-                alt="Students learning together"
-                className="relative rounded-lg shadow-xl w-full h-auto transform group-hover:scale-105 transition-transform duration-300"
-              />
-            </div>
-
-            {/* Text Content */}
-            <div className="space-y-6">
-              <h3 className="text-2xl md:text-3xl font-bold">Empowering Learners Since 2020</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                EduLearn was founded with a simple belief: education should be accessible, engaging, and transformative.
-                We&apos;ve built a platform that combines expert instruction, interactive content, and a supportive community
-                to help you achieve your goals.
-              </p>
-              <div className="space-y-3">
-                {[
-                  "Expert instructors from top institutions",
-                  "Flexible learning at your own pace",
-                  "Industry-recognized certifications",
-                  "Lifetime access to course materials",
-                ].map((item, index) => (
-                  <div key={index} className="flex items-start gap-3">
-                    <CheckCircle2 className="text-teal-800 flex-shrink-0 mt-1" size={20} />
-                    <span className="text-foreground">{item}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
 
           {/* Features Grid */}
@@ -78,13 +40,13 @@ const AboutSection: React.FC = () => {
               return (
                 <div
                   key={index}
-                  className="bg-card p-6 rounded-lg border border-border hover:border-teal-800 hover:shadow-lg transition-all duration-300 group"
+                  className="bg-white p-8 rounded-lg shadow-lg border border-gray-100 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group"
                 >
-                  <div className="bg-primary/10 w-12 h-12 rounded-lg flex items-center justify-center mb-4 group-hover:bg-teal-800 group-hover:scale-110 transition-all duration-300">
-                    <Icon className="text-teal-800 group-hover:text-white transition-colors duration-300" size={24} />
+                  <div className="bg-teal-100 w-16 h-16 rounded-lg flex items-center justify-center mb-6 group-hover:bg-teal-600 group-hover:scale-110 transition-all duration-300">
+                    <Icon className="text-teal-600 group-hover:text-white transition-colors duration-300" size={32} />
                   </div>
-                  <h4 className="text-xl font-bold mb-2">{feature.title}</h4>
-                  <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
+                  <h4 className="text-xl font-bold mb-4 text-gray-800">{feature.title}</h4>
+                  <p className="text-gray-600 leading-relaxed">{feature.description}</p>
                 </div>
               )
             })}
