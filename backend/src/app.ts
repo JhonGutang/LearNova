@@ -16,7 +16,7 @@ app.set("view engine", "jade");
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-const allowedOrigins = ["http://localhost:3000", "http://localhost:3001", "https://studio.apollographql.com"];
+const allowedOrigins = ["http://localhost:3000", "http://localhost:3001", "https://studio.apollographql.com", "https://learnova-lms.onrender.com"];
 app.use(
   cors({
     origin: allowedOrigins,
