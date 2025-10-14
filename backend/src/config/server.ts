@@ -46,6 +46,7 @@ const resolvers = [courseResolvers, lessonResolvers, lessonPageResolvers, creato
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  introspection: true,
   plugins: [
     ApolloServerPluginDrainHttpServer({ httpServer }),
     ApolloServerPluginLandingPageLocalDefault({ embed: true }), // Apollo Sandbox
