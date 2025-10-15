@@ -19,7 +19,6 @@ const sidebarLinks = [
   { label: "Home", icon: <Home className="w-5 h-5" />, href: "/home" },
   { label: "Courses", icon: <BookOpen className="w-5 h-5" />, href: "/courses" },
   { label: "Community", icon: <Users className="w-5 h-5" />, href: "/community" },
-  { label: "Achievements", icon: <Trophy className="w-5 h-5" />, href: "/achievements" },
   { label: "Profile", icon: <User className="w-5 h-5" />, href: "/profile" },
   { label: "Help & Support", icon: <HelpCircle className="w-5 h-5" />, href: "/help" },
 ];

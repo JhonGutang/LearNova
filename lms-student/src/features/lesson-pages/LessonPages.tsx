@@ -47,7 +47,7 @@ const LessonPages: React.FC<LessonPagesProps> = ({ lessonLink, courseLink }) => 
   const handleFinishLesson = () => {
     finishProgress(id)
     setTimeout(() => {
-      redirect("/" + courseLink)
+      redirect("/courses/" + courseLink)
     }, 1500);
   }
 
