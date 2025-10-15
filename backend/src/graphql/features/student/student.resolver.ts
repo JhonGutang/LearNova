@@ -1,21 +1,11 @@
-import prisma from "../../config/prisma";
-import { CreateStudentInput, ResponseStatus } from "../../generated/graphql";
-import { MyContext } from "../../types/context";
+import prisma from "../../../config/prisma";
+import { CreateStudentInput, ResponseStatus } from "../../../generated/graphql";
+import { CourseRepository } from "../courses/course.repository";
 import { StudentService } from "./student.service";
-
-const studentService = new StudentService(prisma)
+const courseRepository = new CourseRepository(prisma)
+const studentService = new StudentService(prisma, courseRepository)
 
 export const resolvers = {
-    Query: {
-        studentDetails: async (_:any, args: any, context: MyContext) => {
-            const { studentId } = context.session;
-            if (!studentId ) {
-                throw new Error('Student not authenticated');
-            }
-            
-            return await studentService.getDetails(studentId);
-        }
-    },
     Mutation: {
         createStudent: (_:any, args: {input: CreateStudentInput}) => {
             const student = studentService.create(args.input);

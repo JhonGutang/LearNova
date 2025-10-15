@@ -1,5 +1,5 @@
-import { PostInput, Post, Comment } from "../../generated/graphql";
-import { formatDateToMDY12Hour } from "../../utils/dateFormatter";
+import { PostInput, Post, Comment } from "../../../generated/graphql";
+import { formatDateToMDY12Hour } from "../../../utils/dateFormatter";
 
 interface PrismaClientLike {
   post: {

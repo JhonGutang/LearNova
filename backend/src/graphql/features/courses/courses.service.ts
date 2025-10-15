@@ -1,10 +1,24 @@
-import { Course, CourseInput, Lesson, LessonProgress } from "../../generated/graphql";
-import { normalizeCourse } from "../../utils/courseNormalizer";
+import {
+  Course,
+  CourseInput,
+  Lesson,
+  LessonProgress,
+} from "../../../generated/graphql";
+import { normalizeCourse } from "../../../utils/courseNormalizer";
 import { CourseRepository } from "./course.repository";
 import { LessonRepository } from "../lessons/lesson.repository";
 import { LevelSystemService } from "../level_system/level_system.service"; // Import Level System Service
 
 type CreateCourseData = CourseInput & { creator_id: number };
+
+// Define interface for course in progress
+export interface ICourseInProgress {
+  courseId: string;
+  title: string;
+  tagline: string;
+  progressPercentage: number;
+  notFinished: boolean;
+}
 
 export interface CourseQueryOptions {
   creatorId?: number;
@@ -12,15 +26,18 @@ export interface CourseQueryOptions {
 }
 
 interface ProgressReponse {
-  progressStatus: string
-  message: string 
+  progressStatus: string;
+  message: string;
 }
 
 interface CourseServiceInterface {
   create(course: CreateCourseData): Promise<Course>;
   enroll(courseId: number, studentId: number): Promise<boolean>;
   getEnrolledCourses(studentId: number): Promise<Course[]>;
-  startProgress(enrolledCourseId: number, lessonId: number): Promise<ProgressReponse>;
+  startProgress(
+    enrolledCourseId: number,
+    lessonId: number
+  ): Promise<ProgressReponse>;
   finishProgress(studentId: number, lessonId: number): Promise<ProgressReponse>;
   getSpecificCourse(
     courseId: number,
@@ -28,29 +45,34 @@ interface CourseServiceInterface {
     options?: CourseQueryOptions
   ): Promise<Course | null>;
   getAllCourses(options?: CourseQueryOptions): Promise<Course[]>;
-
+  getCoursesInProgress(studentId: number): Promise<ICourseInProgress[]>;
 }
 
 export class CourseService implements CourseServiceInterface {
   constructor(
-    private courseRepository: CourseRepository, 
+    private courseRepository: CourseRepository,
     private lessonRepository: LessonRepository,
     private levelSystemService: LevelSystemService // Inject LevelSystemService
   ) {}
 
   async create(courseData: CreateCourseData): Promise<Course> {
-    const existingCourse = await this.courseRepository.findByTitle(courseData.title);
+    const existingCourse = await this.courseRepository.findByTitle(
+      courseData.title
+    );
 
     if (existingCourse) {
-      throw new Error('A course with this title already exists.');
+      throw new Error("A course with this title already exists.");
     }
     const newCourse = await this.courseRepository.create(courseData);
-    return normalizeCourse(newCourse, { includeCreatorName: false, includeLessons: false });
+    return normalizeCourse(newCourse, {
+      includeCreatorName: false,
+      includeLessons: false,
+    });
   }
 
   async enroll(courseId: number, studentId: number): Promise<boolean> {
     try {
-      await this.courseRepository.createEnrollment(courseId, studentId)
+      await this.courseRepository.createEnrollment(courseId, studentId);
       return true;
     } catch (error: any) {
       if (error.code === "P2002") {
@@ -61,11 +83,17 @@ export class CourseService implements CourseServiceInterface {
   }
 
   async getEnrolledCourses(studentId: number): Promise<Course[]> {
-    const enrolledCourses = await this.courseRepository.findEnrolledCoursesByStudentId(studentId)
+    const enrolledCourses =
+      await this.courseRepository.findEnrolledCoursesByStudentId(studentId);
 
     return enrolledCourses
       .filter((enrolled) => enrolled.course)
-      .map((enrolled) => normalizeCourse(enrolled.course, { includeCreatorName: true, includeLessons: false }));
+      .map((enrolled) =>
+        normalizeCourse(enrolled.course, {
+          includeCreatorName: true,
+          includeLessons: false,
+        })
+      );
   }
 
   async getSpecificCourse(
@@ -86,17 +114,19 @@ export class CourseService implements CourseServiceInterface {
 
     // Handle student-specific logic: check enrollment status
     if (options?.studentId) {
-      const enrollmentStatus = await this.courseRepository.checkEnrollmentStatus(
-        courseId,
-        options.studentId
-      );
+      const enrollmentStatus =
+        await this.courseRepository.checkEnrollmentStatus(
+          courseId,
+          options.studentId
+        );
 
       // Also check lesson progress if enrolledCourseId exists
-      let lessonProgress:LessonProgress[] = [];
+      let lessonProgress: LessonProgress[] = [];
       if (enrollmentStatus.enrolledCourseId) {
-        lessonProgress = await this.lessonRepository.findLessonProgressByEnrollment(
-          enrollmentStatus.enrolledCourseId
-        );
+        lessonProgress =
+          await this.lessonRepository.findLessonProgressByEnrollment(
+            enrollmentStatus.enrolledCourseId
+          );
       }
 
       return normalizeCourse(course, {
@@ -116,7 +146,7 @@ export class CourseService implements CourseServiceInterface {
 
   async getAllCourses(options: CourseQueryOptions = {}): Promise<Course[]> {
     const { creatorId, studentId } = options;
-  
+
     // Delegate data fetching to repository
     const courses = await this.courseRepository.findAllCourses({
       creatorId,
@@ -125,7 +155,8 @@ export class CourseService implements CourseServiceInterface {
 
     // Business logic: Transform data for GraphQL
     return courses.map((course) => {
-      const isEnrolled = (course.studentsEnrolled?.length ?? 0) >  0 ? true : false
+      const isEnrolled =
+        (course.studentsEnrolled?.length ?? 0) > 0 ? true : false;
       return normalizeCourse(course, {
         includeCreatorName: true,
         includeLessons: false,
@@ -134,37 +165,52 @@ export class CourseService implements CourseServiceInterface {
     });
   }
 
-  async startProgress(enrolledCourseId: number, lessonId: number): Promise<ProgressReponse> {
+  async startProgress(
+    enrolledCourseId: number,
+    lessonId: number
+  ): Promise<ProgressReponse> {
     try {
-
-      const existingProgress = await this.lessonRepository.findLessonProgress({enrolledCourseId, lessonId});
+      const existingProgress = await this.lessonRepository.findLessonProgress({
+        enrolledCourseId,
+        lessonId,
+      });
       if (existingProgress) {
         return {
           progressStatus: "IN_PROGRESS",
-          message: "This lesson is already " + existingProgress.status
-        }
+          message: "This lesson is already " + existingProgress.status,
+        };
       }
 
-      const newProgress: LessonProgress =  await this.lessonRepository.createLessonProgress(enrolledCourseId, lessonId);
+      const newProgress: LessonProgress =
+        await this.lessonRepository.createLessonProgress(
+          enrolledCourseId,
+          lessonId
+        );
       return {
         progressStatus: "STARTED",
-        message: "This lesson is now " + newProgress.status
+        message: "This lesson is now " + newProgress.status,
       };
     } catch (error) {
       return {
         progressStatus: "FAILED",
-        message: "Error creating lesson progress: " + error
+        message: "Error creating lesson progress: " + error,
       };
     }
   }
 
-  async finishProgress(studentId: number, lessonId: number): Promise<ProgressReponse> {
-    const existingProgress = await this.lessonRepository.findLessonProgress({studentId, lessonId});
-    console.log(existingProgress)
+  async finishProgress(
+    studentId: number,
+    lessonId: number
+  ): Promise<ProgressReponse> {
+    const existingProgress = await this.lessonRepository.findLessonProgress({
+      studentId,
+      lessonId,
+    });
+    console.log(existingProgress);
     if (!existingProgress) {
       return {
         progressStatus: "FAILED",
-        message: "User doesn't have progress with this lesson"
+        message: "User doesn't have progress with this lesson",
       };
     }
 
@@ -177,7 +223,7 @@ export class CourseService implements CourseServiceInterface {
         message: "Lesson progress is already marked as FINISHED.",
       };
     }
-  
+
     try {
       await this.lessonRepository.updateLessonProgressStatus(
         Number(existingProgress.id),
@@ -193,7 +239,10 @@ export class CourseService implements CourseServiceInterface {
 
       let levelUpResult = null;
       if (typeof expGained === "number" && expGained > 0) {
-        levelUpResult = await this.levelSystemService.levelUp(studentId, expGained);
+        levelUpResult = await this.levelSystemService.levelUp(
+          studentId,
+          expGained
+        );
       }
 
       let message = "Lesson progress marked as FINISHED";
@@ -203,14 +252,52 @@ export class CourseService implements CourseServiceInterface {
 
       return {
         progressStatus: "FINISHED",
-        message
+        message,
       };
     } catch (error) {
       return {
         progressStatus: "FAILED",
-        message: "Error updating lesson progress: " + error
+        message: "Error updating lesson progress: " + error,
       };
     }
   }
-  
+
+  async getCoursesInProgress(studentId: number): Promise<ICourseInProgress[]> {
+    const enrolledCourses = await this.courseRepository.findEnrolledCoursesWithProgressByStudentId(studentId);
+    return enrolledCourses.map((enrolled: any) => {
+        const totalLessons = enrolled.course.lessons.length;
+        const finishedLessons = (enrolled.lessonProgress || []).filter(
+            (progress: any) => progress.status === 'FINISHED'
+        ).length;
+
+        const notFinished = finishedLessons < totalLessons;
+        
+        const progressPercentage = totalLessons > 0 
+            ? (finishedLessons / totalLessons) * 100 
+            : 0;
+
+        return {
+            courseId: String(enrolled.course.id),
+            title: enrolled.course.title,
+            tagline: enrolled.course.tagline,
+            progressPercentage: Math.round(progressPercentage * 100) / 100,
+            notFinished 
+        } as ICourseInProgress;
+    }).filter((enrolled: ICourseInProgress) => enrolled.notFinished); 
+  }
+
+  async getRandomCourseRecommendations(studentId: number, limit: number = 5) {
+    const randomCourses =
+      await this.courseRepository.findRandomRecommendedPublishedCoursesExcludingEnrolled(
+        studentId,
+        limit
+      );
+
+    return randomCourses.map((course) => ({
+      courseId: course.id,
+      title: course.title,
+      tagline: course.tagline,
+      rate: Math.random() * 5,
+    }));
+  }
 }

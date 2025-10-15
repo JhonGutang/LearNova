@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { LessonProgress } from "../../generated/graphql";
+import { LessonProgress } from "../../../generated/graphql";
 
 interface LessonRepositoryInterface {
   createLessonProgress(

@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { Comment } from "../../generated/graphql";
-import { Comment as CommentDb } from "../../../generated/prisma";
+import { Comment } from "../../../generated/graphql";
+import { Comment as CommentDb } from "../../../../generated/prisma";
 export interface ICommentService {
   getComments(postId: number): Promise<Comment[]>;
   createComment(params: { comment: string; studentId: number; postId: number }): Promise<Comment | null>;

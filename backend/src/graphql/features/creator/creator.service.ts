@@ -1,10 +1,10 @@
 
-import prisma from "../../config/prisma";
+import prisma from "../../../config/prisma";
 import {
   CreatorProfile,
   CreateCreatorProfileInput,
   Role,
-} from "../../generated/graphql";
+} from "../../../generated/graphql";
 import bcrypt from "bcrypt";
 
 // Normalizer function to convert Prisma creator + user to CreatorProfile

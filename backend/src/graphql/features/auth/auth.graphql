@@ -16,18 +16,6 @@ type CreatorProfile {
   createdAt: DateTime
 }
 
-type StudentProfile {
-  id: Int!
-  userId: Int!
-  firstName: String!
-  lastName: String!
-  middleName: String
-  email: String!
-  phone: String!
-  address: String!
-  createdAt: DateTime
-}
-
 enum Role {
   CREATOR
   STUDENT

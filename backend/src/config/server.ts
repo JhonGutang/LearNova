@@ -16,14 +16,16 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 
 // Import both course and lesson resolvers
-import { resolvers as courseResolvers } from '../features/courses/course.resolver';
-import { resolvers as lessonResolvers } from '../features/lessons/lesson.resolver';
-import { resolvers as lessonPageResolvers } from '../features/lesson_page/lesson_page.resolver';
-import { resolvers as creatorResolvers } from '../features/creator/creator.resolver';
-import { resolvers as studentResolvers} from '../features/student/student.resolver';
-import { resolvers as AuthResolvers } from '../features/auth/auth.resolver';
-import { resolvers as PostResolver } from '../features/posts/post.resolver';
-import { resolvers as CommentResolver } from '../features/comments/comment.resolver';
+import { resolvers as courseResolvers } from '../graphql/features/courses/course.resolver';
+import { resolvers as lessonResolvers } from '../graphql/features/lessons/lesson.resolver';
+import { resolvers as lessonPageResolvers } from '../graphql/features/lesson_page/lesson_page.resolver';
+import { resolvers as creatorResolvers } from '../graphql/features/creator/creator.resolver';
+import { resolvers as studentResolvers} from '../graphql/features/student/student.resolver';
+import { resolvers as AuthResolvers } from '../graphql/features/auth/auth.resolver';
+import { resolvers as PostResolver } from '../graphql/features/posts/post.resolver';
+import { resolvers as CommentResolver } from '../graphql/features/comments/comment.resolver';
+import { resolvers as DashboardResolver } from '../graphql/pages/dashboard.resolver';
+
 // Load default .env file first
 
 // Then check if we need to override with staging
@@ -38,18 +40,19 @@ app.set('port', port);
 const httpServer: Server = http.createServer(app);
 
 // Read GraphQL schemas from files
-const rootTypeDefs = readFileSync(join(__dirname, '../features/root.graphql'), 'utf8');
-const courseTypeDefs = readFileSync(join(__dirname, '../features/courses/course.graphql'), 'utf8');
-const lessonTypeDefs = readFileSync(join(__dirname, '../features/lessons/lesson.graphql'), 'utf8');
-const lessonPageTypeDefs = readFileSync(join(__dirname, '../features/lesson_page/lesson_page.graphql'), 'utf8');
-const creatorTypeDefs = readFileSync(join(__dirname, '../features/creator/creator.graphql'), 'utf8');
-const studentTypeDefs = readFileSync(join(__dirname, '../features/student/student.graphql'), 'utf8');
-const authTypeDefs = readFileSync(join(__dirname, '../features/auth/auth.graphql'), 'utf8');
-const postTypeDefs = readFileSync(join(__dirname, '../features/posts/post.graphql'), 'utf8');
-const commentTypeDefs = readFileSync(join(__dirname, '../features/comments/comment.graphql'), 'utf8');
+const rootTypeDefs = readFileSync(join(__dirname, '../graphql/root.graphql'), 'utf8');
+const dashboardTypeDefs = readFileSync(join(__dirname, '../graphql/pages/dashboard.schema.graphql'), 'utf8');
+const courseTypeDefs = readFileSync(join(__dirname, '../graphql/features/courses/course.graphql'), 'utf8');
+const lessonTypeDefs = readFileSync(join(__dirname, '../graphql/features/lessons/lesson.graphql'), 'utf8');
+const lessonPageTypeDefs = readFileSync(join(__dirname, '../graphql/features/lesson_page/lesson_page.graphql'), 'utf8');
+const creatorTypeDefs = readFileSync(join(__dirname, '../graphql/features/creator/creator.graphql'), 'utf8');
+const studentTypeDefs = readFileSync(join(__dirname, '../graphql/features/student/student.graphql'), 'utf8');
+const authTypeDefs = readFileSync(join(__dirname, '../graphql/features/auth/auth.graphql'), 'utf8');
+const postTypeDefs = readFileSync(join(__dirname, '../graphql/features/posts/post.graphql'), 'utf8');
+const commentTypeDefs = readFileSync(join(__dirname, '../graphql/features/comments/comment.graphql'), 'utf8');
 // Merge typeDefs and resolvers
-const typeDefs = [rootTypeDefs, courseTypeDefs, lessonTypeDefs, lessonPageTypeDefs, creatorTypeDefs, studentTypeDefs, authTypeDefs, postTypeDefs, commentTypeDefs] ;
-const resolvers = [courseResolvers, lessonResolvers, lessonPageResolvers, creatorResolvers, studentResolvers, AuthResolvers, PostResolver, CommentResolver];
+const typeDefs = [rootTypeDefs, courseTypeDefs, lessonTypeDefs, lessonPageTypeDefs, creatorTypeDefs, studentTypeDefs, authTypeDefs, postTypeDefs, commentTypeDefs, dashboardTypeDefs] ;
+const resolvers = [courseResolvers, lessonResolvers, lessonPageResolvers, creatorResolvers, studentResolvers, AuthResolvers, PostResolver, CommentResolver, DashboardResolver];
 
 const server = new ApolloServer({
   typeDefs,

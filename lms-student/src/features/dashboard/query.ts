@@ -1,13 +1,15 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const USER_DETAILS_QUERY = gql`
-  query StudentDetails {
-    studentDetails {
-      id
-      firstName
-      lastName
-      level
-      exp
+  query DashboardPage {
+    DashboardPage {
+      student {
+        id
+        firstName
+        lastName
+        level
+        exp
+      }
       coursesInProgress {
         courseId
         title

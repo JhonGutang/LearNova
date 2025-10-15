@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRedirectLink } from "@/hooks/useRedirect";
+import { Student } from "@/types/data";
 
 const sidebarLinks = [
   { label: "Home", icon: <Home className="w-5 h-5" />, href: "/home" },
@@ -29,9 +30,10 @@ const SIDEBAR_WIDTH_COLLAPSED = 72;
 interface SidebarLayoutProps {
   children: ReactNode; // main content
   headerChild?: ReactNode; // optional header child
+  student?: Student
 }
 
-const SidebarLayout = ({ children, headerChild }: SidebarLayoutProps) => {
+const SidebarLayout = ({ children, headerChild, student }: SidebarLayoutProps) => {
   const { redirect } = useRedirectLink();
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
@@ -111,7 +113,11 @@ const SidebarLayout = ({ children, headerChild }: SidebarLayoutProps) => {
             </div>
             {!collapsed && (
               <div className="flex flex-col">
-                <span className="font-semibold text-gray-900 text-sm">Sarah Johnson</span>
+                <span className="font-semibold text-gray-900 text-sm">
+                  {student
+                    ? student.firstName
+                    : "Sam Jones"}
+                </span>
                 <span className="text-xs text-gray-500">Level 12 • 2,450 XP</span>
               </div>
             )}

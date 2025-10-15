@@ -1,7 +1,7 @@
-import prisma from "../../config/prisma";
-import { MyContext } from "../../types/context";
+import prisma from "../../../config/prisma";
+import { MyContext } from "../../../types/context";
 import { CommentService } from "./comment.service";
-import { ResponseStatus } from "../../generated/graphql";
+import { ResponseStatus } from "../../../generated/graphql";
 
 const commentService = new CommentService(prisma);
 

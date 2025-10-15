@@ -1,6 +1,6 @@
-import prisma from "../../config/prisma";
-import { Lesson, LessonInput } from "../../generated/graphql";
-import { LessonServiceInterface } from "../../interfaces/lesson.interface";
+import prisma from "../../../config/prisma";
+import { Lesson, LessonInput } from "../../../generated/graphql";
+import { LessonServiceInterface } from "../../../interfaces/lesson.interface";
 
 function convertLessonIdToString(lesson: any): Lesson {
     return {

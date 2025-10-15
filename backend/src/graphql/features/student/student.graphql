@@ -1,0 +1,28 @@
+input CreateStudentInput {
+  firstName: String!
+  lastName: String!
+  middleName: String
+  email: String!
+  phone: String!
+  address: String!
+  password: String!
+}
+
+
+type StudentProfile {
+  id: Int!
+  userId: Int
+  firstName: String!
+  lastName: String!
+  middleName: String
+  level: Int
+  exp: Int
+  email: String
+  phone: String
+  address: String
+  createdAt: DateTime
+}
+
+extend type Mutation {
+  createStudent(input: CreateStudentInput): BaseResponse
+}

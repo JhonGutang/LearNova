@@ -1,0 +1,23 @@
+type DashboardPage {
+    student: StudentProfile!
+    coursesInProgress: [CourseInProgress!]!
+    courseRecommendations: [CourseRecommendation!]!
+}
+
+type CourseInProgress {
+  courseId: ID!
+  title: String!
+  tagline: String
+  progressPercentage: Float!
+}
+
+type CourseRecommendation {
+  courseId: ID!
+  title: String!
+  tagline: String
+  rate: Float!
+}
+
+extend type Query {
+  DashboardPage: DashboardPage!
+}

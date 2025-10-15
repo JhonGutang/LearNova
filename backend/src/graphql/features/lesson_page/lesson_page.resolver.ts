@@ -1,5 +1,5 @@
 import { LessonPageService } from "./lesson_page.service";
-import { CreateOrUpdateLessonPageInput } from "../../generated/graphql";
+import { CreateOrUpdateLessonPageInput } from "../../../generated/graphql";
 const lessonPageService = new LessonPageService();
 
 export const resolvers = {

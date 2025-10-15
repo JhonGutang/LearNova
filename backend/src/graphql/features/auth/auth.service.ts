@@ -1,6 +1,6 @@
-import { ChangePasswordInput, CreatorProfile, LoginInput, StudentProfile, User, UserProfile } from "../../generated/graphql";
+import { ChangePasswordInput, CreatorProfile, LoginInput, StudentProfile, User, UserProfile } from "../../../generated/graphql";
 import bcrypt from "bcrypt";
-import { MyContext } from "../../types/context";
+import { MyContext } from "../../../types/context";
 import { PrismaClient } from "@prisma/client";
 
 interface AuthServiceInterface {

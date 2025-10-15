@@ -1,5 +1,5 @@
-import prisma from "../../config/prisma";
-import { CreateOrUpdateLessonPageInput, LessonPage } from "../../generated/graphql";
+import prisma from "../../../config/prisma";
+import { CreateOrUpdateLessonPageInput, LessonPage } from "../../../generated/graphql";
 
 export interface LessonPageServiceInterface {
     getLessonPage(id: number): Promise<LessonPage | null>;

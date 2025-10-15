@@ -1,6 +1,6 @@
-import prisma from "../../config/prisma";
-import { PostInput, ReactPostInput, ResponseStatus } from "../../generated/graphql";
-import { MyContext } from "../../types/context";
+import prisma from "../../../config/prisma";
+import { PostInput, ReactPostInput, ResponseStatus } from "../../../generated/graphql";
+import { MyContext } from "../../../types/context";
 import { PostService } from "./post.service";
 
 const postService = new PostService(prisma);

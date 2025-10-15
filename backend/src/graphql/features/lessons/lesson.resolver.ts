@@ -1,4 +1,4 @@
-import { LessonInput } from "../../generated/graphql";
+import { LessonInput } from "../../../generated/graphql";
 import { LessonService } from "./lesson.service"
 
 const lessonService = new LessonService();

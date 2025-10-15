@@ -1,4 +1,5 @@
-import { CreateStudentInput, StudentDetails, StudentProfile } from "../../generated/graphql";
+import { CreateStudentInput, DashboardPage, StudentProfile } from "../../../generated/graphql";
+import { CourseRepository } from "../courses/course.repository";
 import bcrypt from 'bcrypt'
 
 // Normalizer function to convert Prisma student + user to StudentProfile
@@ -18,14 +19,16 @@ function normalizeStudentProfile(student: any, user: any): StudentProfile {
 
 interface StudentServiceInterface {
     create(input: CreateStudentInput): Promise<StudentProfile>
-    getDetails(studentId: number): Promise<StudentDetails | null>
+    getDetails(studentId: number): Promise<DashboardPage | null>
 }
 
 export class StudentService implements StudentServiceInterface {
     private prisma: any;
+    private courseRepository: CourseRepository;
 
-    constructor(prisma: any) {
+    constructor(prisma: any, courseRepository: CourseRepository) {
       this.prisma = prisma;
+      this.courseRepository = courseRepository;
     }
 
     async create(input: CreateStudentInput): Promise<StudentProfile> {
@@ -52,7 +55,7 @@ export class StudentService implements StudentServiceInterface {
         return normalizeStudentProfile(user.student, user);
     }
 
-    async getDetails(studentId: number): Promise<StudentDetails | null> {
+    async getDetails(studentId: number): Promise<DashboardPage | null> {
         const student = await this.prisma.student.findUnique({
             where: { id: studentId }
         });
@@ -63,36 +66,23 @@ export class StudentService implements StudentServiceInterface {
         const coursesInProgress = await this.getCoursesInProgress(studentId);
         const courseRecommendations = await this.getRandomCourseRecommendations(studentId);
         return {
-            id: student.id.toString(),
-            firstName: student.first_name,
-            lastName: student.last_name,
-            level: student.level, 
-            exp: student.exp,
+            student: {
+                id: student.id.toString(),
+                firstName: student.first_name,
+                lastName: student.last_name,
+                level: student.level,
+                exp: student.exp,
+            },
             coursesInProgress,
             courseRecommendations
         };
     }
 
-    private async getCoursesInProgress(studentId: number) {
-        const enrolledCourses = await this.prisma.enrolled_Course.findMany({
-            where: { student_id: studentId },
-            orderBy: {
-                updated_at: 'desc'
-            },
-            take: 2,
-            include: {
-                course: {
-                    include: {
-                        lessons: true
-                    }
-                },
-                lessonProgress: true
-            }
-        });
-
+    async getCoursesInProgress(studentId: number) {
+        const enrolledCourses = await this.courseRepository.findEnrolledCoursesWithProgressByStudentId(studentId);
         return enrolledCourses.map((enrolled: any) => {
             const totalLessons = enrolled.course.lessons.length;
-            const finishedLessons = enrolled.lessonProgress.filter(
+            const finishedLessons = (enrolled.lessonProgress || []).filter(
                 (progress: any) => progress.status === 'FINISHED'
             ).length;
 
@@ -112,7 +102,7 @@ export class StudentService implements StudentServiceInterface {
         }).filter((enrolled: any) => enrolled.notFinished); 
     }
 
-    private async getRandomCourseRecommendations(studentId: number, limit: number = 5) {
+    async getRandomCourseRecommendations(studentId: number, limit: number = 5) {
         const enrolledCourseIds = await this.prisma.enrolled_Course.findMany({
             where: { student_id: studentId },
             select: { course_id: true }

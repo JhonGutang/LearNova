@@ -1,6 +1,6 @@
-import prisma from "../../config/prisma";
-import { CourseInput, ResponseStatus } from "../../generated/graphql";
-import { MyContext } from "../../types/context";
+import prisma from "../../../config/prisma";
+import { CourseInput, ResponseStatus } from "../../../generated/graphql";
+import { MyContext } from "../../../types/context";
 import { CourseRepository } from "./course.repository";
 import { CourseService } from "./courses.service";
 import { LessonRepository } from "../lessons/lesson.repository";

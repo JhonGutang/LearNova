@@ -8,15 +8,20 @@ import QuickActions from './QuickActions';
 import RecommendedCourses from './RecommendedCourses';
 import RecentActivity from './RecentActivity';
 import CommunityHighlights from './CommunityHighlights';
-import { useUserDetails } from '../useUserDetails';
+import { useUserDetails } from '../useDashboard';
+import SidebarLayout from '@/shared/layout/Sidebar';
+import HeaderContents from '@/shared/HeaderContents';
+
 
 const DashboardLayout: React.FC = () => {
-  const { studentDetails } = useUserDetails();
+  const { dashboardPage } = useUserDetails();
   
   return (
+    <SidebarLayout headerChild={<HeaderContents/>} student={dashboardPage?.student}>
+
     <div className="max-w-7xl mx-auto pt-7">
       {/* Welcome Banner */}
-      <WelcomeBanner userName={studentDetails?.firstName}  level={studentDetails?.level} xp={studentDetails?.exp} />
+      <WelcomeBanner userName={dashboardPage?.student.firstName}  level={dashboardPage?.student.level} xp={dashboardPage?.student.exp} />
       
       {/* Stats Cards */}
       <StatsCards />
@@ -26,7 +31,7 @@ const DashboardLayout: React.FC = () => {
         {/* Continue Learning and Quick Actions together */}
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="flex-1">
-            <ContinueLearning coursesInProgress={studentDetails?.coursesInProgress} />
+            <ContinueLearning coursesInProgress={dashboardPage?.coursesInProgress} />
           </div>
           <div className="w-full lg:w-[340px] flex-shrink-0">
             <QuickActions />
@@ -34,7 +39,7 @@ const DashboardLayout: React.FC = () => {
         </div>
 
         {/* Recommended Courses */}
-        <RecommendedCourses courseRecommendation={studentDetails?.courseRecommendations} />
+        <RecommendedCourses courseRecommendation={dashboardPage?.courseRecommendations} />
 
         {/* Recent Activity and Community Highlights side by side */}
         <div className="flex flex-col lg:flex-row gap-8">
@@ -47,6 +52,8 @@ const DashboardLayout: React.FC = () => {
         </div>
       </div>
     </div>
+    </SidebarLayout>
+
   );
 };
 

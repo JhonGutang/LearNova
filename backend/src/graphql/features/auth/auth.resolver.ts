@@ -1,7 +1,7 @@
-import { ChangePasswordInput, LoginInput, ResponseStatus } from "../../generated/graphql";
+import { ChangePasswordInput, LoginInput, ResponseStatus } from "../../../generated/graphql";
 import { AuthService } from "./auth.service";
-import prisma from "../../config/prisma";
-import { MyContext } from "../../types/context";
+import prisma from "../../../config/prisma";
+import { MyContext } from "../../../types/context";
 const authService = new AuthService(prisma);
 
 export const resolvers = {
