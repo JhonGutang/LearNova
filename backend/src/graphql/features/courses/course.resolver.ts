@@ -5,10 +5,11 @@ import { CourseRepository } from "./course.repository";
 import { CourseService } from "./courses.service";
 import { LessonRepository } from "../lessons/lesson.repository";
 import { LevelSystemService } from "../level_system/level_system.service";
+
+
 const courseRepository = new CourseRepository(prisma);
 const lessonRepository = new LessonRepository(prisma);
-const levelSystemService = new LevelSystemService(prisma)
-const courseService = new CourseService(courseRepository, lessonRepository, levelSystemService);
+const courseService = new CourseService(courseRepository, lessonRepository);
 
 export const resolvers = {
   Query: {
@@ -126,76 +127,5 @@ export const resolvers = {
         console.error(error);
       }
     },
-    startProgress: async (
-      _: any,
-      args: { enrolledCourseId: number; lessonId: number }
-    ) => {
-      try {
-        const isStarted = await courseService.startProgress(
-          args.enrolledCourseId,
-          args.lessonId
-        );
-        if (isStarted.progressStatus === "FAILED") {
-          return {
-            status: ResponseStatus.Error,
-            progressStatus: isStarted.progressStatus,
-            message: isStarted.message,
-          };
-        }
-
-        return {
-          status: ResponseStatus.Success,
-          progressStatus: isStarted.progressStatus,
-          message: isStarted.message,
-        };
-      } catch (error) {
-        console.error("Error starting progress:", error);
-        return {
-          status: ResponseStatus.Error,
-          progressStatus: "FAILED",
-          message: "Internal server error",
-        };
-      }
-    },
-    finishProgress: async (
-      _: any,
-      args: { lessonId: number },
-      context: MyContext
-    ) => {
-      try {
-        const { studentId } = context.session
-
-        if(!studentId) return {
-          status: ResponseStatus.Error,
-          message: "Student not found",
-        }
-
-        const isStarted = await courseService.finishProgress(
-          studentId,
-          args.lessonId
-        );
-
-        if (isStarted.progressStatus === "FAILED") {
-          return {
-            status: ResponseStatus.Error,
-            progressStatus: isStarted.progressStatus,
-            message: isStarted.message,
-          };
-        }
-
-        return {
-          status: ResponseStatus.Success,
-          progressStatus: isStarted.progressStatus,
-          message: isStarted.message,
-        };
-      } catch (error) {
-        console.error("Error starting progress:", error);
-        return {
-          status: ResponseStatus.Error,
-          progressStatus: "FAILED",
-          message: "Internal server error",
-        };
-      }
-    },
-  },
+  }
 };

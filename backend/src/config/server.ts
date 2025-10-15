@@ -25,6 +25,7 @@ import { resolvers as AuthResolvers } from '../graphql/features/auth/auth.resolv
 import { resolvers as PostResolver } from '../graphql/features/posts/post.resolver';
 import { resolvers as CommentResolver } from '../graphql/features/comments/comment.resolver';
 import { resolvers as DashboardResolver } from '../graphql/pages/dashboard.resolver';
+import { resolvers as ProgressResolver} from '../graphql/features/progress/progress.resolver'
 
 // Load default .env file first
 
@@ -50,9 +51,9 @@ const studentTypeDefs = readFileSync(join(__dirname, '../graphql/features/studen
 const authTypeDefs = readFileSync(join(__dirname, '../graphql/features/auth/auth.graphql'), 'utf8');
 const postTypeDefs = readFileSync(join(__dirname, '../graphql/features/posts/post.graphql'), 'utf8');
 const commentTypeDefs = readFileSync(join(__dirname, '../graphql/features/comments/comment.graphql'), 'utf8');
-// Merge typeDefs and resolvers
-const typeDefs = [rootTypeDefs, courseTypeDefs, lessonTypeDefs, lessonPageTypeDefs, creatorTypeDefs, studentTypeDefs, authTypeDefs, postTypeDefs, commentTypeDefs, dashboardTypeDefs] ;
-const resolvers = [courseResolvers, lessonResolvers, lessonPageResolvers, creatorResolvers, studentResolvers, AuthResolvers, PostResolver, CommentResolver, DashboardResolver];
+const progressTypeDefs = readFileSync(join(__dirname, '../graphql/features/progress/progress.schema.graphql'), 'utf8');
+const typeDefs = [rootTypeDefs, courseTypeDefs, lessonTypeDefs, lessonPageTypeDefs, creatorTypeDefs, studentTypeDefs, authTypeDefs, postTypeDefs, commentTypeDefs, dashboardTypeDefs, progressTypeDefs] ;
+const resolvers = [courseResolvers, lessonResolvers, lessonPageResolvers, creatorResolvers, studentResolvers, AuthResolvers, PostResolver, CommentResolver, DashboardResolver, ProgressResolver];
 
 const server = new ApolloServer({
   typeDefs,

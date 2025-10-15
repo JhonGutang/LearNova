@@ -7,7 +7,6 @@ import {
 import { normalizeCourse } from "../../../utils/courseNormalizer";
 import { CourseRepository } from "./course.repository";
 import { LessonRepository } from "../lessons/lesson.repository";
-import { LevelSystemService } from "../level_system/level_system.service"; // Import Level System Service
 
 type CreateCourseData = CourseInput & { creator_id: number };
 
@@ -34,11 +33,6 @@ interface CourseServiceInterface {
   create(course: CreateCourseData): Promise<Course>;
   enroll(courseId: number, studentId: number): Promise<boolean>;
   getEnrolledCourses(studentId: number): Promise<Course[]>;
-  startProgress(
-    enrolledCourseId: number,
-    lessonId: number
-  ): Promise<ProgressReponse>;
-  finishProgress(studentId: number, lessonId: number): Promise<ProgressReponse>;
   getSpecificCourse(
     courseId: number,
     title: string,
@@ -52,7 +46,6 @@ export class CourseService implements CourseServiceInterface {
   constructor(
     private courseRepository: CourseRepository,
     private lessonRepository: LessonRepository,
-    private levelSystemService: LevelSystemService // Inject LevelSystemService
   ) {}
 
   async create(courseData: CreateCourseData): Promise<Course> {
@@ -163,103 +156,6 @@ export class CourseService implements CourseServiceInterface {
         isEnrolled,
       });
     });
-  }
-
-  async startProgress(
-    enrolledCourseId: number,
-    lessonId: number
-  ): Promise<ProgressReponse> {
-    try {
-      const existingProgress = await this.lessonRepository.findLessonProgress({
-        enrolledCourseId,
-        lessonId,
-      });
-      if (existingProgress) {
-        return {
-          progressStatus: "IN_PROGRESS",
-          message: "This lesson is already " + existingProgress.status,
-        };
-      }
-
-      const newProgress: LessonProgress =
-        await this.lessonRepository.createLessonProgress(
-          enrolledCourseId,
-          lessonId
-        );
-      return {
-        progressStatus: "STARTED",
-        message: "This lesson is now " + newProgress.status,
-      };
-    } catch (error) {
-      return {
-        progressStatus: "FAILED",
-        message: "Error creating lesson progress: " + error,
-      };
-    }
-  }
-
-  async finishProgress(
-    studentId: number,
-    lessonId: number
-  ): Promise<ProgressReponse> {
-    const existingProgress = await this.lessonRepository.findLessonProgress({
-      studentId,
-      lessonId,
-    });
-    console.log(existingProgress);
-    if (!existingProgress) {
-      return {
-        progressStatus: "FAILED",
-        message: "User doesn't have progress with this lesson",
-      };
-    }
-
-    if (
-      existingProgress.status &&
-      existingProgress.status.toUpperCase() === "FINISHED"
-    ) {
-      return {
-        progressStatus: "FINISHED",
-        message: "Lesson progress is already marked as FINISHED.",
-      };
-    }
-
-    try {
-      await this.lessonRepository.updateLessonProgressStatus(
-        Number(existingProgress.id),
-        "FINISHED"
-      );
-      let expGained: number | undefined = undefined;
-      if (
-        (existingProgress as any).lesson &&
-        typeof (existingProgress as any).lesson.exp === "number"
-      ) {
-        expGained = (existingProgress as any).lesson.exp;
-      }
-
-      let levelUpResult = null;
-      if (typeof expGained === "number" && expGained > 0) {
-        levelUpResult = await this.levelSystemService.levelUp(
-          studentId,
-          expGained
-        );
-      }
-
-      let message = "Lesson progress marked as FINISHED";
-      if (levelUpResult) {
-        message += ` and student awarded ${expGained} EXP.`;
-      }
-
-      return {
-        progressStatus: "FINISHED",
-        message,
-      };
-    } catch (error) {
-      return {
-        progressStatus: "FAILED",
-        message: "Error updating lesson progress: " + error,
-      };
-    }
   }
 
   async getCoursesInProgress(studentId: number): Promise<ICourseInProgress[]> {

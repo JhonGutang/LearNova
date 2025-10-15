@@ -1,0 +1,11 @@
+type ProgressResponse {
+  status: ResponseStatus
+  message: String
+  progressStatus: String
+}
+
+
+extend type Mutation {
+  startProgress(enrolledCourseId: Int, lessonId: Int): ProgressResponse
+  finishProgress(lessonId: Int): ProgressResponse
+}

@@ -55,15 +55,8 @@ extend type Query {
   enrolledCourses: [Course!]!
 }
 
-type ProgressResponse {
-  status: ResponseStatus
-  message: String
-  progressStatus: String
-}
 
 extend type Mutation {
   createCourse(input: CourseInput!): Course!
   enrollCourse(courseId: Int): BaseResponse
-  startProgress(enrolledCourseId: Int, lessonId: Int): ProgressResponse
-  finishProgress(lessonId: Int): ProgressResponse
 }
