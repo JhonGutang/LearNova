@@ -17,6 +17,7 @@ export const resolvers = {
     },
     Mutation: {
         login: async (_: unknown, args: { input: LoginInput }, context: MyContext) => {
+            console.log(process.env.NODE_ENV)
             const isAuthenticated = await authService.authenticateUser(args.input, context);
             if (isAuthenticated) {
                 return {

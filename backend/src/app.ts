@@ -1,5 +1,4 @@
 import session from "express-session";
-import dotenv from "dotenv";
 import cors from "cors";
 import express, { Request, Response, NextFunction } from "express";
 import path from "path";
@@ -12,11 +11,28 @@ const app = express();
 // You can safely remove this if you only use APIs/GraphQL
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
-app.set("trust proxy", 1);
+
+const nodeEnv = process.env.NODE_ENV;
+
+// Debug logging for environment variables
+console.log("=== DEBUG INFO ===");
+console.log("NODE_ENV:", nodeEnv);
+console.log("SESSION_SECRET:", process.env.SESSION_SECRET ? "***SET***" : "NOT SET");
+
+if (nodeEnv === "STAGING") {
+  app.set("trust proxy", 1);
+}
+
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-const allowedOrigins = ["http://localhost:3000", "http://localhost:3001", "https://studio.apollographql.com", "https://learnova-lms.onrender.com", "https://learnovalms.vercel.app"];
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "https://studio.apollographql.com",
+  "https://learnova-lms.onrender.com",
+  "https://learnovalms.vercel.app"
+];
 app.use(
   cors({
     origin: allowedOrigins,
@@ -28,17 +44,36 @@ app.use(
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-// Catch 404 (but skip /graphql so Apollo can handle it)
+// Determine session cookie options based on NODE_ENV
+let cookieSameSite: boolean | "lax" | "strict" | "none";
+let cookieSecure: boolean;
+
+if (nodeEnv === "LOCAL") {
+  cookieSameSite = "lax";
+  cookieSecure = false;
+} else if (nodeEnv === "STAGING") {
+  cookieSameSite = "none";
+  cookieSecure = true;
+} else {
+  cookieSameSite = "none";
+  cookieSecure = true;
+}
+
+// Debug logging for cookie settings
+console.log("=== COOKIE SETTINGS ===");
+console.log("cookieSameSite:", cookieSameSite);
+console.log("cookieSecure:", cookieSecure);
+console.log("========================");
 
 app.use(session({
   secret: process.env.SESSION_SECRET || 'fallback-secret',
   resave: false,
   saveUninitialized: false,
   cookie: {
-    httpOnly: true,              // not accessible from JS
-    maxAge: 1000 * 60 * 60,      // 1 hour
-    secure: true,               // dev only (true in prod w/ HTTPS)
-    sameSite: 'none',             // good default for CSRF protection
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60,
+    secure: cookieSecure,
+    sameSite: cookieSameSite,
   },
 }));
 

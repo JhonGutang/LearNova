@@ -1,9 +1,12 @@
 #!/usr/bin/env node
 
 import http, { Server } from 'http';
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env' });
+
+
 import app from '../app';
 import debug from 'debug';
-import dotenv from 'dotenv';
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@as-integrations/express4';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
@@ -21,8 +24,13 @@ import { resolvers as studentResolvers} from '../features/student/student.resolv
 import { resolvers as AuthResolvers } from '../features/auth/auth.resolver';
 import { resolvers as PostResolver } from '../features/posts/post.resolver';
 import { resolvers as CommentResolver } from '../features/comments/comment.resolver';
-const envFile = process.env.NODE_ENV === 'staging' ? '.env.staging' : '.env';
-dotenv.config({ path: envFile });
+// Load default .env file first
+
+// Then check if we need to override with staging
+const nodeEnv = process.env.NODE_ENV;
+if (nodeEnv === 'STAGING') {
+  dotenv.config({ path: '.env.staging', override: true });
+}
 
 const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
