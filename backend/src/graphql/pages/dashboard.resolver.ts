@@ -1,9 +1,13 @@
 import prisma from "../../config/prisma";
 import { MyContext } from "../../types/context";
 import { CourseRepository } from "../features/courses/course.repository";
-import { StudentService } from "../features/student/student.service";
+import { CourseService } from "../features/courses/courses.service";
+import { DashboardService } from "./dashboard.service";
+
+
 const courseRepository = new CourseRepository(prisma)
-const studentService = new StudentService(prisma, courseRepository);
+const courservice = new CourseService(courseRepository)
+const dashboardService = new DashboardService(prisma, courservice)
 
 export const resolvers = {
     Query: {
@@ -13,7 +17,7 @@ export const resolvers = {
                 throw new Error('Student not authenticated');
             }
             try {
-                const student = await studentService.getDetails(studentId);
+                const student = await dashboardService.getInfo(studentId);
                 if (!student) {
                     throw new Error('Student not found');
                 }

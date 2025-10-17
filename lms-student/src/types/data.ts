@@ -21,7 +21,10 @@ export interface studentCreateInput {
 
 export interface Course {
   id: string;
-  creatorName: string;
+  creator: {
+    firstName: string,
+    lastName: string
+  }
   title: string;
   tagline?: string;
   description?: string;

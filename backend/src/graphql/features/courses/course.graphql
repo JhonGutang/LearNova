@@ -1,46 +1,25 @@
 
-
 type Course {
   id: ID!
-  creatorName: String
   title: String!
   tagline: String!
   description: String
-  status: String
-  categories: [String!]!
-  createdAt: String!
-  isEnrolled: Boolean
-  enrolledCourseId: Int
-  studentsEnrolled: [StudentsEnrolled] 
-  lessons: [Lesson]
+  creator: Creator
+  createdAt: String
+  studentEnrollment: EnrollmentInfo
 }
 
-type StudentsEnrolled {
-  id: ID!
-  studentId: ID!
-  course_id: ID!
+type Creator {
+  firstName: String
+  lastName: String
 }
 
-
-type Lesson {
-  id: ID!
-  title: String!
-  description: String!
-  progress: LessonProgress
+type EnrollmentInfo {
+  enrolledCourseId: ID!
+  enrolledAt: String
+  progress: Float
 }
 
-enum LessonProgressStatus {
-  IN_PROGRESS
-  FINISHED
-}
-
-type LessonProgress {
-  id: ID
-  enrolledCourseId: ID
-  lessonId: ID
-  status: LessonProgressStatus
-  completedAt: String
-}
 
 input CourseInput {
   title: String!
@@ -49,12 +28,10 @@ input CourseInput {
   categories: [String!]!
 }
 
-extend type Query {
-  course(id: ID!, title: String): Course
-  courses: [Course!]!
-  enrolledCourses: [Course!]!
-}
 
+extend type Query {
+  courses: [Course!]!
+}
 
 extend type Mutation {
   createCourse(input: CourseInput!): Course!

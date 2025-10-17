@@ -1,211 +1,58 @@
 // features/course/course.repository.ts
 
 import { PrismaClient } from "@prisma/client";
-import { CourseInput, LessonProgress } from "../../../generated/graphql";
+import { CourseInput } from "../../../generated/graphql";
 import { Course } from "../../../generated/graphql";
+import { buildCreateCourseQuery, buildFetchAllCoursesQuery, buildFindStudentEnrolledCoursesWithProgressQuery, buildRandomCoursesNotEnrolledQuery } from "./course.query-builder";
+import { Enrolled_Course } from "../../../../generated/prisma";
 
 type CreateCourseData = CourseInput & { creator_id: number };
 
 interface CourseRepositoryInterface {
-  findByTitle(title: string): Promise<Course | null>;
-  findByIdAndTitle(
-    courseId: number,
-    title: string,
-    creatorId?: number
-  ): Promise<Course | null>;
-  findEnrolledCoursesByStudentId(studentId: number): Promise<EnrolledCourse[]>;
-  findEnrolledCoursesWithProgressByStudentId(
-    studentId: number
-  ): Promise<EnrolledCourse[]>;
+  allCourses(): Promise<Course[]>;
+  existsByTitle(title: string): Promise<boolean>;
+  findStudentEnrolledCoursesWithProgress(studentId: number):  Promise<Enrolled_Course[]>;
   createEnrollment(courseId: number, studentId: number): Promise<void>;
-  checkEnrollmentStatus(
-    courseId: number,
-    studentId: number
-  ): Promise<EnrollmentStatus>;
-  create(courseData: CreateCourseData): Promise<Course>;
-  findRandomRecommendedPublishedCoursesExcludingEnrolled(
-    studentId: number,
-    limit?: number
-  ): Promise<Array<Pick<Course, "id" | "title" | "tagline">>>;
-}
-
-interface EnrollmentStatus {
-  isEnrolled: boolean;
-  enrolledCourseId?: number;
-}
-
-interface FindAllCoursesOptions {
-  creatorId?: number;
-  studentId?: number;
-}
-
-interface EnrolledCourse {
-  course: Course[];
+  createCourse(courseData: CreateCourseData): Promise<Course>;
+  randomCoursesNotEnrolled(studentId: number): Promise<Course[]>;
 }
 
 export class CourseRepository implements CourseRepositoryInterface {
   constructor(private prisma: PrismaClient) {}
 
-  async findByTitle(title: string) {
-    return this.prisma.course.findUnique({
+  async allCourses(): Promise<Course[]> {
+    const fetchQuery = buildFetchAllCoursesQuery();
+    return this.prisma.course.findMany(fetchQuery);
+  }
+
+  async existsByTitle(title: string): Promise<boolean> {
+    const course = await this.prisma.course.findUnique({
       where: { title },
+      select: { id: true }, 
     });
+    return !!course;
   }
 
-  async create(courseData: CreateCourseData) {
-    const newCourse = await this.prisma.course.create({
-      data: {
-        title: courseData.title,
-        creator_id: courseData.creator_id,
-        tagline: courseData.tagline,
-        description: courseData.description,
-        categories: {
-          create: courseData.categories.map((categoryName) => ({
-            category: {
-              connectOrCreate: {
-                where: { name: categoryName.toLowerCase() },
-                create: { name: categoryName.toLowerCase() },
-              },
-            },
-          })),
-        },
-      },
-      include: {
-        categories: { include: { category: true } },
-      },
-    });
-
-    return newCourse;
+  async findStudentEnrolledCoursesWithProgress(studentId: number): Promise<Enrolled_Course[]> {
+    const query = buildFindStudentEnrolledCoursesWithProgressQuery(studentId);
+    return await this.prisma.enrolled_Course.findMany(query);
   }
 
-  async findByIdAndTitle(
-    courseId: number,
-    title: string,
-    creatorId?: number
-  ): Promise<Course | null> {
-    const whereClause: any = {
-      id: courseId,
-      title: {
-        equals: title,
-        mode: "insensitive",
-      },
-    };
-
-    // Apply creator filter if provided
-    if (creatorId !== undefined) {
-      whereClause.creator_id = creatorId;
-    }
-
-    const course = await this.prisma.course.findFirst({
-      where: whereClause,
-      select: {
-        id: true,
-        title: true,
-        tagline: true,
-        description: true,
-        status: true,
-        created_at: true,
-        categories: {
-          select: {
-            category: {
-              select: {
-                name: true,
-              },
-            },
-          },
-        },
-        lessons: {
-          select: {
-            id: true,
-            title: true,
-            description: true,
-          },
-        },
-        creator: {
-          select: {
-            first_name: true,
-            last_name: true,
-          },
-        },
-      },
-    });
-
-    return course;
-  }
-
-  async findAllCourses(options: FindAllCoursesOptions): Promise<Course[]> {
-    const { creatorId, studentId } = options;
-
-    const whereClause: any = {};
-    if (creatorId) {
-      whereClause.creator_id = creatorId;
-    }
-
-    const baseSelect = {
-      id: true,
-      title: true,
-      tagline: true,
-      created_at: true,
-      categories: { select: { category: { select: { name: true } } } },
-      creator: { select: { first_name: true, last_name: true } },
-    };
-
-    if (studentId) {
-      return (await this.prisma.course.findMany({
-        where: whereClause,
-        select: {
-          ...baseSelect,
-          studentsEnrolled: {
-            where: { student_id: studentId },
-            select: { id: true },
-          },
-        },
-      })) as Course[];
-    }
-
-    return (await this.prisma.course.findMany({
-      where: whereClause,
-      select: baseSelect,
-    })) as Course[];
-  }
-
-  async findEnrolledCoursesByStudentId(
-    studentId: number
-  ): Promise<EnrolledCourse[]> {
-    return this.prisma.enrolled_Course.findMany({
-      where: {
-        student_id: studentId,
-      },
-      include: {
-        course: {
-          include: {
-            categories: { include: { category: true } },
-            lessons: true,
-            creator: true,
-          },
-        },
-      },
-    });
-  }
-
-  async findEnrolledCoursesWithProgressByStudentId(
-    studentId: number
-  ): Promise<EnrolledCourse[]> {
-    return await this.prisma.enrolled_Course.findMany({
+  async randomCoursesNotEnrolled(studentId: number): Promise<Course[]> {
+    const enrolledCourseIdsResult = await this.prisma.enrolled_Course.findMany({
       where: { student_id: studentId },
-      orderBy: {
-        updated_at: "desc",
-      },
-      take: 2,
-      include: {
-        course: {
-          include: {
-            lessons: true,
-          },
-        },
-        lessonProgress: true,
-      },
+      select: { course_id: true }
     });
+    const enrolledCourseIds = enrolledCourseIdsResult.map((ec: any) => ec.course_id);
+    const randomCoursesQuery = buildRandomCoursesNotEnrolledQuery(enrolledCourseIds, 5);
+    const randomCourses = await this.prisma.course.findMany(randomCoursesQuery);
+    return randomCourses;
+  }
+
+  async createCourse(courseData: CreateCourseData): Promise<Course> {
+    const createQuery = buildCreateCourseQuery(courseData);
+    const newCourse = await this.prisma.course.create(createQuery);
+    return newCourse;
   }
 
   async createEnrollment(courseId: number, studentId: number): Promise<void> {
@@ -215,49 +62,5 @@ export class CourseRepository implements CourseRepositoryInterface {
         student_id: studentId,
       },
     });
-  }
-
-  async checkEnrollmentStatus(
-    courseId: number,
-    studentId: number
-  ): Promise<EnrollmentStatus> {
-    const enrollment = await this.prisma.enrolled_Course.findFirst({
-      where: {
-        course_id: courseId,
-        student_id: studentId,
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    return {
-      isEnrolled: enrollment !== null,
-      enrolledCourseId: enrollment?.id,
-    };
-  }
-
-  async findRandomRecommendedPublishedCoursesExcludingEnrolled(
-    studentId: number,
-    limit: number = 5
-  ): Promise<Array<Pick<Course, "id" | "title" | "tagline">>> {
-    const enrolledCourseIds = await this.prisma.enrolled_Course.findMany({
-      where: { student_id: studentId },
-      select: { course_id: true },
-    });
-
-    const enrolledIds = enrolledCourseIds.map((enrollment: { course_id: number }) => enrollment.course_id);
-
-    const randomCourses = await this.prisma.course.findMany({
-      where: {
-        id: { notIn: enrolledIds },
-        status: "PUBLISHED",
-      },
-      take: limit,
-      orderBy: { id: "desc" },
-      select: { id: true, title: true, tagline: true },
-    });
-
-    return randomCourses as Array<Pick<Course, "id" | "title" | "tagline">>;
   }
 }

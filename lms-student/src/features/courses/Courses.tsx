@@ -69,7 +69,7 @@ const Courses: React.FC = () => {
                   <CoursesCardView
                     courseName={course.title}
                     tagline={course.tagline}
-                    author={course.creatorName}
+                    author={course.creator.firstName + " " + course.creator.lastName}
                     className="w-full"
                     chips={course.isEnrolled ? <EnrolledChip /> : undefined}
                     isEnrolled={course.isEnrolled}

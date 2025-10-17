@@ -1,113 +1,74 @@
-function normalizeLesson(lesson: any, lessonProgressMap?: Map<string, any>) {
-  if (!lesson) return undefined;
-  
-  const normalized: any = {
-    id: String(lesson.id),
-    title: lesson.title,
-    description: lesson.description,
-  };
+import { Course } from "../generated/graphql";
 
-  if (lessonProgressMap) {
-    const progress = lessonProgressMap.get(String(lesson.id));
-    if (progress) {
-      // Format updated_at to a more readable string, e.g., "Apr 10, 2024, 2:30 PM"
-      let readableDate: string | undefined = undefined;
-      if (progress.updated_at instanceof Date) {
-        readableDate = progress.updated_at.toLocaleString(undefined, {
-          year: "numeric",
-          month: "short",
-          day: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
-        });
-      } else if (typeof progress.updated_at === "string" || typeof progress.updated_at === "number") {
-        const dateObj = new Date(progress.updated_at);
-        if (!isNaN(dateObj.getTime())) {
-          readableDate = dateObj.toLocaleString(undefined, {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          });
-        } else {
-          readableDate = String(progress.updated_at);
-        }
-      }
-      normalized.progress = {
-        status: progress.status,
-        completedAt: readableDate,
-      };
+// Helper function to format a value as ISO date string if possible
+function formatDateValue(value: unknown): string | null {
+  let date: Date | null = null;
+
+  if (value instanceof Date) {
+    date = value;
+  } else if (value && typeof (value as any).toISOString === "function") {
+    try {
+      date = new Date((value as any).toISOString());
+    } catch {
+      date = null;
+    }
+  } else if (value && typeof (value as any).toString === "function") {
+    const stringValue = (value as any).toString();
+    const parsedDate = new Date(stringValue);
+    if (!isNaN(parsedDate.getTime())) {
+      date = parsedDate;
     }
   }
 
-  return normalized;
+  if (date && !isNaN(date.getTime())) {
+    // Format as "Month Day, Year" (e.g., "March 15, 2024")
+    return date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  }
+
+  return null;
 }
 
-export function normalizeCourse(
-  course: any,
-  opts?: { 
-    includeCreatorName?: boolean; 
-    includeLessons?: boolean; 
-    isEnrolled?: boolean; 
-    enrolledCourseId?: number;
-    lessonProgress?: any[]; // Add lessonProgress option
-  }
-) {
-  if (!course) return null;
-  const includeCreatorName = opts?.includeCreatorName ?? true;
-  const includeLessons = opts?.includeLessons ?? true;
-
-  const creatorName =
-    includeCreatorName && course.creator
-      ? `${course.creator.first_name} ${course.creator.last_name}`.trim()
-      : undefined;
-
-  const normalized: any = {
-    id: String(course.id),
-    title: course.title,
-    tagline: course.tagline,
-    description: course.description,
-    status: course.status,
-    categories: course.categories
-      ? course.categories.map((cat: any) =>
-          cat.category ? cat.category.name : cat.name
-        )
-      : [],
-    createdAt:
-      course.created_at instanceof Date
-        ? course.created_at.toISOString()
-        : course.created_at,
-  };
-
-  if (includeCreatorName) {
-    normalized.creatorName = creatorName ?? null;
+export function convertCourseDataToCamelCase<TOutput = Course>(course: unknown): TOutput {
+  if (course === null || course === undefined) {
+    return course as TOutput;
   }
 
-  if (includeLessons) {
-    // Create a map of lesson progress for quick lookup
-    let lessonProgressMap: Map<string, any> | undefined;
-    if (opts?.lessonProgress && opts.lessonProgress.length > 0) {
-      lessonProgressMap = new Map(
-        opts.lessonProgress.map(progress => [
-          String(progress.lesson_id || progress.lessonId), 
-          progress
-        ])
-      );
+  if (Array.isArray(course)) {
+    return course.map((item) => convertCourseDataToCamelCase(item)) as unknown as TOutput;
+  }
+
+  if (typeof course !== "object") {
+    return course as TOutput;
+  }
+
+  const inputRecord = course as Record<string, unknown>;
+  const normalized: Record<string, unknown> = {};
+
+  for (const key in inputRecord) {
+    if (!Object.prototype.hasOwnProperty.call(inputRecord, key)) continue;
+    const camelKey = key.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
+    let value = inputRecord[key];
+
+    // Special fix: If the key is 'created_at' or 'createdAt', and value is an object (likely a date), convert to ISO string if possible
+    if (
+      (key === "created_at" || camelKey === "createdAt") &&
+      typeof value === "object" &&
+      value !== null
+    ) {
+      normalized[camelKey] = formatDateValue(value);
+      continue;
     }
 
-    normalized.lessons = course.lessons
-      ? course.lessons.map((lesson: any) => normalizeLesson(lesson, lessonProgressMap))
-      : [];
+    if (Array.isArray(value)) {
+      normalized[camelKey] = value.map((item) =>
+        typeof item === "object" && item !== null ? convertCourseDataToCamelCase(item) : item
+      );
+    } else if (value && typeof value === "object") {
+      normalized[camelKey] = convertCourseDataToCamelCase(value);
+    } else {
+      normalized[camelKey] = value;
+    }
   }
 
-  if (typeof opts?.isEnrolled === "boolean") {
-    normalized.isEnrolled = opts.isEnrolled;
-  }
-
-  if (typeof opts?.enrolledCourseId !== "undefined") {
-    normalized.enrolledCourseId = opts.enrolledCourseId;
-  }
-
-  return normalized;
+  return normalized as unknown as TOutput;
 }

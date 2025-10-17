@@ -1,3 +1,23 @@
+type Lesson {
+  id: ID!
+  title: String!
+  description: String!
+  progress: LessonProgress
+}
+
+type LessonProgress {
+  id: ID
+  enrolledCourseId: ID
+  lessonId: ID
+  status: LessonProgressStatus
+  completedAt: String
+}
+
+enum LessonProgressStatus {
+  IN_PROGRESS
+  FINISHED
+}
+
 
 input LessonInput {
     course_id: Int!,

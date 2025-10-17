@@ -3,86 +3,19 @@ import { CourseInput, ResponseStatus } from "../../../generated/graphql";
 import { MyContext } from "../../../types/context";
 import { CourseRepository } from "./course.repository";
 import { CourseService } from "./courses.service";
-import { LessonRepository } from "../lessons/lesson.repository";
-import { LevelSystemService } from "../level_system/level_system.service";
 
 
 const courseRepository = new CourseRepository(prisma);
-const lessonRepository = new LessonRepository(prisma);
-const courseService = new CourseService(courseRepository, lessonRepository);
+const courseService = new CourseService(courseRepository);
 
 export const resolvers = {
   Query: {
-    course: async (
-      _: any,
-      args: { id: string; title: string },
-      context: MyContext
-    ) => {
-      const { role, studentId, creatorId } = context.session;
-      if (!role) return null;
-
-      const courseId = parseInt(args.id);
-      const getOptions =
-        role === "STUDENT"
-          ? studentId
-            ? { studentId }
-            : undefined
-          : role === "CREATOR"
-          ? creatorId
-            ? { creatorId }
-            : null
-          : null;
-
-      if (getOptions === null) return null;
-
-      const course = await courseService.getSpecificCourse(
-        courseId,
-        args.title,
-        getOptions
-      );
-
-      if (!course && role === "CREATOR") {
-        throw new Error("Course not found");
-      }
-
-      return course;
-    },
-    courses: async (_: any, __: any, context: MyContext) => {
-      try {
-        const { role, studentId, creatorId } = context.session;
-        if (!role) return null;
-
-        const getOptions =
-        role === "STUDENT"
-          ? studentId
-            ? { studentId }
-            : undefined
-          : role === "CREATOR"
-          ? creatorId
-            ? { creatorId }
-            : null
-          : null;
-
-      if (getOptions === null) return null;
-      return await courseService.getAllCourses(
-        getOptions
-      );
-
-      } catch (error) {
-        throw new Error(`Internal server error: ${error}`);
-      }
-    },
-    enrolledCourses: async (_: any, __: any, context: MyContext) => {
-      try {
-        if (!context.session.studentId) return null;
-        return await courseService.getEnrolledCourses(context.session.studentId);
-      } catch (error) {
-        console.error("Error fetching enrolled courses:", error);
-        throw new Error("Internal server error");
-      }
-    },
+    courses: async (_: unknown, __: {}, context: MyContext) => {
+      const { studentId, role } = context.session;
+      if(!studentId && role !== 'STUDENT') return null
+      return await courseService.coursesForStudents();
+    }
   },
-
   Mutation: {
     createCourse: async (
       _: any,

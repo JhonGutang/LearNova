@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 import { DashboardPage } from "../../generated/graphql";
-import { StudentService } from "../features/student/student.service";
 import { CourseService } from "../features/courses/courses.service";
 
 interface DashboardServiceInterface {
@@ -11,7 +10,7 @@ export class DashboardService implements DashboardServiceInterface {
     private prisma: PrismaClient;
     private courseService: CourseService;
 
-    constructor(prismaInstance: PrismaClient, studentService: StudentService, courseService: CourseService) {
+    constructor(prismaInstance: PrismaClient, courseService: CourseService) {
         this.prisma = prismaInstance;
         this.courseService = courseService;
     }
