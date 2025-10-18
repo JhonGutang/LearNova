@@ -129,3 +129,13 @@ export interface StudentEnrollment {
   enrolledAt: string; 
   progress: number;
 }
+
+export interface SpecificPageData {
+  specificCoursePage: {
+    student: {
+      firstName: string;
+      lastName: string;
+    };
+    course: CourseWithLessons;
+  };
+}

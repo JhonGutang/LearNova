@@ -1,26 +1,40 @@
 import { gql } from "@apollo/client";
 
-export const COURSE_WITH_LESSON_QUERY = gql`
-  query course($courseId: ID!, $title: String!) {
-    course(id: $courseId, title: $title) {
-      id
-      creatorName
-      title
-      tagline
-      description
-      categories
-      enrolledCourseId
-      lessons {
+export const SPECIFIC_PAGE_QUERY = gql`
+  query SpecificCoursePage($courseId: Int, $title: String) {
+    specificCoursePage(courseId: $courseId, title: $title) {
+      student {
+        firstName
+        lastName
+      }
+      course {
         id
         title
+        tagline
         description
-        progress {
-          completedAt
-          status
+        creator {
+          firstName
+          lastName
+        }
+        createdAt
+        studentEnrollment {
+          enrolledCourseId
+          enrolledAt
+          progress
+        }
+        lessons {
+          id
+          title
+          description
+          progress {
+            id
+            enrolledCourseId
+            lessonId
+            status
+            completedAt
+          }
         }
       }
-      status
-      createdAt
     }
   }
 `;

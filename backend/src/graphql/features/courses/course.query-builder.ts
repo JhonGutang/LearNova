@@ -52,13 +52,15 @@ export const buildCreateCourseQuery = (courseData: CreateCourseData) => {
 };
 
 // Query builder for findStudentEnrolledCoursesWithProgress
-export const buildFindStudentEnrolledCoursesWithProgressQuery = (studentId: number) => {
-  return {
+export const buildFindStudentEnrolledCoursesWithProgressQuery = (
+  studentId: number,
+  limit?: number
+) => {
+  const query: any = {
     where: { student_id: studentId },
     orderBy: {
       updated_at: "desc",
     },
-    take: 2,
     include: {
       course: {
         include: {
@@ -74,6 +76,12 @@ export const buildFindStudentEnrolledCoursesWithProgressQuery = (studentId: numb
       lessonProgress: true,
     },
   };
+
+  if (typeof limit === "number") {
+    query.take = limit;
+  }
+
+  return query;
 };
 
 // Query builder for fetching random courses not enrolled by a student
@@ -90,5 +98,62 @@ export const buildRandomCoursesNotEnrolledQuery = (
       { id: "desc" }
     ],
     take: limit
+  };
+};
+
+export const buildFindCourseOrEnrolledCourseQuery = (
+  studentId: number,
+  courseId: number,
+  title: string
+) => {
+  return {
+    where: {
+      id: courseId,
+      // Make title filter case-insensitive (assumes Prisma and DB support 'mode')
+      title: {
+        equals: title,
+        mode: 'insensitive',
+      },
+    },
+    include: {
+      creator: {
+        select: {
+          id: true,
+          first_name: true,
+          last_name: true,
+        },
+      },
+      lessons: {
+        orderBy: {
+          id: 'asc',
+        },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          updated_at: true,
+        },
+      },
+      studentsEnrolled: {
+        where: {
+          student_id: studentId,
+        },
+        select: {
+          id: true,
+          student_id: true,
+          created_at: true,
+          lessonProgress: {
+            select: {
+              id: true,
+              lesson_id: true,
+              status: true,
+              created_at: true,
+              updated_at: true,
+            },
+          },
+        },
+        take: 1,
+      },
+    },
   };
 };

@@ -17,7 +17,7 @@ interface CourseByIdProps {
 const CourseById: React.FC<CourseByIdProps> = ({ courseLink }) => {
     const { fromSlug, redirect, toSlug } = useRedirectLink();
     const { id, title } = fromSlug(courseLink);
-    const { course, loading, error, enrollCourse, startProgress } = useCourseById(id, title);
+    const { specificPage, loading, error, enrollCourse, startProgress } = useCourseById(id, title);
 
     if (loading) return <div className="p-8">Loading...</div>;
     if (error) return <div className="p-8">Error loading course.</div>;
@@ -43,40 +43,40 @@ const CourseById: React.FC<CourseByIdProps> = ({ courseLink }) => {
           <Card className="w-full shadow-lg border-0 bg-white">
             <CardHeader className="flex flex-row items-center gap-6 pb-0">
               <AvatarWithImage
-                src={course?.creatorName || mockCourse.teacher.avatar}
-                alt={course?.creatorName || mockCourse.teacher.name}
+                src={specificPage?.course.creator.firstName || mockCourse.teacher.avatar}
+                alt={specificPage?.course.creator.firstName || mockCourse.teacher.name}
                 className="w-16 h-16 border-2 border-primary shadow"
               />
               <div>
-                <CardTitle className="text-3xl font-extrabold text-primary mb-1">{course?.title}</CardTitle>
+                <CardTitle className="text-3xl font-extrabold text-primary mb-1">{specificPage?.course.title}</CardTitle>
                 <div className="flex items-center gap-2 text-gray-500 text-sm">
                   <span>by</span>
-                  <span className="font-semibold text-gray-700">{course?.creatorName}</span>
+                  <span className="font-semibold text-gray-700">{specificPage?.course?.creator.firstName + " " + specificPage?.course.creator.lastName}</span>
                   <span className="inline-block w-1 h-1 bg-gray-300 rounded-full mx-1" />
-                  <span className="text-xs text-gray-400">{course?.categories || "General"}</span>
+                  <span className="text-xs text-gray-400">{specificPage?.course?.categories || "General"}</span>
                 </div>
               </div>
             </CardHeader>
             <CardContent className="pt-2">
-              <div className="text-sm italic mb-2">&quot;{course?.tagline}&quot;</div>
-              <p className="text-gray-700 mb-4 text-base leading-relaxed">{course?.description}</p>
+              <div className="text-sm italic mb-2">&quot;{specificPage?.course?.tagline}&quot;</div>
+              <p className="text-gray-700 mb-4 text-base leading-relaxed">{specificPage?.course?.description}</p>
               <div className="flex items-center gap-3 mb-4">
                 <AvatarWithImage
-                  src={course?.creatorName || mockCourse.teacher.avatar}
-                  alt={course?.creatorName || mockCourse.teacher.name}
+                  src={specificPage?.course?.creator.firstName + " " + specificPage?.course?.creator.lastName || mockCourse.teacher.avatar}
+                  alt={specificPage?.course?.creator.firstName + " " + specificPage?.course?.creator.lastName || mockCourse.teacher.name}
                   className="w-8 h-8"
                 />
                 <div>
-                  <div className="font-medium text-gray-800">{course?.creatorName}</div>
+                  <div className="font-medium text-gray-800">{specificPage?.course?.creator.firstName + " " + specificPage?.course.creator.lastName }</div>
                   <div className="text-xs text-gray-500">{mockCourse.teacher.bio}</div>
                 </div>
               </div>
               <Button
                 className="w-full py-2 text-lg font-semibold bg-teal-800 hover:bg-teal-700 transition-colors shadow-lg shadow-teal-800/25"
                 size="lg"
-                onClick={() => enrollCourse(Number(course?.id))}
+                onClick={() => enrollCourse(Number(specificPage?.course?.id))}
               >
-                {course?.enrolledCourseId ? "Unenroll" : "Enroll Now"}
+                {specificPage?.course?.studentEnrollment ? "Unenroll" : "Enroll Now"}
               </Button>
             </CardContent>
           </Card>
@@ -89,7 +89,7 @@ const CourseById: React.FC<CourseByIdProps> = ({ courseLink }) => {
             <CardContent>
               <ScrollArea className="max-h-72 pr-2">
                 <ul className="space-y-3">
-                  {course?.lessons.map((lesson, idx) => {
+                  {specificPage?.course?.lessons.map((lesson, idx) => {
                     // Fallbacks for missing data
                     const title = lesson.title ?? `Lesson ${idx + 1}`;
                     const completed = lesson.progress && lesson.progress.status === "FINISHED";
@@ -98,7 +98,7 @@ const CourseById: React.FC<CourseByIdProps> = ({ courseLink }) => {
                       <li
                         key={title}
                         className={`flex cursor-pointer items-center justify-between p-3 rounded-lg border transition-colors ${completed ? "bg-green-50 border-green-200" : "bg-white border-gray-200"}`}
-                        onClick={() => handleStartProgress(Number(course.enrolledCourseId), courseLink, lesson)}
+                        onClick={() => handleStartProgress(Number(specificPage?.course.studentEnrollment?.enrolledCourseId), courseLink, lesson)}
                       >
                         <div className="flex items-center gap-3">
                           <div

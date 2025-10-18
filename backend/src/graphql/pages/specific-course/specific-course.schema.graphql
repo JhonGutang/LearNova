@@ -1,0 +1,8 @@
+type SpecificCourse {
+    student: StudentProfile
+    course: Course
+}
+
+extend type Query {
+    specificCoursePage(courseId: Int, title: String): SpecificCourse
+}

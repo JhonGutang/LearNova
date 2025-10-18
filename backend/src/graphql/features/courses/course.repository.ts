@@ -12,6 +12,7 @@ interface CourseRepositoryInterface {
   allCourses(): Promise<Course[]>;
   existsByTitle(title: string): Promise<boolean>;
   findStudentEnrolledCoursesWithProgress(studentId: number):  Promise<Enrolled_Course[]>;
+  findCourseOrEnrolledCourse(studentId: number, courseId: number, title: string): Promise<Course | null>
   createEnrollment(courseId: number, studentId: number): Promise<void>;
   createCourse(courseData: CreateCourseData): Promise<Course>;
   randomCoursesNotEnrolled(studentId: number): Promise<Course[]>;
@@ -33,9 +34,22 @@ export class CourseRepository implements CourseRepositoryInterface {
     return !!course;
   }
 
-  async findStudentEnrolledCoursesWithProgress(studentId: number): Promise<Enrolled_Course[]> {
-    const query = buildFindStudentEnrolledCoursesWithProgressQuery(studentId);
+  async findStudentEnrolledCoursesWithProgress(studentId: number, limit?: number): Promise<Enrolled_Course[]> {
+    const query = limit
+      ? buildFindStudentEnrolledCoursesWithProgressQuery(studentId, limit)
+      : buildFindStudentEnrolledCoursesWithProgressQuery(studentId);
+
     return await this.prisma.enrolled_Course.findMany(query);
+  }
+
+  async findCourseOrEnrolledCourse(
+    studentId: number,
+    courseId: number,
+    title: string
+  ): Promise<Course | null> {
+    const { buildFindCourseOrEnrolledCourseQuery } = require("./course.query-builder");
+    const query = buildFindCourseOrEnrolledCourseQuery(studentId, courseId, title);
+    return await this.prisma.course.findFirst(query);
   }
 
   async randomCoursesNotEnrolled(studentId: number): Promise<Course[]> {

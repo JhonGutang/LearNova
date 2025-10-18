@@ -14,6 +14,12 @@ export const resolvers = {
       const { studentId, role } = context.session;
       if(!studentId && role !== 'STUDENT') return null
       return await courseService.coursesForStudents();
+    },
+    course: async (_: unknown, args: { courseId: number, title: string }, context: MyContext) => {
+      const { studentId, role } = context.session;
+      if ((studentId === undefined || studentId === null) && role !== 'STUDENT') return null;
+      if (studentId === undefined || studentId === null) return null;
+      return await courseService.course(studentId, args.courseId, args.title);
     }
   },
   Mutation: {

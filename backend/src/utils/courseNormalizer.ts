@@ -1,6 +1,6 @@
 import { Course } from "../generated/graphql";
 
-// Helper function to format a value as ISO date string if possible
+// Helper function to format a value as "Month Day, Year" if possible
 function formatDateValue(value: unknown): string | null {
   let date: Date | null = null;
 
@@ -73,11 +73,10 @@ export function convertCourseDataToCamelCase<TOutput = Course>(course: unknown):
   return normalized as unknown as TOutput;
 }
 
-// New function: transform enrolled course data for studentEnrolledCourses
+
 export function transformEnrolledCourseForStudent(enr: any) {
   const course = enr.course;
   
-  // Defensive: check required fields
   const totalLessons = course.lessons?.length || 0;
   const finished = (enr.lessonProgress || []).filter(
     (p: any) => p.status === "FINISHED"
@@ -106,4 +105,74 @@ export function transformEnrolledCourseForStudent(enr: any) {
           : 0,
     },
   };
+}
+
+export function normalizeCourseOrEnrolledCourseWithLessons(rawCourse: any): Course {
+  const enrollment =
+    rawCourse.studentsEnrolled && rawCourse.studentsEnrolled[0]
+      ? rawCourse.studentsEnrolled[0]
+      : null;
+
+  const progressMap = new Map<number, any>(
+    (enrollment?.lessonProgress?.map((p: any) => [p.lesson_id, p]) as [number, any][]) || []
+  );
+
+  const creator = rawCourse.creator
+    ? {
+        firstName: rawCourse.creator.first_name,
+        lastName: rawCourse.creator.last_name,
+      }
+    : null;
+
+  const enrolledCourseId = enrollment ? enrollment.id : null;
+
+  const lessons = (rawCourse.lessons || []).map((lesson: any) => {
+    const progressEntry = progressMap.get(lesson.id);
+    const progress =
+      progressEntry
+        ? {
+            id: progressEntry.id,
+            enrolledCourseId: enrolledCourseId,
+            lessonId: progressEntry.lesson_id,
+            status: progressEntry.status,
+            completedAt: progressEntry.updated_at
+              ? formatDateValue(progressEntry.updated_at)
+              : null,
+          }
+        : null;
+
+    return {
+      id: lesson.id,
+      title: lesson.title,
+      description: lesson.description,
+      createdAt: lesson.created_at,
+      progress,
+    };
+  });
+
+  let studentEnrollment = null;
+  if (enrollment) {
+    studentEnrollment = {
+      enrolledCourseId: enrollment.id,
+      enrolledAt: enrollment.created_at,
+      progress:
+        rawCourse.lessons.length > 0
+          ? (
+              (enrollment.lessonProgress?.filter((p: any) => p.status === "FINISHED").length || 0) /
+              rawCourse.lessons.length
+            )
+          : 0,
+    };
+  }
+
+  return {
+    id: rawCourse.id,
+    title: rawCourse.title,
+    tagline: rawCourse.tagline,
+    description: rawCourse.description,
+    createdAt: rawCourse.created_at,
+    lessons,
+    creator,
+    studentEnrollment,
+  } as Course;
 }

@@ -3,13 +3,14 @@ import {
   CourseInProgress,
   CourseInput,
 } from "../../../generated/graphql";
-import { convertCourseDataToCamelCase, transformEnrolledCourseForStudent } from "../../../utils/courseNormalizer";
+import { convertCourseDataToCamelCase, transformEnrolledCourseForStudent, normalizeCourseOrEnrolledCourseWithLessons } from "../../../utils/courseNormalizer";
 import { CourseRepository } from "./course.repository";
 
 type CreateCourseData = CourseInput & { creator_id: number };
 
 export interface CourseServiceInterface {
   create(courseData: CreateCourseData): Promise<Course>;
+  course(studentId: number, courseId: number, title: string): Promise<Course>;
   coursesForStudents(studentId?: number): Promise<Course[]>;
   studentEnrolledCourses(studentId: number): Promise<Course[]>;
   enroll(courseId: number, studentId: number): Promise<boolean>;
@@ -24,10 +25,19 @@ export class CourseService implements CourseServiceInterface {
     return courses.map((course) => convertCourseDataToCamelCase(course));
   }
 
+  async course(studentId: number, courseId: number, title: string): Promise<Course> {
+    const course = await this.courseRepository.findCourseOrEnrolledCourse(studentId, courseId, title);
+    if (!course) {
+      throw new Error("Course not found");
+    }
+    return normalizeCourseOrEnrolledCourseWithLessons(course);
+  }
+
   async getCoursesInProgress(studentId: number) {
+    const LIMIT = 2;
     const enrolledCourses =
       await this.courseRepository.findStudentEnrolledCoursesWithProgress(
-        studentId
+        studentId, LIMIT
       );
     return enrolledCourses
       .map((enrolled: any) => {
@@ -53,7 +63,8 @@ export class CourseService implements CourseServiceInterface {
   }
 
   async studentEnrolledCourses(studentId: number): Promise<Course[]> {
-    const enrolledCourses = await this.courseRepository.findStudentEnrolledCoursesWithProgress(studentId);
+    const LIMIT = 2;
+    const enrolledCourses = await this.courseRepository.findStudentEnrolledCoursesWithProgress(studentId, LIMIT);
     return enrolledCourses.map((enr: any) => transformEnrolledCourseForStudent(enr));
   }
 
