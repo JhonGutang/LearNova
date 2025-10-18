@@ -12,7 +12,7 @@ interface CardViewProps {
   rating?: number;
   reviewCount?: number;
   imageUrl?: string;
-  isEnrolled?: boolean;
+  isEnrolled?: boolean; // if student is enrolled, this will be true
   onEnrollClick?: () => void;
   onViewClick?: () => void;
 }
@@ -25,11 +25,15 @@ const CoursesCardView: React.FC<CardViewProps> = ({
   tagline,
   className = "",
   children,
+  author,
   rating = 4.8,
   isEnrolled = false,
   onEnrollClick,
   onViewClick,
 }) => {
+  // Determine if student enrollment exists
+  const enrolled = Boolean(isEnrolled);
+
   return (
     <div
       className={`
@@ -121,14 +125,26 @@ const CoursesCardView: React.FC<CardViewProps> = ({
           flexDirection: "column",
         }}
       >
-        {/* Title and Description */}
+        {/* Title, Author, and Description - Improved UI */}
         <div className="mb-4">
-          <h2 className="text-xl font-bold text-gray-900 mb-2">
+          <h2 className="text-2xl font-extrabold text-gray-900 mb-1 tracking-tight">
             {courseName || "Web Development Bootcamp"}
           </h2>
-          <p className="text-sm text-gray-700 leading-relaxed">
-            {tagline || "Complete guide to modern web development"}
-          </p>
+          <div className="flex items-center mb-2">
+            <div className="w-8 h-8 rounded-full bg-orange-200 flex items-center justify-center mr-2">
+              <span className="text-orange-700 font-semibold text-lg">
+                {author ? author.trim().split(" ").map(n => n[0]).join("") : "WD"}
+              </span>
+            </div>
+            <span className="text-gray-600 text-sm font-medium">
+              by <span className="text-gray-800">{author}</span>
+            </span>
+          </div>
+          <div className="bg-gray-50 px-3 py-2 rounded-md border border-gray-100">
+            <p className="text-sm text-gray-700 leading-relaxed">
+              {tagline || "Complete guide to modern web development"}
+            </p>
+          </div>
         </div>
 
         {/* Rating and Enrollment Button */}
@@ -138,14 +154,14 @@ const CoursesCardView: React.FC<CardViewProps> = ({
             <span className="text-gray-900 font-semibold">{rating}</span>
           </div>
           <Button
-            onClick={isEnrolled ? onViewClick : onEnrollClick}
+            onClick={enrolled ? onViewClick : onEnrollClick}
             className={`cursor-pointer text-sm px-4 py-2 ${
-              isEnrolled 
-                ? "bg-teal-600 hover:bg-teal-700 text-white" 
+              enrolled
+                ? "bg-teal-600 hover:bg-teal-700 text-white"
                 : "bg-teal-800 hover:bg-teal-700 text-white"
             }`}
           >
-            {isEnrolled ? "View Course" : "Enroll"}
+            {enrolled ? "View Course" : "Enroll"}
           </Button>
         </div>
 

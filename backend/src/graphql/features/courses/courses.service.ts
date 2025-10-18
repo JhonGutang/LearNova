@@ -3,7 +3,7 @@ import {
   CourseInProgress,
   CourseInput,
 } from "../../../generated/graphql";
-import { convertCourseDataToCamelCase } from "../../../utils/courseNormalizer";
+import { convertCourseDataToCamelCase, transformEnrolledCourseForStudent } from "../../../utils/courseNormalizer";
 import { CourseRepository } from "./course.repository";
 
 type CreateCourseData = CourseInput & { creator_id: number };
@@ -11,6 +11,7 @@ type CreateCourseData = CourseInput & { creator_id: number };
 export interface CourseServiceInterface {
   create(courseData: CreateCourseData): Promise<Course>;
   coursesForStudents(studentId?: number): Promise<Course[]>;
+  studentEnrolledCourses(studentId: number): Promise<Course[]>;
   enroll(courseId: number, studentId: number): Promise<boolean>;
   getCoursesInProgress(studentId: number): Promise<CourseInProgress[]>;
 }
@@ -20,7 +21,6 @@ export class CourseService implements CourseServiceInterface {
 
   async coursesForStudents(studentId?: number): Promise<Course[]> {
     const courses = await this.courseRepository.allCourses();
-    console.log(courses);
     return courses.map((course) => convertCourseDataToCamelCase(course));
   }
 
@@ -51,6 +51,12 @@ export class CourseService implements CourseServiceInterface {
       })
       .filter((enrolled: any) => enrolled.notFinished);
   }
+
+  async studentEnrolledCourses(studentId: number): Promise<Course[]> {
+    const enrolledCourses = await this.courseRepository.findStudentEnrolledCoursesWithProgress(studentId);
+    return enrolledCourses.map((enr: any) => transformEnrolledCourseForStudent(enr));
+  }
+
 
   async getRandomCourseRecommendations(studentId: number, limit: number = 5) {
     const randomCourses = await this.courseRepository.randomCoursesNotEnrolled(studentId);

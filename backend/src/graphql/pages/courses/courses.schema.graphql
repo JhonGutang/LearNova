@@ -1,0 +1,11 @@
+type CoursesPage {
+    student: StudentProfile!
+    allCourses: [Course!]!
+    featuredCourses: [Course!]!
+    enrollCourse: [Course!]!
+}
+
+
+extend type Query {
+    coursesPage: CoursesPage!
+}

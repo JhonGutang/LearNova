@@ -63,6 +63,12 @@ export const buildFindStudentEnrolledCoursesWithProgressQuery = (studentId: numb
       course: {
         include: {
           lessons: true,
+          creator: {
+            select: {
+              first_name: true,
+              last_name: true,
+            },
+          },
         },
       },
       lessonProgress: true,

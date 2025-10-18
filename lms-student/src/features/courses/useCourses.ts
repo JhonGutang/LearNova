@@ -1,29 +1,29 @@
 import * as ApolloReact from "@apollo/client/react";
-import { COURSES_WITH_CREATOR_QUERY } from "./query";
-import { useState, useEffect } from "react";
+import { COURSES_PAGE_QUERY } from "./query";
 import { Course } from "@/types/data";
 
-// Define the expected shape of the query result
-interface CoursesWithCreatorQueryData {
-  courses: Course[];
+interface Student {
+  id: string;
+  firstName: string;
+  lastName: string;
+  level: number;
+  exp: number;
 }
 
-export function useCoursesWithCreator() {
-  const [courses, setCourses] = useState<Course[]>();
-  const { data, loading, error, refetch } = ApolloReact.useQuery<CoursesWithCreatorQueryData>(COURSES_WITH_CREATOR_QUERY, {
-    fetchPolicy: "network-only",
-    errorPolicy: 'all',
-    notifyOnNetworkStatusChange: true,
-  });
+export interface CoursesPageData {
+  coursesPage: {
+    allCourses: Course[];
+    featuredCourses: Course[];
+    enrollCourse: (Course & { studentEnrollment?: any })[];
+    student: Student;
+  }
+}
 
-  useEffect(() => {
-    if (data && data.courses) {
-      setCourses(data.courses);
-    }
-  }, [data]);
-
+// Custom hook to fetch courses page data
+export function useCourses() {
+  const { data, loading, error, refetch } = ApolloReact.useQuery<CoursesPageData>(COURSES_PAGE_QUERY);
   return {
-    courses,
+    coursesPageData: data?.coursesPage,
     loading,
     error,
     refetch,

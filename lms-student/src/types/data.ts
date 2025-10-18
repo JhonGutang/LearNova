@@ -31,8 +31,7 @@ export interface Course {
   status?: string;
   categories: string[];
   createdAt?: string;
-  isEnrolled?: boolean;
-  enrolledCourseId?: number;
+  studentEnrollment?: StudentEnrollment
 }
 
 export interface Lesson {
@@ -122,4 +121,11 @@ export interface CourseRecommendation {
 
 export interface Error {
   message: string;
+}
+
+
+export interface StudentEnrollment {
+  enrolledCourseId: string;
+  enrolledAt: string; 
+  progress: number;
 }

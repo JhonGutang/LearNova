@@ -24,7 +24,8 @@ import { resolvers as studentResolvers} from '../graphql/features/student/studen
 import { resolvers as AuthResolvers } from '../graphql/features/auth/auth.resolver';
 import { resolvers as PostResolver } from '../graphql/features/posts/post.resolver';
 import { resolvers as CommentResolver } from '../graphql/features/comments/comment.resolver';
-import { resolvers as DashboardResolver } from '../graphql/pages/dashboard.resolver';
+import { resolvers as DashboardPageResolver } from '../graphql/pages/dashboard/dashboard.resolver';
+import { resolvers as CoursesPageResolver } from '../graphql/pages/courses/courses.resolver';
 import { resolvers as ProgressResolver} from '../graphql/features/progress/progress.resolver'
 
 // Load default .env file first
@@ -42,7 +43,8 @@ const httpServer: Server = http.createServer(app);
 
 // Read GraphQL schemas from files
 const rootTypeDefs = readFileSync(join(__dirname, '../graphql/root.graphql'), 'utf8');
-const dashboardTypeDefs = readFileSync(join(__dirname, '../graphql/pages/dashboard.schema.graphql'), 'utf8');
+const dashboardPageTypeDefs = readFileSync(join(__dirname, '../graphql/pages/dashboard/dashboard.schema.graphql'), 'utf8');
+const coursesPageTypeDefs = readFileSync(join(__dirname, '../graphql/pages/courses/courses.schema.graphql'), 'utf8');
 const courseTypeDefs = readFileSync(join(__dirname, '../graphql/features/courses/course.graphql'), 'utf8');
 const lessonTypeDefs = readFileSync(join(__dirname, '../graphql/features/lessons/lesson.graphql'), 'utf8');
 const lessonPageTypeDefs = readFileSync(join(__dirname, '../graphql/features/lesson_page/lesson_page.graphql'), 'utf8');
@@ -52,8 +54,9 @@ const authTypeDefs = readFileSync(join(__dirname, '../graphql/features/auth/auth
 const postTypeDefs = readFileSync(join(__dirname, '../graphql/features/posts/post.graphql'), 'utf8');
 const commentTypeDefs = readFileSync(join(__dirname, '../graphql/features/comments/comment.graphql'), 'utf8');
 const progressTypeDefs = readFileSync(join(__dirname, '../graphql/features/progress/progress.schema.graphql'), 'utf8');
-const typeDefs = [rootTypeDefs, courseTypeDefs, lessonTypeDefs, lessonPageTypeDefs, creatorTypeDefs, studentTypeDefs, authTypeDefs, postTypeDefs, commentTypeDefs, dashboardTypeDefs, progressTypeDefs] ;
-const resolvers = [courseResolvers, lessonResolvers, lessonPageResolvers, creatorResolvers, studentResolvers, AuthResolvers, PostResolver, CommentResolver, DashboardResolver, ProgressResolver];
+
+const typeDefs = [rootTypeDefs, courseTypeDefs, lessonTypeDefs, lessonPageTypeDefs, creatorTypeDefs, studentTypeDefs, authTypeDefs, postTypeDefs, commentTypeDefs, dashboardPageTypeDefs, coursesPageTypeDefs, progressTypeDefs] ;
+const resolvers = [courseResolvers, lessonResolvers, lessonPageResolvers, creatorResolvers, studentResolvers, AuthResolvers, PostResolver, CommentResolver, DashboardPageResolver, CoursesPageResolver, ProgressResolver];
 
 const server = new ApolloServer({
   typeDefs,

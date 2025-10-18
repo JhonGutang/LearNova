@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
-import { DashboardPage } from "../../generated/graphql";
-import { CourseService } from "../features/courses/courses.service";
+import { DashboardPage } from "../../../generated/graphql";
+import { CourseService } from "../../features/courses/courses.service";
+import { formatStudentProfile } from "../../../utils/studentProfileFormatter";
 
 interface DashboardServiceInterface {
     getInfo(studentId: number): Promise<DashboardPage | null>;
@@ -26,13 +27,7 @@ export class DashboardService implements DashboardServiceInterface {
         const coursesInProgress = await this.courseService.getCoursesInProgress(studentId);
         const courseRecommendations = await this.courseService.getRandomCourseRecommendations(studentId);
         return {
-            student: {
-                id: student.id.toString(),
-                firstName: student.first_name,
-                lastName: student.last_name,
-                level: student.level,
-                exp: student.exp,
-            },
+            student: formatStudentProfile(student),
             coursesInProgress,
             courseRecommendations
         };

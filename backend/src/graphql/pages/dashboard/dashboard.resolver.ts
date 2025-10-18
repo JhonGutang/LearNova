@@ -1,7 +1,7 @@
-import prisma from "../../config/prisma";
-import { MyContext } from "../../types/context";
-import { CourseRepository } from "../features/courses/course.repository";
-import { CourseService } from "../features/courses/courses.service";
+import prisma from "../../../config/prisma";
+import { MyContext } from "../../../types/context";
+import { CourseRepository } from "../../features/courses/course.repository";
+import { CourseService } from "../../features/courses/courses.service";
 import { DashboardService } from "./dashboard.service";
 
 

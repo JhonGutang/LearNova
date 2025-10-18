@@ -72,3 +72,38 @@ export function convertCourseDataToCamelCase<TOutput = Course>(course: unknown):
 
   return normalized as unknown as TOutput;
 }
+
+// New function: transform enrolled course data for studentEnrolledCourses
+export function transformEnrolledCourseForStudent(enr: any) {
+  const course = enr.course;
+  
+  // Defensive: check required fields
+  const totalLessons = course.lessons?.length || 0;
+  const finished = (enr.lessonProgress || []).filter(
+    (p: any) => p.status === "FINISHED"
+  ).length;
+
+  // Convert creator data to camelCase if it exists
+  const creator = course.creator ? convertCourseDataToCamelCase<{firstName: string | null, lastName: string | null}>(course.creator) : null;
+
+  return {
+    id: course.id,
+    title: course.title,
+    tagline: course.tagline,
+    description: course.description,
+    creator,
+    createdAt: course.createdAt
+      ? course.createdAt.toISOString?.() ?? String(course.createdAt)
+      : null,
+    studentEnrollment: {
+      enrolledCourseId: enr.id,
+      enrolledAt: enr.created_at
+        ? enr.created_at.toISOString?.() ?? String(enr.created_at)
+        : null,
+      progress:
+        totalLessons > 0
+          ? Math.round((finished / totalLessons) * 100) / 100
+          : 0,
+    },
+  };
+}

@@ -1,11 +1,9 @@
-import Courses from "@/features/courses/Courses";
-import SidebarLayout from "@/shared/layout/Sidebar";
+
+import { CoursesLayout } from "@/features/courses/CoursesLayout";
 
 const CoursePage = () => {
     return (
-        <SidebarLayout>
-            <Courses/>
-        </SidebarLayout>
+        <CoursesLayout/>
     )
 }
 
