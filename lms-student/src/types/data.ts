@@ -98,11 +98,11 @@ export interface DashboardPage {
 }
 
 export interface Student {
-  id: string;
+  id?: string;
   firstName: string;
   lastName: string;
-  level: number;
-  exp: number;
+  level?: number;
+  exp?: number;
 }
 
 export interface CoursesInProgress {

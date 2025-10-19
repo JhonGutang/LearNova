@@ -12,9 +12,7 @@ const CourseTitlePage = async({ params }: PageProps) => {
   const { courseTitle } = await params;
 
   return (
-    <SidebarLayout>
       <CourseById courseLink={courseTitle}/>
-    </SidebarLayout>
   );
 };
 
