@@ -4,17 +4,16 @@ import express, { Request, Response, NextFunction } from "express";
 import path from "path";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
-
+import passport from "passport";
 const app = express();
 
-// view engine setup (only needed if you actually render HTML pages)
-// You can safely remove this if you only use APIs/GraphQL
+// view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
 
 const nodeEnv = process.env.NODE_ENV;
 
-// Debug logging for environment variables
+// Debug logging
 console.log("=== DEBUG INFO ===");
 console.log("NODE_ENV:", nodeEnv);
 console.log("SESSION_SECRET:", process.env.SESSION_SECRET ? "***SET***" : "NOT SET");
@@ -23,9 +22,14 @@ if (nodeEnv === "STAGING") {
   app.set("trust proxy", 1);
 }
 
+// ===== CORRECT MIDDLEWARE ORDER =====
+
+// 1. Basic middleware
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// 2. CORS (before session!)
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
@@ -41,10 +45,11 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"]
   })
 );
-app.use(cookieParser());
+
+// 3. Static files
 app.use(express.static(path.join(__dirname, "public")));
 
-// Determine session cookie options based on NODE_ENV
+// 4. Session configuration
 let cookieSameSite: boolean | "lax" | "strict" | "none";
 let cookieSecure: boolean;
 
@@ -59,12 +64,12 @@ if (nodeEnv === "LOCAL") {
   cookieSecure = true;
 }
 
-// Debug logging for cookie settings
 console.log("=== COOKIE SETTINGS ===");
 console.log("cookieSameSite:", cookieSameSite);
 console.log("cookieSecure:", cookieSecure);
 console.log("========================");
 
+// 5. Session middleware (BEFORE cookieParser and passport)
 app.use(session({
   secret: process.env.SESSION_SECRET || 'fallback-secret',
   resave: false,
@@ -77,6 +82,30 @@ app.use(session({
   },
 }));
 
+// 6. Cookie parser (AFTER session) - Optional: You might not even need this
+app.use(cookieParser());
+
+// 7. Passport initialization
+app.use(passport.initialize());
+app.use(passport.session());
+
+// 8. Routes
+import authRoutes from "./routes/auth";
+app.use("/auth", authRoutes);
+
+// Test endpoint to verify sessions
+app.get("/test-session", (req: Request, res: Response) => {
+  console.log("Session ID:", req.sessionID);
+  console.log("Session data:", req.session);
+  
+  res.json({
+    sessionId: req.sessionID,
+    session: req.session,
+    cookies: req.cookies,
+  });
+});
+
+// 404 handler
 app.use((req: Request, res: Response, next: NextFunction) => {
   if (req.path.startsWith("/graphql")) {
     return next();

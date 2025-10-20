@@ -44,9 +44,10 @@ model User {
   role       Role
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-
-  creator Creator?
-  student Student?
+  provider   String?
+  providerId String?
+  creator    Creator?
+  student    Student?
 }
 
 model Student {

@@ -12,6 +12,7 @@ const dashboardService = new DashboardService(prisma, courservice)
 export const resolvers = {
     Query: {
         DashboardPage: async (_: any, __: any, context: MyContext) => {
+            console.log(context.session)
             const studentId = context.session?.studentId;
             if (!studentId) {
                 throw new Error('Student not authenticated');

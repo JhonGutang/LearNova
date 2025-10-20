@@ -148,8 +148,14 @@ export default function Signin() {
               <span className="relative z-10 px-2 bg-white">Or continue with</span>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <Button variant="outline" type="button" className="w-full cursor-pointer">
-                {/* Simple G icon */}
+              <Button
+                variant="outline"
+                type="button"
+                className="w-full cursor-pointer"
+                onClick={() => {
+                  window.location.href = "http://localhost:8000/auth/google/student";
+                }}
+              >
                 <span className="mr-2">G</span> Google
               </Button>
               <Button variant="outline" type="button" className="w-full cursor-pointer">

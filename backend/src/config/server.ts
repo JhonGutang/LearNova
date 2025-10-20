@@ -13,7 +13,6 @@ import { ApolloServerPluginLandingPageLocalDefault } from "@apollo/server/plugin
 import { json } from "body-parser";
 import { readFileSync } from "fs";
 import { join } from "path";
-
 // Import both course and lesson resolvers
 import { resolvers as courseResolvers } from "../graphql/features/courses/course.resolver";
 import { resolvers as lessonResolvers } from "../graphql/features/lessons/lesson.resolver";
@@ -127,6 +126,8 @@ const resolvers = [
   ProgressResolver,
   SpecificCoursePageResolver,
 ];
+
+
 
 const server = new ApolloServer({
   typeDefs,
