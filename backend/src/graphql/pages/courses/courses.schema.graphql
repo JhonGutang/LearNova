@@ -1,11 +1,15 @@
 type CoursesPage {
     student: StudentProfile!
-    allCourses: [Course!]!
-    featuredCourses: [Course!]!
-    enrollCourse: [Course!]!
+    courses: [Course!]!
+}
+
+enum CourseCategory {
+    ALL
+    FEATURED
+    ENROLLED
 }
 
 
 extend type Query {
-    coursesPage: CoursesPage!
+    coursesPage(category: CourseCategory): CoursesPage!
 }

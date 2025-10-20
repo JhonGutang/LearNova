@@ -112,9 +112,9 @@ export const useAuth = () => {
         showToast("error", "Logout Failed", logoutResult?.message);
       } else {
         showToast("success", "Logged out");
-        // setTimeout(() => {
-        //   redirect("/signin");
-        // }, 1000);
+        setTimeout(() => {
+          redirect("/signin");
+        }, 1000);
       }
     } catch (err) {
       showToast("error", "Logout Failed", (err as Error)?.message);

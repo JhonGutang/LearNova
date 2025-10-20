@@ -1,10 +1,10 @@
-import { CoursesPage } from "../../../generated/graphql";
+import { CourseCategory, CoursesPage } from "../../../generated/graphql";
 import { CourseService } from "../../features/courses/courses.service";
 import { formatStudentProfile } from "../../../utils/studentProfileFormatter";
 import { PrismaClient } from "@prisma/client";
 
 interface CoursesServiceInterface {
-    getData(studentId: number): Promise<CoursesPage>;
+    getData(category: CourseCategory, studentId: number): Promise<CoursesPage>;
 }
 
 export class CoursesService implements CoursesServiceInterface {
@@ -16,7 +16,7 @@ export class CoursesService implements CoursesServiceInterface {
         this.courseService = courseService;
     }
 
-    async getData(studentId: number): Promise<CoursesPage> {
+    async getData(category: CourseCategory, studentId: number): Promise<CoursesPage> {
         const student = await this.prisma.student.findUnique({
             where: { id: studentId }
         });
@@ -25,15 +25,33 @@ export class CoursesService implements CoursesServiceInterface {
             throw new Error('Student not found');
         }
 
-        const allCourses = await this.courseService.coursesForStudents(studentId);
-        const featuredCourses = allCourses.slice(0, 3);
-        const enrollCourse = await this.courseService.studentEnrolledCourses(studentId);
+        const studentProfile = formatStudentProfile(student);
 
-        return {
-            student: formatStudentProfile(student),
-            allCourses,
-            featuredCourses,
-            enrollCourse,
-        };
+        switch (category) {
+            case CourseCategory.All: {
+                const allCourses = await this.courseService.coursesForStudents(studentId);
+                return {
+                    student: studentProfile,
+                    courses: allCourses,
+                } as CoursesPage;
+            }
+            case CourseCategory.Featured: {
+                const allCourses = await this.courseService.coursesForStudents(studentId);
+                const featuredCourses = allCourses.slice(0, 3);
+                return {
+                    student: studentProfile,
+                    courses: featuredCourses,
+                } as CoursesPage;
+            }
+            case CourseCategory.Enrolled: {
+                const enrollCourse = await this.courseService.studentEnrolledCourses(studentId);
+                return {
+                    student: studentProfile,
+                    courses: enrollCourse,
+                } as CoursesPage;
+            }
+            default:
+                throw new Error('Invalid course category');
+        }
     }
 }

@@ -1,9 +1,9 @@
 import { gql } from "@apollo/client";
 
 export const COURSES_PAGE_QUERY = gql`
-  query CoursesPage {
-    coursesPage {
-      allCourses {
+  query CoursesPage($category: CourseCategory) {
+    coursesPage(category: $category) {
+      courses {
         id
         title
         tagline
@@ -13,33 +13,6 @@ export const COURSES_PAGE_QUERY = gql`
           lastName
         }
         createdAt
-      }
-      featuredCourses {
-        id
-        title
-        tagline
-        description
-        creator {
-          firstName
-          lastName
-        }
-        createdAt
-      }
-      enrollCourse {
-        id
-        title
-        tagline
-        description
-        creator {
-          firstName
-          lastName
-        }
-        createdAt
-        studentEnrollment {
-          enrolledCourseId
-          enrolledAt
-          progress
-        }
       }
       student {
         id

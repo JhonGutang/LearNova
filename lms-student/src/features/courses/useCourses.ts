@@ -12,16 +12,17 @@ interface Student {
 
 export interface CoursesPageData {
   coursesPage: {
-    allCourses: Course[];
-    featuredCourses: Course[];
-    enrollCourse: (Course & { studentEnrollment?: any })[];
+    courses: (Course & { studentEnrollment?: any })[];
     student: Student;
   }
 }
 
-// Custom hook to fetch courses page data
-export function useCourses() {
-  const { data, loading, error, refetch } = ApolloReact.useQuery<CoursesPageData>(COURSES_PAGE_QUERY);
+// Custom hook to fetch courses page data by category
+export function useCourses(category: string) {
+  console.log(category)
+  const { data, loading, error, refetch } = ApolloReact.useQuery<CoursesPageData>(COURSES_PAGE_QUERY, {
+    variables: { category },
+  });
   return {
     coursesPageData: data?.coursesPage,
     loading,

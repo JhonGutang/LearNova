@@ -94,16 +94,16 @@ export function transformEnrolledCourseForStudent(enr: any) {
     createdAt: course.createdAt
       ? course.createdAt.toISOString?.() ?? String(course.createdAt)
       : null,
-    studentEnrollment: {
-      enrolledCourseId: enr.id,
-      enrolledAt: enr.created_at
-        ? enr.created_at.toISOString?.() ?? String(enr.created_at)
-        : null,
-      progress:
-        totalLessons > 0
-          ? Math.round((finished / totalLessons) * 100) / 100
-          : 0,
-    },
+    // studentEnrollment: {
+    //   enrolledCourseId: enr.id,
+    //   enrolledAt: enr.created_at
+    //     ? enr.created_at.toISOString?.() ?? String(enr.created_at)
+    //     : null,
+    //   progress:
+    //     totalLessons > 0
+    //       ? Math.round((finished / totalLessons) * 100) / 100
+    //       : 0,
+    // },
   };
 }
 
