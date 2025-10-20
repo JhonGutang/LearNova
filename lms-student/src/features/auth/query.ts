@@ -17,3 +17,12 @@ export const CREATE_STUDENT = gql`
     }
   }
 `;
+
+export const LOGOUT = gql`
+  mutation Logout {
+    logout {
+      status
+      message
+    }
+  }
+`;

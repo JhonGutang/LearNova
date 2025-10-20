@@ -15,6 +15,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { useRedirectLink } from "@/hooks/useRedirect";
 import { Student } from "@/types/data";
+import dynamic from "next/dynamic";
+
+// Dynamically import the LogoutModal to ensure it's not SSR'd
+const LogoutModal = dynamic(() => import("@/features/auth/logout/Logout"), { ssr: false });
 
 const sidebarLinks = [
   { label: "Home", icon: <Home className="w-5 h-5" />, href: "/home" },
@@ -37,6 +41,7 @@ const SidebarLayout = ({ children, headerChild, student }: SidebarLayoutProps) =
   const { redirect } = useRedirectLink();
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
+  const [logoutOpen, setLogoutOpen] = useState(false);
   const sidebarWidth = collapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED;
 
   return (
@@ -123,14 +128,19 @@ const SidebarLayout = ({ children, headerChild, student }: SidebarLayoutProps) =
             )}
           </div>
           {!collapsed && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="ml-auto text-red-500 hover:bg-red-100"
-              aria-label="Logout"
-            >
-              <LogOut className="w-5 h-5" />
-            </Button>
+            <>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="ml-auto text-red-500 hover:bg-red-100"
+                aria-label="Logout"
+                onClick={() => setLogoutOpen(true)}
+              >
+                <LogOut className="w-5 h-5" />
+              </Button>
+              {/* Logout Modal Triggered Here */}
+              <LogoutModal open={logoutOpen} onOpenChange={setLogoutOpen} />
+            </>
           )}
         </div>
       </aside>

@@ -1,6 +1,6 @@
 import { credentials, Error, Role, studentCreateInput } from "@/types/data";
 import * as ApolloReact from "@apollo/client/react";
-import { LOGIN_STUDENT, CREATE_STUDENT } from "./query";
+import { LOGIN_STUDENT, CREATE_STUDENT, LOGOUT } from "./query";
 import { CustomToast } from "@/shared/CustomToast";
 import { useCallback } from "react";
 import { SignupFormFields } from "@/constants/AuthFormFields";
@@ -8,12 +8,15 @@ import { useRedirectLink } from "@/hooks/useRedirect";
 import { BaseResponse } from "@/types/responses";
 
 export const useAuth = () => {
-  const {redirect} = useRedirectLink()
-  // Mutations for login and registration
+  const { redirect } = useRedirectLink();
+
+  // Mutations for login, registration, and logout
   const [LoginStudent, { data: loginData, loading: loginLoading, error: loginError }] =
     ApolloReact.useMutation(LOGIN_STUDENT);
   const [CreateStudent, { data: registerData, loading: registerLoading, error: registerError }] =
     ApolloReact.useMutation(CREATE_STUDENT);
+  const [LogoutMutation, { data: logoutData, loading: logoutLoading, error: logoutError }] =
+    ApolloReact.useMutation(LOGOUT);
 
   // Helper for showing toast
   const showToast = useCallback((type: "success" | "error", title: string, description?: string) => {
@@ -100,14 +103,37 @@ export const useAuth = () => {
     }
   };
 
+  // Logout handler
+  const logout = useCallback(async () => {
+    try {
+      const response = await LogoutMutation();
+      const logoutResult = (response.data as BaseResponse).logout;
+      if (logoutResult?.status === "ERROR") {
+        showToast("error", "Logout Failed", logoutResult?.message);
+      } else {
+        showToast("success", "Logged out");
+        // setTimeout(() => {
+        //   redirect("/signin");
+        // }, 1000);
+      }
+    } catch (err) {
+      showToast("error", "Logout Failed", (err as Error)?.message);
+      return;
+    }
+  }, [LogoutMutation, redirect, showToast]);
+
   return {
     login,
     register,
+    logout,
     loginData,
     loginLoading,
     loginError,
     registerData,
     registerLoading,
     registerError,
+    logoutData,
+    logoutLoading,
+    logoutError,
   };
 };

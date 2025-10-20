@@ -7,4 +7,8 @@ export interface BaseResponse {
         status: "SUCCESS" | "ERROR";
         message: string;
     };
+    logout?: {
+        status: "SUCCESS" | "ERROR";
+        message: string;
+    };
 }
