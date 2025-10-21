@@ -3,7 +3,7 @@
 import { PrismaClient } from "@prisma/client";
 import { CourseInput } from "../../../generated/graphql";
 import { Course } from "../../../generated/graphql";
-import { buildCreateCourseQuery, buildFetchAllCoursesQuery, buildFindStudentEnrolledCoursesWithProgressQuery, buildRandomCoursesNotEnrolledQuery } from "./course.query-builder";
+import { buildCreateCourseQuery, buildFetchAllCoursesQuery, buildFindCourseOrEnrolledCourseQuery, buildFindStudentEnrolledCoursesWithProgressQuery, buildRandomCoursesNotEnrolledQuery, buildSearchCoursesWithEnrollmentQuery } from "./course.query-builder";
 import { Enrolled_Course } from "../../../../generated/prisma";
 
 type CreateCourseData = CourseInput & { creator_id: number };
@@ -13,6 +13,7 @@ interface CourseRepositoryInterface {
   existsByTitle(title: string): Promise<boolean>;
   findStudentEnrolledCoursesWithProgress(studentId: number):  Promise<Enrolled_Course[]>;
   findCourseOrEnrolledCourse(studentId: number, courseId: number, title: string): Promise<Course | null>
+  findCoursesWithSimilarTitle(studentId: number, title: string): Promise<Course[] | null>
   createEnrollment(courseId: number, studentId: number): Promise<void>;
   createCourse(courseData: CreateCourseData): Promise<Course>;
   randomCoursesNotEnrolled(studentId: number): Promise<Course[]>;
@@ -47,9 +48,19 @@ export class CourseRepository implements CourseRepositoryInterface {
     courseId: number,
     title: string
   ): Promise<Course | null> {
-    const { buildFindCourseOrEnrolledCourseQuery } = require("./course.query-builder");
     const query = buildFindCourseOrEnrolledCourseQuery(studentId, courseId, title);
     return await this.prisma.course.findFirst(query);
+  }
+
+  async findCoursesWithSimilarTitle(studentId: number, title: string): Promise<Course[] | null> {
+    if (!title || title.trim().length === 0) {
+      return [];
+    }
+
+    const query = buildSearchCoursesWithEnrollmentQuery(studentId, title);
+
+    const courses = await this.prisma.course.findMany(query);
+    return courses;
   }
 
   async randomCoursesNotEnrolled(studentId: number): Promise<Course[]> {

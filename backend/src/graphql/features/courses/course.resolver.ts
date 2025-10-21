@@ -20,6 +20,12 @@ export const resolvers = {
       if ((studentId === undefined || studentId === null) && role !== 'STUDENT') return null;
       if (studentId === undefined || studentId === null) return null;
       return await courseService.course(studentId, args.courseId, args.title);
+    },
+    searchCourse: async (_:unknown, args: {title: string}, context: MyContext) => {
+      const { studentId, role } = context.session;
+      if(!studentId && role !== 'STUDENT') return null
+      if (studentId === undefined || studentId === null) return null;
+      return await courseService.searchCourse(studentId, args.title);
     }
   },
   Mutation: {

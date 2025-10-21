@@ -157,3 +157,36 @@ export const buildFindCourseOrEnrolledCourseQuery = (
     },
   };
 };
+
+
+export const buildSearchCoursesWithEnrollmentQuery = (
+  studentId: number,
+  searchTerm: string
+) => {
+  return {
+    where: {
+      title: {
+        contains: searchTerm,
+        mode: 'insensitive' as const,
+      },
+    },
+    include: {
+      creator: {
+        select: {
+          id: true,
+          first_name: true,
+          last_name: true,
+        },
+      },
+      studentsEnrolled: {
+        where: {
+          student_id: studentId,
+        },
+        select: {
+          id: true, // enrolled course id
+        },
+        take: 1,
+      },
+    },
+  };
+};

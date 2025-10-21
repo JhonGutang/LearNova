@@ -3,7 +3,7 @@ import {
   CourseInProgress,
   CourseInput,
 } from "../../../generated/graphql";
-import { convertCourseDataToCamelCase, transformEnrolledCourseForStudent, normalizeCourseOrEnrolledCourseWithLessons } from "../../../utils/courseNormalizer";
+import { convertCourseDataToCamelCase, transformEnrolledCourseForStudent, normalizeCourseOrEnrolledCourseWithLessons, normalizeCourseWithEnrollmentInfoOnly } from "../../../utils/courseNormalizer";
 import { CourseRepository } from "./course.repository";
 
 type CreateCourseData = CourseInput & { creator_id: number };
@@ -12,6 +12,7 @@ export interface CourseServiceInterface {
   create(courseData: CreateCourseData): Promise<Course>;
   course(studentId: number, courseId: number, title: string): Promise<Course>;
   coursesForStudents(studentId?: number): Promise<Course[]>;
+  searchCourse(studentId: number, title: string): Promise<Course[]>;
   studentEnrolledCourses(studentId: number): Promise<Course[]>;
   enroll(courseId: number, studentId: number): Promise<boolean>;
   getCoursesInProgress(studentId: number): Promise<CourseInProgress[]>;
@@ -31,6 +32,13 @@ export class CourseService implements CourseServiceInterface {
       throw new Error("Course not found");
     }
     return normalizeCourseOrEnrolledCourseWithLessons(course);
+  }
+
+  async searchCourse(studentId: number, title: string): Promise<Course[]> {
+    const courses = await this.courseRepository.findCoursesWithSimilarTitle(studentId, title);
+    return (courses ?? []).map((course) => 
+      normalizeCourseWithEnrollmentInfoOnly(course)
+    ) as Course[];
   }
 
   async getCoursesInProgress(studentId: number) {

@@ -74,6 +74,46 @@ export function convertCourseDataToCamelCase<TOutput = Course>(course: unknown):
 }
 
 
+// =====================
+// New Normalizer: normalizeCourseWithEnrollmentInfoOnly
+// Returns a normalized course with studentEnrollment if enrolled, but NO lessons array
+// =====================
+export function normalizeCourseWithEnrollmentInfoOnly(rawCourse: any): Omit<Course, "lessons"> {
+  const enrollment =
+    rawCourse.studentsEnrolled && rawCourse.studentsEnrolled[0]
+      ? rawCourse.studentsEnrolled[0]
+      : null;
+  let studentEnrollment = null;
+  if (enrollment) {
+    const totalLessons = Array.isArray(rawCourse.lessons) ? rawCourse.lessons.length : 0;
+    const finishedLessons =
+      Array.isArray(enrollment.lessonProgress)
+        ? enrollment.lessonProgress.filter((p: any) => p.status === "FINISHED").length
+        : 0;
+    studentEnrollment = {
+      enrolledCourseId: enrollment.id,
+      enrolledAt: enrollment.created_at,
+      progress: totalLessons > 0 ? finishedLessons / totalLessons : 0,
+    };
+  }
+  const creator = rawCourse.creator
+    ? {
+        firstName: rawCourse.creator.first_name,
+        lastName: rawCourse.creator.last_name,
+      }
+    : null;
+
+  return {
+    id: rawCourse.id,
+    title: rawCourse.title,
+    tagline: rawCourse.tagline,
+    description: rawCourse.description,
+    createdAt: rawCourse.created_at,
+    creator,
+    studentEnrollment,
+  };
+}
+
 export function transformEnrolledCourseForStudent(enr: any) {
   const course = enr.course;
   
@@ -81,8 +121,7 @@ export function transformEnrolledCourseForStudent(enr: any) {
   const finished = (enr.lessonProgress || []).filter(
     (p: any) => p.status === "FINISHED"
   ).length;
-
-  // Convert creator data to camelCase if it exists
+  
   const creator = course.creator ? convertCourseDataToCamelCase<{firstName: string | null, lastName: string | null}>(course.creator) : null;
 
   return {
@@ -94,19 +133,23 @@ export function transformEnrolledCourseForStudent(enr: any) {
     createdAt: course.createdAt
       ? course.createdAt.toISOString?.() ?? String(course.createdAt)
       : null,
-    // studentEnrollment: {
-    //   enrolledCourseId: enr.id,
-    //   enrolledAt: enr.created_at
-    //     ? enr.created_at.toISOString?.() ?? String(enr.created_at)
-    //     : null,
-    //   progress:
-    //     totalLessons > 0
-    //       ? Math.round((finished / totalLessons) * 100) / 100
-    //       : 0,
-    // },
+    studentEnrollment: {
+      enrolledCourseId: enr.id,
+      enrolledAt: enr.created_at
+        ? enr.created_at.toISOString?.() ?? String(enr.created_at)
+        : null,
+      progress:
+        totalLessons > 0
+          ? Math.round((finished / totalLessons) * 100) / 100
+          : 0,
+    },
   };
 }
 
+
+// =====================
+// Existing detailed normalizer with lessons included
+// =====================
 export function normalizeCourseOrEnrolledCourseWithLessons(rawCourse: any): Course {
   const enrollment =
     rawCourse.studentsEnrolled && rawCourse.studentsEnrolled[0]

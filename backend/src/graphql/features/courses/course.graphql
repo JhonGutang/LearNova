@@ -34,6 +34,7 @@ input CourseInput {
 extend type Query {
   courses: [Course!]!
   course(courseId: Int, title: String): Course
+  searchCourse(title: String): [Course!]!
 }
 
 extend type Mutation {

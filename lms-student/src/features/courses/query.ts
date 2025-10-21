@@ -24,3 +24,24 @@ export const COURSES_PAGE_QUERY = gql`
     }
   }
 `;
+
+export const SEARCH_COURSE_QUERY = gql`
+  query SearchCourse($title: String) {
+    searchCourse(title: $title) {
+      id
+      title
+      tagline
+      description
+      creator {
+        firstName
+        lastName
+      }
+      createdAt
+      studentEnrollment {
+        enrolledCourseId
+        enrolledAt
+        progress
+      }
+    }
+  }
+`;
