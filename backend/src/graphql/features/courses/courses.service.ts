@@ -3,15 +3,23 @@ import {
   CourseInProgress,
   CourseInput,
 } from "../../../generated/graphql";
-import { convertCourseDataToCamelCase, transformEnrolledCourseForStudent, normalizeCourseOrEnrolledCourseWithLessons, normalizeCourseWithEnrollmentInfoOnly } from "../../../utils/courseNormalizer";
+import {
+  convertCourseDataToCamelCase,
+  transformEnrolledCourseForStudent,
+  normalizeCourseOrEnrolledCourseWithLessons,
+  normalizeCourseWithEnrollmentInfoOnly,
+  flattenCategories,
+} from "../../../utils/courseNormalizer";
 import { CourseRepository } from "./course.repository";
 
 type CreateCourseData = CourseInput & { creator_id: number };
 
+
 export interface CourseServiceInterface {
   create(courseData: CreateCourseData): Promise<Course>;
-  course(studentId: number, courseId: number, title: string): Promise<Course>;
+  course(userId: number, courseId: number, title: string, role: string): Promise<Course | undefined>;
   coursesForStudents(studentId?: number): Promise<Course[]>;
+  creatorCourses(creatorId: number): Promise<Course[]>;
   searchCourse(studentId: number, title: string): Promise<Course[]>;
   studentEnrolledCourses(studentId: number): Promise<Course[]>;
   enroll(courseId: number, studentId: number): Promise<boolean>;
@@ -26,12 +34,37 @@ export class CourseService implements CourseServiceInterface {
     return courses.map((course) => convertCourseDataToCamelCase(course));
   }
 
-  async course(studentId: number, courseId: number, title: string): Promise<Course> {
-    const course = await this.courseRepository.findCourseOrEnrolledCourse(studentId, courseId, title);
-    if (!course) {
-      throw new Error("Course not found");
+  async creatorCourses(creatorId: number): Promise<Course[]> {
+    const courses = await this.courseRepository.findCoursesByCreatorId(creatorId);
+    return courses;
+  }
+
+  async course(userId: number, courseId: number, title: string, role: string): Promise<Course | undefined> {
+    if (role === "STUDENT") {
+      const studentId = userId;
+      const course = await this.courseRepository.findCourseOrEnrolledCourse(studentId, courseId, title);
+      if (!course) {
+        throw new Error("Course not found");
+      }
+      return normalizeCourseOrEnrolledCourseWithLessons(course);
     }
-    return normalizeCourseOrEnrolledCourseWithLessons(course);
+
+    if (role === "CREATOR") {
+      const creatorId = userId;
+      const course = await this.courseRepository.findCreatorCourseByIdAndTitle(creatorId, courseId, title);
+      if (!course) {
+        throw new Error("Course Not Found");
+      }
+      let categories: string[] = [];
+      if (Array.isArray(course.categories)) {
+        categories = flattenCategories(course.categories);
+      }
+
+      return {
+        ...course,
+        categories,
+      };
+    }
   }
 
   async searchCourse(studentId: number, title: string): Promise<Course[]> {

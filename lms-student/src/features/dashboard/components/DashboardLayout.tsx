@@ -40,16 +40,6 @@ const DashboardLayout: React.FC = () => {
 
         {/* Recommended Courses */}
         <RecommendedCourses courseRecommendation={dashboardPage?.courseRecommendations} />
-
-        {/* Recent Activity and Community Highlights side by side */}
-        <div className="flex flex-col lg:flex-row gap-8">
-          <div className="flex-1">
-            <RecentActivity />
-          </div>
-          <div className="flex-1">
-            <CommunityHighlights />
-          </div>
-        </div>
       </div>
     </div>
     </SidebarLayout>

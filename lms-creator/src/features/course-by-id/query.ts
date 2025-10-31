@@ -1,21 +1,18 @@
 import { gql } from "@apollo/client";
 
 export const GET_COURSE_BY_ID = gql`
-    query GetCourseById($id: ID!, $title: String!) {
-        course(id: $id, title: $title) {
-            id
-            title
-            creatorName
-            tagline
-            description
-            status
-            categories
-            lessons {
-                id
-                title
-                description
-            }
-            createdAt
-        }
+  query Course($courseId: Int, $title: String) {
+    course(courseId: $courseId, title: $title) {
+      id
+      title
+      tagline
+      description
+      lessons {
+        id
+        title
+        description
+      }
+      categories
     }
+  }
 `;

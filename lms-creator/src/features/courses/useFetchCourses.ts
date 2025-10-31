@@ -1,24 +1,24 @@
 import { useEffect, useState } from "react";
 import { Course } from "@/src/types/backend-data";
-import { GET_COURSES } from "./query";
+import { GET_CREATOR_COURSES } from "./query";
 import * as ApolloReact from "@apollo/client/react";
 import { useRedirectLink } from "@/src/shadcn/hooks/useRedirectLink";
 interface CoursesData {
-    courses: Course[];
+    creatorCourses: Course[];
 }
 
 export function useFetchCourses() {
     const [courses, setCourses] = useState<Course[]>([]);
     const {redirect} = useRedirectLink()
-    const { data, loading, error, refetch } = ApolloReact.useQuery<CoursesData>(GET_COURSES, {
+    const { data, loading, error, refetch } = ApolloReact.useQuery<CoursesData>(GET_CREATOR_COURSES, {
         fetchPolicy: "network-only",
         errorPolicy: 'all',
         notifyOnNetworkStatusChange: true,
     });
 
     useEffect(() => {
-        if (data && data.courses) {
-            setCourses(data.courses);
+        if (data && data.creatorCourses) {
+            setCourses(data.creatorCourses);
         }
     }, [data]);
 

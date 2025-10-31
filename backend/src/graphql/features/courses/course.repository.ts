@@ -12,8 +12,10 @@ interface CourseRepositoryInterface {
   allCourses(): Promise<Course[]>;
   existsByTitle(title: string): Promise<boolean>;
   findStudentEnrolledCoursesWithProgress(studentId: number):  Promise<Enrolled_Course[]>;
+  findCoursesByCreatorId(creatorId: number): Promise<Course[]>;
   findCourseOrEnrolledCourse(studentId: number, courseId: number, title: string): Promise<Course | null>
   findCoursesWithSimilarTitle(studentId: number, title: string): Promise<Course[] | null>
+  findCreatorCourseByIdAndTitle(creatorId: number, courseId: number, title: string): Promise<Course | null>
   createEnrollment(courseId: number, studentId: number): Promise<void>;
   createCourse(courseData: CreateCourseData): Promise<Course>;
   randomCoursesNotEnrolled(studentId: number): Promise<Course[]>;
@@ -33,6 +35,49 @@ export class CourseRepository implements CourseRepositoryInterface {
       select: { id: true }, 
     });
     return !!course;
+  }
+
+  async findCoursesByCreatorId(creatorId: number): Promise<Course[]> {
+    return this.prisma.course.findMany({
+      where: { creator_id: creatorId },
+      select: {
+        id: true,
+        title: true,
+        tagline: true,
+      },
+      orderBy: { id: 'asc' },
+    });
+  }
+
+  async findCreatorCourseByIdAndTitle(creatorId: number, courseId: number, title: string): Promise<Course | null> {
+    return this.prisma.course.findFirst({
+      where: {
+        id: courseId,
+        creator_id: creatorId,
+        title: {
+          equals: title,
+          mode: 'insensitive',
+        },
+      },
+      include: {
+        lessons: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+          },
+        },
+        categories: {
+          select: {
+            category: {
+              select: {
+                name: true,
+              }
+            }
+          },
+        },
+      },
+    });
   }
 
   async findStudentEnrolledCoursesWithProgress(studentId: number, limit?: number): Promise<Enrolled_Course[]> {

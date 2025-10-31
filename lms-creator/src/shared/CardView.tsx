@@ -49,7 +49,7 @@ const CardView: React.FC<CardViewProps> = ({ data }) => {
               </div>
             </CardContent>
             <CardFooter>
-              <Button variant="outline" className="w-full" onClick={() => redirect('/courses/' + toSlug(course.id, course.title))}>
+              <Button variant="outline" className="w-full" onClick={() => redirect('/courses/' + toSlug(Number(course.id), course.title))}>
                 View
               </Button>
             </CardFooter>

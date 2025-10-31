@@ -28,6 +28,16 @@ function formatDateValue(value: unknown): string | null {
   return null;
 }
 
+// Utility to flatten categories from array of { category: { name: string }} objects to array of name strings.
+export function flattenCategories(categories: unknown): string[] {
+  if (!Array.isArray(categories)) return [];
+  return categories
+    .map((cat: any) =>
+      cat && cat.category && typeof cat.category.name === "string" ? cat.category.name : null
+    )
+    .filter((name: string | null): name is string => !!name);
+}
+
 export function convertCourseDataToCamelCase<TOutput = Course>(course: unknown): TOutput {
   if (course === null || course === undefined) {
     return course as TOutput;
@@ -103,6 +113,12 @@ export function normalizeCourseWithEnrollmentInfoOnly(rawCourse: any): Omit<Cour
       }
     : null;
 
+  // Use flattenCategories to produce array of names if categories field exists
+  let categories: string[] = [];
+  if (Array.isArray(rawCourse.categories)) {
+    categories = flattenCategories(rawCourse.categories);
+  }
+
   return {
     id: rawCourse.id,
     title: rawCourse.title,
@@ -111,18 +127,27 @@ export function normalizeCourseWithEnrollmentInfoOnly(rawCourse: any): Omit<Cour
     createdAt: rawCourse.created_at,
     creator,
     studentEnrollment,
+    ...(categories.length ? { categories } : {}),
   };
 }
 
 export function transformEnrolledCourseForStudent(enr: any) {
   const course = enr.course;
-  
+
   const totalLessons = course.lessons?.length || 0;
   const finished = (enr.lessonProgress || []).filter(
     (p: any) => p.status === "FINISHED"
   ).length;
-  
-  const creator = course.creator ? convertCourseDataToCamelCase<{firstName: string | null, lastName: string | null}>(course.creator) : null;
+
+  const creator = course.creator
+    ? convertCourseDataToCamelCase<{ firstName: string | null; lastName: string | null }>(course.creator)
+    : null;
+
+  // Use flattenCategories to produce array of names if categories field exists
+  let categories: string[] = [];
+  if (Array.isArray(course.categories)) {
+    categories = flattenCategories(course.categories);
+  }
 
   return {
     id: course.id,
@@ -143,6 +168,7 @@ export function transformEnrolledCourseForStudent(enr: any) {
           ? Math.round((finished / totalLessons) * 100) / 100
           : 0,
     },
+    ...(categories.length ? { categories } : {}),
   };
 }
 
@@ -208,6 +234,12 @@ export function normalizeCourseOrEnrolledCourseWithLessons(rawCourse: any): Cour
     };
   }
 
+  // Use flattenCategories to produce array of names if categories field exists
+  let categories: string[] = [];
+  if (Array.isArray(rawCourse.categories)) {
+    categories = flattenCategories(rawCourse.categories);
+  }
+
   return {
     id: rawCourse.id,
     title: rawCourse.title,
@@ -217,5 +249,6 @@ export function normalizeCourseOrEnrolledCourseWithLessons(rawCourse: any): Cour
     lessons,
     creator,
     studentEnrollment,
+    ...(categories.length ? { categories } : {}),
   } as Course;
 }

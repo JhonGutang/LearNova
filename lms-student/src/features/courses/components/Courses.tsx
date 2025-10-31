@@ -58,7 +58,7 @@ const Courses: React.FC<CoursesProps> = ({
       setDisplayedCourses(newCourses);
       setIsShowingSearchResults(replacementCourses.length > 0);
     },
-    []
+    [courses]
   );
 
   if (loading) {
@@ -132,7 +132,7 @@ const Courses: React.FC<CoursesProps> = ({
                       }
                       className="w-full"
                       chips={course.studentEnrollment ? <Chip type="enrolled" /> : undefined}
-                      isEnrolled={!!course.studentEnrollment}
+                      isEnrolled={category === "ENROLLED" ? true: false}
                       onViewClick={goToCourse}
                       onEnrollClick={
                         course.studentEnrollment ? undefined : goToCourse

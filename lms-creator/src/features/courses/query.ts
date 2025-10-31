@@ -1,13 +1,11 @@
 import { gql } from "@apollo/client";
 
-export const GET_COURSES = gql`
-  query courses {
-    courses {
+export const GET_CREATOR_COURSES = gql`
+  query CreatorCourses {
+    creatorCourses {
       id
       title
       tagline
-      categories
-      createdAt
     }
   }
 `;

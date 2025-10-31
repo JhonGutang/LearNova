@@ -16,16 +16,28 @@ export const resolvers = {
       return await courseService.coursesForStudents();
     },
     course: async (_: unknown, args: { courseId: number, title: string }, context: MyContext) => {
-      const { studentId, role } = context.session;
-      if ((studentId === undefined || studentId === null) && role !== 'STUDENT') return null;
-      if (studentId === undefined || studentId === null) return null;
-      return await courseService.course(studentId, args.courseId, args.title);
+      const { creatorId, studentId, role } = context.session;
+      if ((role === "STUDENT" && !studentId) || (role === "CREATOR" && !creatorId)) return null;
+
+      if (role === "STUDENT") {
+        return await courseService.course(studentId!, args.courseId, args.title, role);
+      }
+
+      if (role === "CREATOR") {
+        return await courseService.course(creatorId!, args.courseId, args.title, role);
+      }
+    },
+    creatorCourses: async (_: unknown, args: {}, context: MyContext) => {
+      const { creatorId, role } = context.session;
+      if (role !== "CREATOR" || !creatorId) return null;
+      console.log(role, creatorId)
+      return await courseService.creatorCourses(creatorId);
     },
     searchCourse: async (_:unknown, args: {title: string}, context: MyContext) => {
       const { studentId, role } = context.session;
       if(!studentId && role !== 'STUDENT') return null
       if (studentId === undefined || studentId === null) return null;
-      return await courseService.searchCourse(studentId, args.title);
+    return await courseService.searchCourse(studentId, args.title);
     }
   },
   Mutation: {

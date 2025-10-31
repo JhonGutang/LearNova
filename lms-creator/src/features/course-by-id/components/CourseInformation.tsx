@@ -26,7 +26,7 @@ const CourseInformation: React.FC<CourseInformationProps> = ({ course }) => {
             <div className='text-sm mb-2 mt-2'>
                 <span className="flex flex-wrap gap-2">
                     {course.categories.map((cat) => (
-                        <span key={cat} className="chip chip-success">
+                        <span key={cat} className="chip chip-success capitalize">
                             {cat}
                         </span>
                     ))}

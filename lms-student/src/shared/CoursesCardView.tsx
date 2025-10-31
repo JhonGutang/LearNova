@@ -33,6 +33,7 @@ const CoursesCardView: React.FC<CardViewProps> = ({
 }) => {
   // Determine if student enrollment exists
   const enrolled = Boolean(isEnrolled);
+  console.log(isEnrolled)
 
   return (
     <div

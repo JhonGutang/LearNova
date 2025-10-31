@@ -12,6 +12,7 @@ export interface Course {
   creatorName: string;
   description: string;
   status: string;
+  totalNumberOfStudents?: number;
   categories: string[];
   createdAt: string;
 }
