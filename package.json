@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "server": "cd backend && npm run dev",
+    "creator": "cd lms-creator && npm run dev",
+    "student": "cd lms-student && npm run dev",
+    "start-student": "concurrently \"npm run server\" \"npm run student\"",
+    "start-creator": "concurrently \"npm run server\" \"npm run creator\"",
+    "start-all": "concurrently \"npm run server\" \"npm run creator\" \"npm run student\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
