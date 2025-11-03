@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "install-all-dependencies": "npm install --prefix backend && npm install --prefix lms-creator && npm install --prefix lms-student",
     "server": "cd backend && npm run dev",
     "creator": "cd lms-creator && npm run dev",
     "student": "cd lms-student && npm run dev",
