@@ -16,7 +16,6 @@ export class SpecificCoursePageService implements SpecificCoursePageServiceInter
     }
 
     async getInfo(studentId: number, courseId: number, title: string): Promise<SpecificCourse | null> {
-        console.log(studentId, courseId, title)
         const student = await this.prisma.student.findUnique({
             where: { id: studentId },
             select: {
@@ -29,8 +28,7 @@ export class SpecificCoursePageService implements SpecificCoursePageServiceInter
             return null; 
         }
 
-        const course = await this.courseService.course(studentId, courseId, title);
-
+        const course = await this.courseService.course(studentId, courseId, title, "STUDENT");
         if (!course) {
             return null;
         }
