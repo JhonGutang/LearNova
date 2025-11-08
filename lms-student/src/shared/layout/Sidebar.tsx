@@ -1,188 +1,283 @@
-'use client';
+"use client";
 
 import React, { ReactNode, useState } from "react";
 import { usePathname } from "next/navigation";
 import {
   Home,
-  User,
   BookOpen,
+  MessageSquare,
   LogOut,
+  Settings,
+  Star,
+  Book,
+  Clock,
   Users,
-  Trophy,
-  HelpCircle,
-  Sidebar as SidebarIcon
+  PanelLeftOpen,
+  PanelLeftClose,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useRedirectLink } from "@/hooks/useRedirect";
 import { Student } from "@/types/data";
 import dynamic from "next/dynamic";
 
-// Dynamically import the LogoutModal to ensure it's not SSR'd
-const LogoutModal = dynamic(() => import("@/features/auth/logout/Logout"), { ssr: false });
+const LogoutModal = dynamic(() => import("@/features/auth/logout/Logout"), {
+  ssr: false,
+});
 
 const sidebarLinks = [
-  { label: "Home", icon: <Home className="w-5 h-5" />, href: "/home" },
-  { label: "Courses", icon: <BookOpen className="w-5 h-5" />, href: "/courses" },
-  { label: "Community", icon: <Users className="w-5 h-5" />, href: "/community" },
-  { label: "Profile", icon: <User className="w-5 h-5" />, href: "/profile" },
-  { label: "Help & Support", icon: <HelpCircle className="w-5 h-5" />, href: "/help" },
+  { label: "Dashboard", icon: <Home size={16} />, href: "/home" },
+  { label: "Courses", icon: <BookOpen size={16} />, href: "/courses" },
+  { label: "Community", icon: <MessageSquare size={16} />, href: "/community" },
 ];
 
-const SIDEBAR_WIDTH_EXPANDED = 240;
-const SIDEBAR_WIDTH_COLLAPSED = 72;
+const quickAccessLinks = [
+  {
+    label: "Enrolled Courses",
+    icon: <Book size={15} className="min-w-[16px]" />,
+    count: 5,
+  },
+  {
+    label: "Favorite Courses",
+    icon: <Star size={15} className="min-w-[16px]" />,
+    count: 3,
+  },
+  {
+    label: "Recent Courses",
+    icon: <Clock size={15} className="min-w-[16px]" />,
+    count: 2,
+  },
+  {
+    label: "Top Topics",
+    icon: <Users size={15} className="min-w-[16px]" />,
+    count: 8,
+  },
+];
+
+const SIDEBAR_WIDTH_EXPANDED = 260;
+const SIDEBAR_WIDTH_COLLAPSED = 64;
 
 interface SidebarLayoutProps {
-  children: ReactNode; // main content
-  headerChild?: ReactNode; // optional header child
-  student?: Student
+  children: ReactNode;
+  headerChild?: ReactNode;
+  student?: Student;
 }
 
-const SidebarLayout = ({ children, headerChild, student }: SidebarLayoutProps) => {
+interface SidebarLinksProps {
+  pathname: string;
+  redirect: (href: string) => void;
+  collapsed?: boolean;
+}
+
+function SidebarLinks({ pathname, redirect, collapsed }: SidebarLinksProps) {
+  return (
+    <ul className="w-full space-y-1">
+      {sidebarLinks.map((link) => {
+        const isActive = pathname === link.href;
+        return (
+          <li key={link.href}>
+            <button
+              type="button"
+              onClick={() => redirect(link.href)}
+              className={`flex cursor-pointer items-center w-full rounded-md px-3.5 py-2 gap-2 transition-colors text-[14px] font-medium
+                ${
+                  isActive
+                    ? "bg-[#e6f3fc] text-[#14a9e3]"
+                    : "text-[#222] hover:bg-gray-100"
+                }
+                `}
+              aria-current={isActive ? "page" : undefined}
+              tabIndex={0}
+            >
+              <span
+                className={
+                  isActive
+                    ? "text-[#14a9e3]"
+                    : "text-gray-500 group-hover:text-[#14a9e3]"
+                }
+              >
+                {link.icon}
+              </span>
+              {!collapsed && (
+                <span className="whitespace-nowrap">{link.label}</span>
+              )}
+            </button>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+function QuickAccess({ collapsed = false }: { collapsed?: boolean }) {
+  if (collapsed) return null;
+  return (
+    <div className="mt-3 mb-2">
+      <div className="text-[11px] font-medium tracking-wide text-gray-500 uppercase mb-2 ml-1">
+        QUICK ACCESS
+      </div>
+      <ul className="space-y-1">
+        {quickAccessLinks.map((link) => (
+          <li key={link.label}>
+            <div className="flex items-center py-1 px-1 rounded group hover:bg-gray-50 transition-all">
+              <span
+                className="flex items-center text-gray-500 mr-2"
+                style={{ minWidth: 18 }}
+              >
+                {link.icon}
+              </span>
+              <span className="text-[12.5px] font-normal text-gray-800 flex-1">
+                {link.label}
+              </span>
+              <span className="text-[11.5px] text-gray-500 ml-auto bg-gray-100 w-5 h-5 rounded-full flex items-center justify-center font-medium">
+                {link.count}
+              </span>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+const SettingsSection: React.FC<{ collapsed?: boolean }> = ({ collapsed }) => {
+  if (collapsed) return null;
+  return (
+    <div className="border-t border-gray-100 mt-3 pt-2">
+      <button
+        type="button"
+        className="flex items-center gap-2 px-4 py-2 w-full text-gray-600 hover:bg-gray-50 transition rounded-md text-[13.5px]"
+        style={{ marginBottom: 1 }}
+      >
+        <Settings size={15} /> <span>Settings</span>
+      </button>
+    </div>
+  );
+};
+
+const LogoutSection: React.FC<{
+  setLogoutOpen: (v: boolean) => void;
+  collapsed?: boolean;
+}> = ({ setLogoutOpen, collapsed }) => {
+  if (collapsed) return null;
+  return (
+    <div className="mt-1">
+      <button
+        type="button"
+        className="flex cursor-pointer items-center gap-2 px-4 py-2 w-full text-[#e04141] hover:bg-red-50 transition rounded-md text-[13.5px]"
+        onClick={() => setLogoutOpen(true)}
+      >
+        <LogOut size={15} className="mr-1" />
+        <span>Logout</span>
+      </button>
+    </div>
+  );
+};
+
+const VersionSection: React.FC<{ collapsed?: boolean }> = ({ collapsed }) => {
+  if (collapsed) return null;
+  return (
+    <div className="text-center text-[10.5px] text-gray-400 mt-2 mb-1 select-none">
+      Version 1.0.0
+    </div>
+  );
+};
+
+const SidebarLayout = ({
+  children,
+  headerChild,
+  student,
+}: SidebarLayoutProps) => {
   const { redirect } = useRedirectLink();
   const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState(false);
+  const CURRENT_PAGE = sidebarLinks.find(
+    (link) => link.href === pathname
+  )?.label;
   const [logoutOpen, setLogoutOpen] = useState(false);
-  const sidebarWidth = collapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED;
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-gray-100 to-white">
-      {/* Sidebar */}
+    <div className="flex h-screen bg-white font-sans">
       <aside
-        className={`hidden md:flex flex-col bg-white border-r shadow-lg transition-all duration-200 ${collapsed ? "w-18" : "w-60"}`}
-        style={{ width: sidebarWidth }}
+        className={`hidden md:flex flex-col ${
+          sidebarCollapsed
+            ? "w-[64px] min-w-[64px] max-w-[64px]"
+            : "w-[260px] min-w-[240px] max-w-[260px]"
+        } bg-white border-r border-gray-100`}
+        style={{
+          boxShadow: "0 0.5px 0 #eee",
+          position: "sticky",
+          top: 0,
+          left: 0,
+          zIndex: 40,
+          height: "100vh",
+          minHeight: "100vh",
+          transition: "width 0.25s cubic-bezier(.4,0,.2,1)",
+        }}
       >
-        {/* Brand/Logo and Collapse/Expand Button side by side */}
-        <div className={`h-20 flex items-center px-4 ${collapsed ? "justify-center" : ""}`}>
-          <div className={`flex items-center gap-2 ${collapsed ? "" : "w-full"}`}>
-            {!collapsed && (
-              <span className="text-2xl font-extrabold text-teal-800 tracking-wide text-left">
+        <div className="flex flex-col justify-between h-full w-full">
+          <div>
+            <div
+              className={`h-16 flex items-center ${
+                sidebarCollapsed ? "justify-center px-0" : "px-7"
+              } mb-2 select-none sticky top-0 bg-white z-30`}
+              style={{ minHeight: "62px" }}
+            >
+              <span
+                className="text-[16.5px] font-extrabold text-[#14a9e3]"
+                style={{ display: sidebarCollapsed ? "none" : undefined }}
+              >
                 LearNova
               </span>
-            )}
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setCollapsed((prev) => !prev)}
-            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-            className={`border border-gray-200 bg-gray-100 hover:bg-gray-200 cursor-pointer ml-2 ${collapsed ? "ml-0" : ""}`}
-          >
-            <SidebarIcon className="w-6 h-6 text-black" />
-          </Button>
-        </div>
-
-        {/* Navigation */}
-        <nav className={`flex-1 py-6 space-y-1 ${collapsed ? "px-1" : "px-4"}`}>
-          {sidebarLinks.map((link) => {
-            const isActive = pathname === link.href;
-            return (
-              <button
-                key={link.href}
-                type="button"
-                onClick={() => redirect(link.href)}
-                className={`w-full group flex items-center gap-3 rounded-lg text-base font-medium transition-all px-3 py-2
-                  ${isActive ? "bg-teal-800 text-white shadow-lg shadow-teal-800/25" : "text-gray-800 hover:bg-teal-100 hover:text-teal-800"}
-                  ${collapsed ? "justify-center" : ""}
-                  focus:outline-none
-                  cursor-pointer
-                `}
-                tabIndex={0}
-                aria-current={isActive ? "page" : undefined}
-              >
-                <span
-                  className={`flex items-center justify-center transition-colors ${
-                    isActive
-                      ? "text-white"
-                      : "text-gray-500 group-hover:text-teal-800"
-                  }`}
-                >
-                  {link.icon}
+              {sidebarCollapsed && (
+                <span>
+                  <Home size={26} className="text-[#14a9e3]" />
                 </span>
-                {!collapsed && (
-                  <span className="transition-opacity duration-200">{link.label}</span>
-                )}
-              </button>
-            );
-          })}
-        </nav>
-
-        {/* User Profile (bottom) */}
-        <div
-          className={`px-4 py-3 border-t bg-gradient-to-r from-gray-100 to-white flex items-center gap-3 ${
-            collapsed ? "justify-center px-2" : ""
-          }`}
-        >
-          <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-full bg-teal-600 flex items-center justify-center font-bold text-white text-sm">
-              SJ
+              )}
             </div>
-            {!collapsed && (
-              <div className="flex flex-col">
-                <span className="font-semibold text-gray-900 text-sm">
-                  {student
-                    ? student.firstName
-                    : "Sam Jones"}
-                </span>
-                <span className="text-xs text-gray-500">Level 12 • 2,450 XP</span>
-              </div>
-            )}
+            <nav className="px-2 pt-0 pb-2 w-full">
+              <SidebarLinks
+                pathname={pathname}
+                redirect={redirect}
+                collapsed={sidebarCollapsed}
+              />
+            </nav>
+            {!sidebarCollapsed && <hr className="my-2 border-gray-100" />}
+            <div className="px-3">
+              <QuickAccess collapsed={sidebarCollapsed} />
+            </div>
           </div>
-          {!collapsed && (
-            <>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="ml-auto text-red-500 hover:bg-red-100"
-                aria-label="Logout"
-                onClick={() => setLogoutOpen(true)}
-              >
-                <LogOut className="w-5 h-5" />
-              </Button>
-              {/* Logout Modal Triggered Here */}
-              <LogoutModal open={logoutOpen} onOpenChange={setLogoutOpen} />
-            </>
-          )}
+          <div className="w-full">
+            <SettingsSection collapsed={sidebarCollapsed} />
+            <LogoutSection
+              setLogoutOpen={setLogoutOpen}
+              collapsed={sidebarCollapsed}
+            />
+            <VersionSection collapsed={sidebarCollapsed} />
+            <LogoutModal open={logoutOpen} onOpenChange={setLogoutOpen} />
+          </div>
         </div>
       </aside>
-
-      {/* Right content area */}
-      <div className="flex flex-col flex-1 relative ">
-        {/* Header */}
-        <header
-          className="fixed top-0 right-0 h-20 flex items-center px-6 z-40 bg-white/80 backdrop-blur border-b transition-all duration-200"
-          style={{
-            left: `${sidebarWidth}px`,
-            width: `calc(100vw - ${sidebarWidth}px)`,
-          }}
-        >
-          <div className="flex flex-1 items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-teal-800 tracking-tight">
-                {sidebarLinks.find((l) => l.href === pathname)?.label || "Dashboard"}
-              </h1>
-              {pathname === "/home" && (
-                <p className="text-sm text-gray-600 mt-1">Welcome back, ready to learn something new?</p>
+      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto h-screen">
+        <div className="h-16 flex items-center justify-between px-5 border-b border-gray-100 min-h-[62px] sticky top-0 bg-white z-20">
+          <div className="flex items-center">
+            <button
+              type="button"
+              aria-label={
+                sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"
+              }
+              className="inline-flex items-center justify-center w-9 h-9 rounded-full border hover:bg-gray-100 transition-all border-gray-200 cursor-pointer"
+              onClick={() => setSidebarCollapsed((c) => !c)}
+            >
+              {sidebarCollapsed ? (
+                <PanelLeftOpen size={20} />
+              ) : (
+                <PanelLeftClose size={20} />
               )}
-            </div>
-            <div className="flex items-center gap-4">
-              {pathname === "/home" && (
-                <div className="flex items-center gap-2 bg-orange-100 text-orange-700 px-3 py-1 rounded-full">
-                  <Trophy className="w-4 h-4" />
-                  <span className="text-sm font-medium">5 Day Streak</span>
-                </div>
-              )}
-              {/* Optional header child */}
-              {headerChild && (
-                <div className="ml-6 flex items-center">{headerChild}</div>
-              )}
-            </div>
+            </button>
+            <div className="text-[#14a9e3]">{CURRENT_PAGE}</div>
           </div>
-        </header>
-
-        {/* Main content */}
-        <main className="flex-1 pt-20 p-6 bg-gradient-to-br from-white to-gray-100 overflow-auto">
-          {children}
-        </main>
+          <div>{headerChild}</div>
+        </div>
+        <div className="flex-1 flex flex-col min-w-0">{children}</div>
       </div>
     </div>
   );
