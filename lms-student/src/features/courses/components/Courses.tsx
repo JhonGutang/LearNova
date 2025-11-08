@@ -121,7 +121,7 @@ const Courses: React.FC<CoursesProps> = ({
                 return (
                   <div
                     key={course.id}
-                    className="flex"
+                    className="flex pt-5"
                     style={{ width: 330, maxWidth: "90vw" }}
                   >
                     <CoursesCardView

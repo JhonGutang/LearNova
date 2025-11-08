@@ -1,6 +1,5 @@
 import React from "react";
 import { Star } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 interface CardViewProps {
   courseName?: string;
@@ -17,30 +16,37 @@ interface CardViewProps {
   onViewClick?: () => void;
 }
 
-const CARD_WIDTH = 320;
-const CARD_HEIGHT = 430;
+// Exact card sizes from the screenshot
+const CARD_WIDTH = 300;
+const CARD_HEIGHT = 380;
 
 const CoursesCardView: React.FC<CardViewProps> = ({
-  courseName,
-  tagline,
+  courseName = "Advanced React Patterns",
+  tagline = "Master modern React patterns and best practices for scalable applications",
   className = "",
-  children,
-  author,
+  author = "Sarah Johnson",
+  chips,
   rating = 4.8,
-  isEnrolled = false,
+  isEnrolled = true,
   onEnrollClick,
   onViewClick,
+  children,
 }) => {
-  // Determine if student enrollment exists
-  const enrolled = Boolean(isEnrolled);
-  console.log(isEnrolled)
+  // For demo: provide standard chips if not provided
+  const displayChips =
+    chips ??
+    (
+      <div className="flex items-center gap-2 mt-3">
+        <span className="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">React</span>
+        <span className="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">JavaScript</span>
+        <span className="bg-blue-50 text-blue-500 border border-blue-200 text-xs font-semibold px-3 py-1 rounded-full">+2 more</span>
+      </div>
+    );
 
   return (
     <div
       className={`
-        bg-white rounded-xl shadow-lg border border-gray-200 flex flex-col transition
-        hover:shadow-xl hover:border-gray-300 hover:-translate-y-1
-        ${className}
+      bg-white rounded-2xl shadow-[0_1px_10px_0px_rgba(16,30,115,0.07)] border border-[#f3f6fa] flex flex-col ${className}
       `}
       style={{
         minHeight: CARD_HEIGHT,
@@ -52,126 +58,111 @@ const CoursesCardView: React.FC<CardViewProps> = ({
         boxSizing: "border-box",
         display: "flex",
         flexDirection: "column",
+        padding: 0,
       }}
     >
-      {/* Upper Visual Section - Tech Icons */}
+      {/* Top image section */}
       <div
-        className="relative bg-gradient-to-br from-orange-400 via-orange-500 to-orange-600 rounded-t-xl flex items-center justify-center p-8"
+        className="relative rounded-t-2xl overflow-hidden"
         style={{
-          minWidth: CARD_WIDTH,
-          maxWidth: CARD_WIDTH,
-          width: CARD_WIDTH,
-          height: 200, // Larger section for icons
+          width: "100%",
+          height: 156,
         }}
       >
-        {/* HTML5 Logo - Main center icon */}
-        <div className="relative z-10">
-          <div className="w-16 h-16 bg-orange-500 rounded-lg shadow-lg flex items-center justify-center transform rotate-12">
-            <span className="text-white font-bold text-2xl">5</span>
-          </div>
-        </div>
-
-        {/* Surrounding Tech Icons */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          {/* Left side icons */}
-          <div className="absolute left-8 top-8 space-y-2">
-            <div className="w-8 h-8 bg-orange-400 rounded flex items-center justify-center">
-              <div className="w-4 h-1 bg-white rounded"></div>
-              <div className="w-4 h-1 bg-white rounded ml-1"></div>
-              <div className="w-4 h-1 bg-white rounded ml-1"></div>
-            </div>
-            <div className="w-8 h-8 bg-orange-400 rounded flex items-center justify-center">
-              <div className="w-4 h-1 bg-white rounded"></div>
-              <div className="w-4 h-1 bg-white rounded ml-1"></div>
-              <div className="w-4 h-1 bg-white rounded ml-1"></div>
-            </div>
-          </div>
-
-          {/* Right side icons */}
-          <div className="absolute right-8 top-8 space-y-2">
-            <div className="w-8 h-8 bg-orange-400 rounded flex items-center justify-center">
-              <span className="text-white font-bold text-sm">j</span>
-            </div>
-            <div className="w-8 h-8 bg-orange-400 rounded flex items-center justify-center">
-              <div className="w-4 h-1 bg-white rounded"></div>
-              <div className="w-4 h-1 bg-white rounded ml-1"></div>
-              <div className="w-4 h-1 bg-white rounded ml-1"></div>
-            </div>
-            <div className="w-8 h-8 bg-orange-400 rounded flex items-center justify-center">
-              <div className="w-3 h-3 border-l-2 border-white"></div>
-            </div>
-          </div>
-
-          {/* Bottom right icons */}
-          <div className="absolute right-8 bottom-8 space-y-2">
-            <div className="w-8 h-8 bg-orange-600 rounded flex items-center justify-center">
-              <span className="text-white font-bold text-xs">.S</span>
-            </div>
-            <div className="w-8 h-8 bg-yellow-400 rounded flex items-center justify-center">
-              <span className="text-black font-bold text-xs">ä</span>
-            </div>
-          </div>
-        </div>
+        {/* Static background - replace src with course image if provided */}
+        <img
+          src="https://i.pinimg.com/736x/b3/47/3e/b3473e153e708db362d199b7339ebd26.jpg"
+          alt="Course visual"
+          style={{
+            objectFit: "fill",
+            width: "100%",
+            height: "180px", // Fixed height for consistency
+            display: "block",
+            background: "linear-gradient(120deg,#0cb9e8 0%,#4285f4 100%)", // fallback
+          }}
+        />
+        {/* Favorite button */}
+        <button
+          type="button"
+          tabIndex={0}
+          aria-label="Favorite"
+          style={{
+            position: "absolute",
+            top: 15,
+            right: 16,
+            background: "#fff",
+            border: "none",
+            borderRadius: "9999px",
+            boxShadow: "0 1px 6px 0 rgba(4, 39, 100, 0.07)",
+            width: 25,
+            height: 25,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+            padding: 0,
+          }}
+          className="group"
+        >
+          <Star
+            size={22}
+            className="text-gray-400 group-hover:text-blue-400 transition-colors"
+            strokeWidth={2}
+            fill="none"
+          />
+        </button>
       </div>
 
-      {/* Lower Text Section */}
+      {/* Card content section */}
       <div
-        className="flex-1 px-6 py-6 flex flex-col justify-between"
+        className="flex-1 py-0 px-6 flex flex-col"
         style={{
+          flex: 1,
+          justifyContent: "stretch",
           minWidth: CARD_WIDTH,
           maxWidth: CARD_WIDTH,
-          width: CARD_WIDTH,
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
+          width: "100%",
+          background: "white",
         }}
       >
-        {/* Title, Author, and Description - Improved UI */}
-        <div className="mb-4">
-          <h2 className="text-2xl font-extrabold text-gray-900 mb-1 tracking-tight">
-            {courseName || "Web Development Bootcamp"}
+        <div className="mt-6">
+          <h2 className="text-[17px] font-bold text-gray-900 mb-1">
+            {courseName}
           </h2>
           <div className="flex items-center mb-2">
-            <div className="w-8 h-8 rounded-full bg-orange-200 flex items-center justify-center mr-2">
-              <span className="text-orange-700 font-semibold text-lg">
-                {author ? author.trim().split(" ").map(n => n[0]).join("") : "WD"}
-              </span>
-            </div>
-            <span className="text-gray-600 text-sm font-medium">
-              by <span className="text-gray-800">{author}</span>
-            </span>
+            <span className="text-gray-500 text-sm">by</span>
+            <span className="ml-1 text-gray-800 text-[13px] font-medium">{author}</span>
           </div>
-          <div className="bg-gray-50 px-3 py-2 rounded-md border border-gray-100">
-            <p className="text-sm text-gray-700 leading-relaxed">
-              {tagline || "Complete guide to modern web development"}
+          <div>
+            <p className="text-[15px] text-gray-700 mb-1">
+              {tagline}
             </p>
           </div>
         </div>
-
-        {/* Rating and Enrollment Button */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <Star className="w-4 h-4 text-yellow-400 fill-current mr-1" />
-            <span className="text-gray-900 font-semibold">{rating}</span>
-          </div>
-          <Button
-            onClick={enrolled ? onViewClick : onEnrollClick}
-            className={`cursor-pointer text-sm px-4 py-2 ${
-              enrolled
-                ? "bg-teal-600 hover:bg-teal-700 text-white"
-                : "bg-teal-800 hover:bg-teal-700 text-white"
-            }`}
-          >
-            {enrolled ? "View Course" : "Enroll"}
-          </Button>
+        {/* Chips/tags row */}
+        <div>
+          {displayChips}
         </div>
-
-        {/* Action Button */}
-        {children && (
-          <div className="w-full mt-4">
-            {children}
-          </div>
-        )}
+        <div className="mt-auto">
+          <button
+            type="button"
+            onClick={isEnrolled ? onViewClick : onEnrollClick}
+            className={`
+              mt-7 w-full
+              bg-[#11a4f7] hover:bg-[#078cd6]
+              text-white text-[17px] font-semibold 
+              cursor-pointer
+              py-[5px] rounded-[11px] shadow 
+              transition-all duration-150 active:scale-[0.99]
+              focus:outline-none
+            `}
+            style={{
+              boxShadow: "0 1px 3px 0 rgba(10,82,200,0.08)",
+            }}
+          >
+            {isEnrolled ? "View Course" : "Enroll"}
+          </button>
+        </div>
       </div>
     </div>
   );
