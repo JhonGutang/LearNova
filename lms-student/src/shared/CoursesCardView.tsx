@@ -11,13 +11,12 @@ interface CardViewProps {
   rating?: number;
   reviewCount?: number;
   imageUrl?: string;
-  isEnrolled?: boolean; // if student is enrolled, this will be true
+  isEnrolled?: boolean; 
   onEnrollClick?: () => void;
   onViewClick?: () => void;
 }
 
-// Exact card sizes from the screenshot
-const CARD_WIDTH = 300;
+// Card height constant for consistency
 const CARD_HEIGHT = 380;
 
 const CoursesCardView: React.FC<CardViewProps> = ({
@@ -46,14 +45,12 @@ const CoursesCardView: React.FC<CardViewProps> = ({
   return (
     <div
       className={`
-      bg-white rounded-2xl shadow-[0_1px_10px_0px_rgba(16,30,115,0.07)] border border-[#f3f6fa] flex flex-col ${className}
+      bg-white rounded-2xl shadow-[0_1px_10px_0px_rgba(16,30,115,0.07)] border border-[#f3f6fa] flex flex-col
+      w-full max-w-sm mx-auto
+      ${className}
       `}
       style={{
         minHeight: CARD_HEIGHT,
-        maxHeight: CARD_HEIGHT,
-        minWidth: CARD_WIDTH,
-        maxWidth: CARD_WIDTH,
-        width: CARD_WIDTH,
         height: CARD_HEIGHT,
         boxSizing: "border-box",
         display: "flex",
@@ -119,8 +116,6 @@ const CoursesCardView: React.FC<CardViewProps> = ({
         style={{
           flex: 1,
           justifyContent: "stretch",
-          minWidth: CARD_WIDTH,
-          maxWidth: CARD_WIDTH,
           width: "100%",
           background: "white",
         }}

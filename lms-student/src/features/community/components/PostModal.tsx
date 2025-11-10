@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Post } from "@/types/data";
-import { ThumbsUp, MessageCircle, Heart, Smile, ThumbsDown } from "lucide-react";
+import { MessageCircle, Heart } from "lucide-react";
 import { usePosts } from "../usePost";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
@@ -12,25 +12,11 @@ interface PostModalProps {
   post: Post | null;
 }
 
-
-interface MockReaction {
-  type: 'like' | 'love' | 'haha' | 'wow' | 'sad' | 'angry';
-  count: number;
-  userReaction?: boolean;
-}
-
 const PostModal: React.FC<PostModalProps> = ({ isOpen, onClose, post }) => {
   const { handleReactPost, handleCreateComment } = usePosts();
-  const [isLiking, setIsLiking] = useState(false);
+  const [isLoving, setIsLoving] = useState(false);
   const [isCommenting, setIsCommenting] = useState(false);
   const [commentText, setCommentText] = useState("");
-
-  const mockReactions: MockReaction[] = [
-    { type: 'like', count: 12, userReaction: post?.hasLiked },
-    { type: 'love', count: 5 },
-    { type: 'haha', count: 3 },
-    { type: 'wow', count: 1 },
-  ];
 
   if (!isOpen || !post) return null;
 
@@ -43,39 +29,16 @@ const PostModal: React.FC<PostModalProps> = ({ isOpen, onClose, post }) => {
       .slice(0, 2);
   };
 
-  const getReactionIcon = (type: string) => {
-    switch (type) {
-      case 'like': return <ThumbsUp className="w-4 h-4" />;
-      case 'love': return <Heart className="w-4 h-4" fill="#14b8a6" />; // teal-500
-      case 'haha': return <Smile className="w-4 h-4" fill="#2dd4bf" />; // teal-400
-      case 'wow': return <Smile className="w-4 h-4" fill="#5eead4" />; // teal-300
-      case 'sad': return <ThumbsDown className="w-4 h-4" fill="#5eead4" />; // teal-300
-      case 'angry': return <ThumbsDown className="w-4 h-4" fill="#0d9488" />; // teal-700
-      default: return <ThumbsUp className="w-4 h-4" />;
-    }
-  };
-
-  const getReactionColor = (type: string) => {
-    switch (type) {
-      case 'like': return 'text-teal-600';
-      case 'love': return 'text-teal-500';
-      case 'haha': return 'text-teal-400';
-      case 'wow': return 'text-teal-300';
-      case 'sad': return 'text-teal-300';
-      case 'angry': return 'text-teal-700';
-      default: return 'text-teal-600';
-    }
-  };
-
-  const handleReaction = async () => {
-    if (isLiking) return;
-    setIsLiking(true);
+  // Love (like) handler
+  const handleLove = async () => {
+    if (isLoving) return;
+    setIsLoving(true);
     try {
       await handleReactPost(post.id, !post.hasLiked);
     } catch (error) {
       console.error("Failed to react to post:", error);
     } finally {
-      setIsLiking(false);
+      setIsLoving(false);
     }
   };
 
@@ -94,7 +57,8 @@ const PostModal: React.FC<PostModalProps> = ({ isOpen, onClose, post }) => {
     }
   };
 
-  const totalReactions = mockReactions.reduce((sum, reaction) => sum + reaction.count, 0);
+  // Love summary, replace reactions summary
+  const loveCount = typeof post.reactionCount === "number" ? post.reactionCount : 0;
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
@@ -130,37 +94,35 @@ const PostModal: React.FC<PostModalProps> = ({ isOpen, onClose, post }) => {
                 <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{post.content}</p>
               </div>
 
-              {/* Reactions Summary */}
-              {totalReactions > 0 && (
+              {/* Love Summary */}
+              {loveCount > 0 && (
                 <div className="flex items-center gap-2 mb-3 text-sm text-gray-600">
                   <div className="flex -space-x-1">
-                    {mockReactions.slice(0, 3).map((reaction, index) => (
-                      <div key={index} className={`w-5 h-5 rounded-full bg-white border border-white flex items-center justify-center ${getReactionColor(reaction.type)}`}>
-                        {getReactionIcon(reaction.type)}
-                      </div>
-                    ))}
+                    <div className="w-5 h-5 rounded-full bg-white border border-white flex items-center justify-center text-teal-500">
+                      <Heart className="w-4 h-4" fill="#14b8a6" />
+                    </div>
                   </div>
-                  <span>{totalReactions} reactions</span>
+                  <span>{loveCount} loves</span>
                 </div>
               )}
 
               {/* Action Buttons */}
               <div className="flex items-center justify-between border-t pt-3">
                 <button
-                  onClick={handleReaction}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors flex-1 justify-center ${
+                  onClick={handleLove}
+                  className={`cursor-pointer flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors flex-1 justify-center ${
                     post.hasLiked 
                       ? 'text-teal-600 bg-teal-50 hover:bg-teal-100' 
                       : 'text-gray-600 hover:bg-gray-50'
                   }`}
-                  disabled={isLiking}
+                  disabled={isLoving}
                 >
-                  <ThumbsUp 
+                  <Heart 
                     className="w-5 h-5" 
-                    fill={post.hasLiked ? "#0d9488" : "none"} // teal-700
+                    fill={post.hasLiked ? "#0d9488" : "none"} // teal-700 when loved
                     stroke={post.hasLiked ? "#0d9488" : "currentColor"}
                   />
-                  <span>Like</span>
+                  <span>Love</span>
                 </button>
                 
                 <button className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-gray-600 hover:bg-gray-50 transition-colors flex-1 justify-center">

@@ -8,15 +8,16 @@ const CategoryChip: React.FC<{ active?: boolean; onClick?: () => void; label: st
   <button
     onClick={onClick}
     className={`
-      px-3 py-1.5 rounded-full border-2 
-      text-sm font-semibold mr-2 transition-all duration-150 shadow-sm
-      flex items-center gap-1.5 
+      px-4 py-2 rounded-lg
+      cursor-pointer
+      text-sm font-medium transition-all duration-150
+      flex items-center justify-center
       ${active 
-        ? "bg-teal-600 border-teal-700 text-white shadow-md scale-105"
-        : "bg-gray-50 border-gray-300 text-gray-700 hover:bg-teal-50 hover:border-teal-300 hover:text-teal-700"}
-      focus:outline-none focus:ring-2 focus:ring-teal-300
+        ? "bg-[#F0F2F5] text-[#333333] border-none"
+        : "bg-white text-[#666666] border border-[#E0E0E0] hover:bg-gray-50"}
+      focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-1
     `}
-    style={{ minWidth: 72, minHeight: 32 }}
+    style={{ minHeight: 40 }}
   >
     {label}
   </button>

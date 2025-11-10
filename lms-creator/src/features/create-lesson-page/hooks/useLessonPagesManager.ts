@@ -77,9 +77,10 @@ export function useLessonPagesManager(lessonLink: string) {
     })) + 1;
   }, [pages]);
 
-  // Add a new page and select it
+
   const handleAddPage = useCallback(async () => {
     if (!id) return;
+    console.log('creating new page')
     const newPage = await upsertLessonPage({
       lessonId: Number(id),
       pageNumber: nextPageNumber,

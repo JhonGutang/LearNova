@@ -9,7 +9,7 @@ import SearchCourse from "./SearchCourse";
 import { Chip } from "./Chips";
 
 const categoryOptions = [
-  { label: "All", value: "ALL" },
+  { label: "All Courses", value: "ALL" },
   { label: "Featured", value: "FEATURED" },
   { label: "Enrolled", value: "ENROLLED" },
 ];
@@ -78,27 +78,29 @@ const Courses: React.FC<CoursesProps> = ({
   }
 
   return (
-    <div className="min-h-screen bg-white w-full">
+    <div className="min-h-screen w-full">
       <main className="px-4 py-6 md:px-6 min-h-[60vh] max-w-7xl mx-auto w-full">
         <section>
-          <div className="flex mb-8 justify-center gap-2 flex-wrap items-center">
-            {categoryOptions.map((cat) => (
-              <Chip
-                key={cat.value}
-                type="category"
-                label={cat.label}
-                active={categoriesEqual(category, cat.value)}
-                onClick={() => onCategoryChange(cat.value as typeof category)}
-              />
-            ))}
-            <div className="ml-4 min-w-[220px]">
+          <div className="flex mb-8 items-center gap-4 flex-wrap">
+            <div className="flex-1 min-w-[280px] max-w-[65%]">
               <SearchCourse
-                placeholder="Search courses..."
+                placeholder="Search courses, authors, or categories..."
                 value={search}
                 onChange={setSearch}
                 onReplaceCourses={handleReplaceCourses}
-                className="w-full max-w-xs"
+                className="w-full"
               />
+            </div>
+            <div className="flex items-center gap-3 flex-shrink-0">
+              {categoryOptions.map((cat) => (
+                <Chip
+                  key={cat.value}
+                  type="category"
+                  label={cat.label}
+                  active={categoriesEqual(category, cat.value)}
+                  onClick={() => onCategoryChange(cat.value as typeof category)}
+                />
+              ))}
             </div>
           </div>
           {loading ? (
@@ -114,31 +116,26 @@ const Courses: React.FC<CoursesProps> = ({
               Course not found.
             </div>
           ) : (
-            <div className="flex flex-wrap gap-6 justify-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
               {displayedCourses.map((course) => {
                 const goToCourse = () =>
                   redirect("courses/" + toSlug(Number(course.id), course.title));
                 return (
-                  <div
+                  <CoursesCardView
                     key={course.id}
-                    className="flex pt-5"
-                    style={{ width: 330, maxWidth: "90vw" }}
-                  >
-                    <CoursesCardView
-                      courseName={course.title}
-                      tagline={course.tagline}
-                      author={
-                        course.creator.firstName + " " + course.creator.lastName
-                      }
-                      className="w-full"
-                      chips={course.studentEnrollment ? <Chip type="enrolled" /> : undefined}
-                      isEnrolled={category === "ENROLLED" ? true: false}
-                      onViewClick={goToCourse}
-                      onEnrollClick={
-                        course.studentEnrollment ? undefined : goToCourse
-                      }
-                    />
-                  </div>
+                    courseName={course.title}
+                    tagline={course.tagline}
+                    author={
+                      course.creator.firstName + " " + course.creator.lastName
+                    }
+                    className="w-full"
+                    chips={course.studentEnrollment ? <Chip type="enrolled" /> : undefined}
+                    isEnrolled={category === "ENROLLED" ? true: false}
+                    onViewClick={goToCourse}
+                    onEnrollClick={
+                      course.studentEnrollment ? undefined : goToCourse
+                    }
+                  />
                 );
               })}
             </div>

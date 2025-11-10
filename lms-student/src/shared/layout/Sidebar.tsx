@@ -52,9 +52,6 @@ const quickAccessLinks = [
   },
 ];
 
-const SIDEBAR_WIDTH_EXPANDED = 260;
-const SIDEBAR_WIDTH_COLLAPSED = 64;
-
 interface SidebarLayoutProps {
   children: ReactNode;
   headerChild?: ReactNode;
