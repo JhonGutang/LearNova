@@ -1,0 +1,22 @@
+export const dailyMotivations = [
+  "Believe in yourself and all that you are.",
+  "Every day is a new beginning. Seize it.",
+  "You are stronger than you think.",
+  "Success is the sum of small efforts, repeated day in and day out.",
+  "Mistakes are proof you are trying.",
+  "Dream big. Work hard. Stay focused.",
+  "Great things never come from comfort zones.",
+  "Progress, not perfection.",
+  "Push yourself, because no one else will do it for you.",
+  "Don’t stop until you’re proud.",
+  "Your only limit is your mind.",
+  "Stay positive, work hard, make it happen.",
+  "You don’t have to be perfect to be amazing.",
+  "Little by little, a little becomes a lot.",
+  "The best way to get started is to quit talking and begin doing.",
+  "Learn from yesterday. Live for today. Hope for tomorrow.",
+  "Difficult roads often lead to beautiful destinations.",
+  "Be the energy you want to attract.",
+  "It always seems impossible until it’s done.",
+  "Small steps every day lead to big results."
+];
