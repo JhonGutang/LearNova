@@ -16,7 +16,7 @@ interface CourseByIdProps {
 const CourseById: React.FC<CourseByIdProps> = ({ name }) => {
   const { fromSlug } = useRedirectLink();
   const { id, title } = fromSlug(name);
-  const { course, loading, error, addNewLesson } = useCourseById(id?.toString() || null, title);
+  const { course, loading, error, addNewLesson } = useCourseById(Number(id) || null, title);
 
   if (loading || error || !course) {
     return <CourseStateGuard course={course} loading={loading} error={error} />;

@@ -51,10 +51,22 @@ export class CourseService implements CourseServiceInterface {
 
     if (role === "CREATOR") {
       const creatorId = userId;
-      const course = await this.courseRepository.findCreatorCourseByIdAndTitle(creatorId, courseId, title);
+      const course = await this.courseRepository.findCreatorCourseByIdAndTitle(creatorId, courseId);
       if (!course) {
         throw new Error("Course Not Found");
       }
+
+      function normalizeString(str: string): string {
+        return str.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+      }
+
+      const courseTitleNorm = normalizeString(course.title ?? "");
+      const inputTitleNorm = normalizeString(title ?? "");
+
+      if (courseTitleNorm !== inputTitleNorm) {
+        throw new Error("Course title does not match");
+      }
+
       let categories: string[] = [];
       if (Array.isArray(course.categories)) {
         categories = flattenCategories(course.categories);

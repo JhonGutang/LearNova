@@ -69,6 +69,12 @@ export function convertCourseDataToCamelCase<TOutput = Course>(course: unknown):
       continue;
     }
 
+    // If the (camel)key is categories, flatten the value
+    if (camelKey === "categories") {
+      normalized[camelKey] = flattenCategories(value);
+      continue;
+    }
+
     if (Array.isArray(value)) {
       normalized[camelKey] = value.map((item) =>
         typeof item === "object" && item !== null ? convertCourseDataToCamelCase(item) : item
@@ -82,6 +88,7 @@ export function convertCourseDataToCamelCase<TOutput = Course>(course: unknown):
 
   return normalized as unknown as TOutput;
 }
+
 
 
 // =====================

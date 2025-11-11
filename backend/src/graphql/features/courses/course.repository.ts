@@ -15,7 +15,7 @@ interface CourseRepositoryInterface {
   findCoursesByCreatorId(creatorId: number): Promise<Course[]>;
   findCourseOrEnrolledCourse(studentId: number, courseId: number, title: string): Promise<Course | null>
   findCoursesWithSimilarTitle(studentId: number, title: string): Promise<Course[] | null>
-  findCreatorCourseByIdAndTitle(creatorId: number, courseId: number, title: string): Promise<Course | null>
+  findCreatorCourseByIdAndTitle(creatorId: number, courseId: number): Promise<Course | null>
   createEnrollment(courseId: number, studentId: number): Promise<void>;
   createCourse(courseData: CreateCourseData): Promise<Course>;
   randomCoursesNotEnrolled(studentId: number): Promise<Course[]>;
@@ -49,15 +49,11 @@ export class CourseRepository implements CourseRepositoryInterface {
     });
   }
 
-  async findCreatorCourseByIdAndTitle(creatorId: number, courseId: number, title: string): Promise<Course | null> {
+  async findCreatorCourseByIdAndTitle(creatorId: number, courseId: number): Promise<Course | null> {
     return this.prisma.course.findFirst({
       where: {
         id: courseId,
         creator_id: creatorId,
-        title: {
-          equals: title,
-          mode: 'insensitive',
-        },
       },
       include: {
         lessons: {

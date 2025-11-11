@@ -7,10 +7,10 @@ interface CourseData {
     course: CourseWithLessons;
 }
 
-export function useCourseById(courseId: string | null, title: string) {
+export function useCourseById(courseId: number | null, title: string) {
     const [courseWithLessons, setCourseWithLessons] = useState<CourseWithLessons>();
     const { data, loading, error, refetch } = ApolloReact.useQuery<CourseData>(GET_COURSE_BY_ID, {
-        variables: { id: courseId, title:  title },
+        variables: { courseId: courseId, title:  title },
         skip: !courseId,
         errorPolicy: 'all',
         notifyOnNetworkStatusChange: true,
