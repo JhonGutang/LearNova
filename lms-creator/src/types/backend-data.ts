@@ -13,6 +13,7 @@ export interface Course {
   description: string;
   status: string;
   totalNumberOfParticipants?: number;
+  totalNumberOfLessons?: number;
   categories: string[];
   createdAt: string;
 }
@@ -20,7 +21,6 @@ export interface Course {
 export interface CourseWithLessons extends Course {
   lessons: Lesson[];
   updated_at: string;
-  totalNumberOfParticipants?: number;
 }
 
 export type CreateCourseFormData = Omit<Course, "id" | "status" | "createdAt">;

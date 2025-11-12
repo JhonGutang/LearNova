@@ -9,6 +9,7 @@ type Course {
   createdAt: String
   studentEnrollment: EnrollmentInfo
   totalNumberOfParticipants: Int
+  totalNumberOfLessons: Int
   lessons: [Lesson]
 }
 

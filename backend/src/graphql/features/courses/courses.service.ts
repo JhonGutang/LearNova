@@ -57,6 +57,8 @@ export class CourseService implements CourseServiceInterface {
   }
 
   async course(userId: number, courseId: number, title: string, role: string): Promise<Course | undefined> {
+    let totalNumberOfLessons = 0;
+
     if (role === "STUDENT") {
       const studentId = userId;
       const course = await this.courseRepository.findCourseOrEnrolledCourse(studentId, courseId, title);
@@ -67,32 +69,43 @@ export class CourseService implements CourseServiceInterface {
     }
 
     if (role === "CREATOR") {
-      const creatorId = userId;
-      const course = await this.courseRepository.findCreatorCourseByIdAndTitle(creatorId, courseId);
-      if (!course) {
-        throw new Error("Course Not Found");
+      try {
+        const creatorId = userId;
+        const course = await this.courseRepository.findCreatorCourseByIdAndTitle(creatorId, courseId);
+        if (!course) {
+          throw new Error("Course Not Found");
+        }
+        const totalNumberOfParticipants = await this.courseRepository.countTotalNumberOfParticipants(course.id);
+
+        function normalizeString(str: string): string {
+          return str.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+        }
+
+        const courseTitleNorm = normalizeString(course.title ?? "");
+        const inputTitleNorm = normalizeString(title ?? "");
+
+        if (courseTitleNorm !== inputTitleNorm) {
+          throw new Error("Course title does not match");
+        }
+
+        let categories: string[] = [];
+        if (Array.isArray(course.categories)) {
+          categories = flattenCategories(course.categories);
+        }
+
+        if (Array.isArray(course.lessons)) {
+          totalNumberOfLessons = course.lessons.length;
+        }
+
+        return {
+          ...course,
+          totalNumberOfParticipants,
+          categories,
+          totalNumberOfLessons,
+        };
+      } catch (error) {
+        throw error;
       }
-
-      function normalizeString(str: string): string {
-        return str.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
-      }
-
-      const courseTitleNorm = normalizeString(course.title ?? "");
-      const inputTitleNorm = normalizeString(title ?? "");
-
-      if (courseTitleNorm !== inputTitleNorm) {
-        throw new Error("Course title does not match");
-      }
-
-      let categories: string[] = [];
-      if (Array.isArray(course.categories)) {
-        categories = flattenCategories(course.categories);
-      }
-
-      return {
-        ...course,
-        categories,
-      };
     }
   }
 

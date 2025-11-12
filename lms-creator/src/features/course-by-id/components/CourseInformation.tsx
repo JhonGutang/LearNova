@@ -53,11 +53,11 @@ const CourseInformation: React.FC<CourseInformationProps> = ({ course }) => {
                 <div className="grid grid-cols-1 gap-2 text-sm">
                     <div className="flex items-center justify-between">
                         <span className="text-gray-600">Total Participants</span>
-                        <span className="font-medium text-gray-900"> 8</span>
+                        <span className="font-medium text-gray-900"> {course.totalNumberOfParticipants}</span>
                     </div>
                     <div className="flex items-center justify-between">
                         <span className="text-gray-600">Total Lessons</span>
-                        <span className="font-medium text-gray-900">{totalSubModules}</span>
+                        <span className="font-medium text-gray-900">{course.totalNumberOfLessons}</span>
                     </div>
                     <div className="flex items-center justify-between">
                         <span className="text-gray-600">Course Author</span>

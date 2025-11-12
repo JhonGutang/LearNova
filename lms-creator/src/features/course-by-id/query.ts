@@ -12,6 +12,8 @@ export const GET_COURSE_BY_ID = gql`
         title
         description
       }
+      totalNumberOfParticipants
+      totalNumberOfLessons
       categories
     }
   }
