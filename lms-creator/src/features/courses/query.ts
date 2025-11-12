@@ -6,6 +6,7 @@ export const GET_CREATOR_COURSES = gql`
       id
       title
       tagline
+      totalNumberOfParticipants
     }
   }
 `;

@@ -16,6 +16,7 @@ interface CourseRepositoryInterface {
   findCourseOrEnrolledCourse(studentId: number, courseId: number, title: string): Promise<Course | null>
   findCoursesWithSimilarTitle(studentId: number, title: string): Promise<Course[] | null>
   findCreatorCourseByIdAndTitle(creatorId: number, courseId: number): Promise<Course | null>
+  countTotalNumberOfParticipants(courseId: number): Promise<number | null>
   createEnrollment(courseId: number, studentId: number): Promise<void>;
   createCourse(courseData: CreateCourseData): Promise<Course>;
   randomCoursesNotEnrolled(studentId: number): Promise<Course[]>;
@@ -74,6 +75,13 @@ export class CourseRepository implements CourseRepositoryInterface {
         },
       },
     });
+  }
+
+  async countTotalNumberOfParticipants(courseId: any): Promise<number> {
+    const count = await this.prisma.enrolled_Course.count({
+      where: { course_id: courseId }
+    });
+    return count;
   }
 
   async findStudentEnrolledCoursesWithProgress(studentId: number, limit?: number): Promise<Enrolled_Course[]> {

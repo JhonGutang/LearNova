@@ -12,7 +12,7 @@ export interface Course {
   creatorName: string;
   description: string;
   status: string;
-  totalNumberOfStudents?: number;
+  totalNumberOfParticipants?: number;
   categories: string[];
   createdAt: string;
 }
@@ -20,7 +20,7 @@ export interface Course {
 export interface CourseWithLessons extends Course {
   lessons: Lesson[];
   updated_at: string;
-  totalNumberOfStudents?: number;
+  totalNumberOfParticipants?: number;
 }
 
 export type CreateCourseFormData = Omit<Course, "id" | "status" | "createdAt">;

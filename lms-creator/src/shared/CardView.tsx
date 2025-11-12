@@ -43,8 +43,8 @@ const CardView: React.FC<CardViewProps> = ({ data }) => {
               <div className="flex items-center gap-2 text-gray-600 text-sm min-h-[28px]">
                 <Users className="w-5 h-5 text-gray-500" />
                 <span>
-                  {course.totalNumberOfStudents || 0}{" "}
-                  {(course.totalNumberOfStudents || 0) === 1 ? "student" : "students"}
+                  {course.totalNumberOfParticipants || 0}{" "}
+                  {(course.totalNumberOfParticipants || 0) === 1 ? "student" : "students"}
                 </span>
               </div>
             </CardContent>

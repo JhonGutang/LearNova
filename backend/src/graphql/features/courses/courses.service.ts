@@ -36,7 +36,19 @@ export class CourseService implements CourseServiceInterface {
 
   async creatorCourses(creatorId: number): Promise<Course[]> {
     const courses = await this.courseRepository.findCoursesByCreatorId(creatorId);
-    return courses;
+    const coursesWithParticipants = await Promise.all(
+      courses.map(async (course) => {
+        if (course.id !== undefined && course.id !== null) {
+          const total = await this.courseRepository.countTotalNumberOfParticipants(course.id);
+          return {
+            ...course,
+            totalNumberOfParticipants: total ?? 0,
+          };
+        }
+        return course;
+      })
+    );
+    return coursesWithParticipants;
   }
 
   async course(userId: number, courseId: number, title: string, role: string): Promise<Course | undefined> {
