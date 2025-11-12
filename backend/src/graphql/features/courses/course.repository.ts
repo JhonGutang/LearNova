@@ -20,6 +20,7 @@ interface CourseRepositoryInterface {
   createEnrollment(courseId: number, studentId: number): Promise<void>;
   createCourse(courseData: CreateCourseData): Promise<Course>;
   randomCoursesNotEnrolled(studentId: number): Promise<Course[]>;
+  modifyCourseStatus(courseId: number, creatorId: number): Promise<Boolean>;
 }
 
 export class CourseRepository implements CourseRepositoryInterface {
@@ -145,5 +146,18 @@ export class CourseRepository implements CourseRepositoryInterface {
         student_id: studentId,
       },
     });
+  }
+
+  async modifyCourseStatus(courseId: number, creatorId: number): Promise<Boolean> {
+    await this.prisma.course.update({
+      where: {
+        id: courseId,
+        creator_id: creatorId,
+      },
+      data: {
+        status: "PUBLISHED",
+      },
+    });
+    return true;
   }
 }

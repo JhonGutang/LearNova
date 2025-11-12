@@ -24,6 +24,7 @@ export interface CourseServiceInterface {
   studentEnrolledCourses(studentId: number): Promise<Course[]>;
   enroll(courseId: number, studentId: number): Promise<boolean>;
   getCoursesInProgress(studentId: number): Promise<CourseInProgress[]>;
+  publishCourse(courseId: number, creatorId: number): Promise<Boolean>
 }
 
 export class CourseService implements CourseServiceInterface {
@@ -183,6 +184,18 @@ export class CourseService implements CourseServiceInterface {
       if (error.code === "P2002") {
         return false;
       }
+      return false;
+    }
+  }
+
+  async publishCourse(courseId: number, creatorId: number): Promise<Boolean> {
+    if (creatorId === undefined) {
+      throw new Error("Creator ID is required to publish course. Please authenticate as a creator.");
+    }
+    try {
+      await this.courseRepository.modifyCourseStatus(courseId, creatorId);
+      return true;
+    } catch (error) {
       return false;
     }
   }

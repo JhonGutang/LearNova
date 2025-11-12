@@ -4,6 +4,7 @@ type Course {
   title: String!
   tagline: String!
   description: String
+  status: String
   categories: [String]
   creator: Creator
   createdAt: String
@@ -44,4 +45,5 @@ extend type Query {
 extend type Mutation {
   createCourse(input: CourseInput!): Course!
   enrollCourse(courseId: Int): BaseResponse
+  publishCourse(courseId: Int): BaseResponse
 }

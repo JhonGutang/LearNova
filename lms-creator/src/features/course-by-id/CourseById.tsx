@@ -8,6 +8,7 @@ import CourseInformation from "./components/CourseInformation";
 import CreateLessonFormDialog from "../create-lesson/CreateLessonFormDialog";
 import CourseStateGuard from "./components/CourseStateGuard";
 import LessonListView from "./components/LessonView";
+import { Course } from "@/src/types/backend-data";
 
 interface CourseByIdProps {
   name: string;
@@ -16,16 +17,17 @@ interface CourseByIdProps {
 const CourseById: React.FC<CourseByIdProps> = ({ name }) => {
   const { fromSlug } = useRedirectLink();
   const { id, title } = fromSlug(name);
-  const { course, loading, error, addNewLesson } = useCourseById(Number(id) || null, title);
+  const { course, loading, error, addNewLesson, publishCourse } = useCourseById(Number(id) || null, title);
 
   if (loading || error || !course) {
     return <CourseStateGuard course={course} loading={loading} error={error} />;
   }
 
+
   return (
     <TeacherHomeLayout pageTitle={title} navItems={navItems}>
       <div className="flex h-[91vh]">
-        <CourseInformation course={course} />
+        <CourseInformation course={course} publishCourse={publishCourse} />
         <div className="h-full py-10 px-4 flex-1 flex flex-col">
           <div className="flex items-center justify-between mb-4">
             <div className="text-xl font-semibold">Lessons</div>

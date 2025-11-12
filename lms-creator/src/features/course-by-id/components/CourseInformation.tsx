@@ -1,13 +1,14 @@
+import { Button } from '@/src/shadcn/components/ui/button';
 import { Course } from '@/src/types/backend-data';
 import { Pencil } from 'lucide-react';
 import React from 'react';
 
 interface CourseInformationProps {
     course: Course
+    publishCourse: (courseId: number) => void
 }
 
-const CourseInformation: React.FC<CourseInformationProps> = ({ course }) => {
-    const totalSubModules = 7;
+const CourseInformation: React.FC<CourseInformationProps> = ({ course, publishCourse }) => {
     return (
         <div className="basis-2/5 flex-shrink-0 flex-grow-0 p-10 h-full border-r-2 border-gray-200">
             <div className='flex items-center gap-2 text-2xl'>
@@ -68,6 +69,11 @@ const CourseInformation: React.FC<CourseInformationProps> = ({ course }) => {
                         <span className="font-medium text-gray-900 capitalize">{course.status}</span>
                     </div>
                 </div>
+            </div>
+            <div className="mt-5 w-full flex">
+                <Button onClick={() => publishCourse(Number(course.id))} className="cursor-pointer w-full bg-blue-500 hover:bg-blue-600 transition-colors duration-150">
+                    {course.status === "PUBLISHED" ? "UNPUBLISHED" : "Publish"}
+                </Button>
             </div>
         </div>
     );

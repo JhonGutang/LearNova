@@ -84,5 +84,21 @@ export const resolvers = {
         console.error(error);
       }
     },
+    publishCourse: async (_: any, args: { courseId: number }, context: MyContext) => {
+      const { creatorId, role } = context.session ?? {};
+      if (!creatorId || role !== 'CREATOR') {
+        return {
+          status: ResponseStatus.Error,
+          message: "Unauthorized: Only creators can publish courses",
+        };
+      }
+
+      await courseService.publishCourse(args.courseId, creatorId);
+
+      return {
+        status: ResponseStatus.Success,
+        message: "Course published successfully",
+      };
+    }
   }
 };

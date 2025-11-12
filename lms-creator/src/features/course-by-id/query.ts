@@ -7,6 +7,7 @@ export const GET_COURSE_BY_ID = gql`
       title
       tagline
       description
+      status
       lessons {
         id
         title
@@ -15,6 +16,15 @@ export const GET_COURSE_BY_ID = gql`
       totalNumberOfParticipants
       totalNumberOfLessons
       categories
+    }
+  }
+`;
+
+export const PUBLISH_COURSE = gql`
+  mutation PublishCourse($courseId: Int!) {
+    publishCourse(courseId: $courseId) {
+      status
+      message
     }
   }
 `;
