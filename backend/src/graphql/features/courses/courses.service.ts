@@ -40,12 +40,17 @@ export class CourseService implements CourseServiceInterface {
       courses.map(async (course) => {
         if (course.id !== undefined && course.id !== null) {
           const total = await this.courseRepository.countTotalNumberOfParticipants(course.id);
+          const categories = flattenCategories(course.categories);
           return {
             ...course,
+            categories,
             totalNumberOfParticipants: total ?? 0,
           };
         }
-        return course;
+        return {
+          ...course,
+          categories: flattenCategories(course.categories),
+        };
       })
     );
     return coursesWithParticipants;

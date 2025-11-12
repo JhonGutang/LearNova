@@ -45,6 +45,15 @@ export class CourseRepository implements CourseRepositoryInterface {
         id: true,
         title: true,
         tagline: true,
+        categories: {
+          select: {
+            category: {
+              select: {
+                name: true,
+              }
+            }
+          }
+        },
       },
       orderBy: { id: 'asc' },
     });

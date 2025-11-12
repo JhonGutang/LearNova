@@ -26,7 +26,7 @@ const CardView: React.FC<CardViewProps> = ({ data }) => {
               <CardTitle className="text-lg">{course.title}</CardTitle>
               <div className="mt-1 flex flex-wrap gap-1">
                 {displayedCategories.map((cat, i) => (
-                  <span key={i} className="chip chip-success">
+                  <span key={i} className="chip chip-success capitalize">
                     {cat}
                   </span>
                 ))}
