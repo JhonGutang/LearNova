@@ -1,5 +1,5 @@
 import prisma from "../../../config/prisma";
-import { CourseInput, ResponseStatus } from "../../../generated/graphql";
+import { CourseInput, EditCourseInput, ResponseStatus } from "../../../generated/graphql";
 import { MyContext } from "../../../types/context";
 import { CourseRepository } from "./course.repository";
 import { CourseService } from "./courses.service";
@@ -55,6 +55,18 @@ export const resolvers = {
         return await courseService.create(inputWithCreatorId);
       } catch (error) {
         console.error("Error creating course:", error);
+        throw new Error("Internal server error");
+      }
+    },
+    editCourse: async (_: any, args: { input: EditCourseInput }, context: MyContext) => {
+      const { creatorId, role } = context.session ?? {};
+      if (!creatorId || role !== "CREATOR") {
+        throw new Error("Unauthorized: Only creators can edit courses");
+      }
+      try {
+        return await courseService.edit(args.input, creatorId);
+      } catch (error) {
+        console.error("Error editing course:", error);
         throw new Error("Internal server error");
       }
     },

@@ -28,3 +28,16 @@ export const PUBLISH_COURSE = gql`
     }
   }
 `;
+
+export const EDIT_COURSE = gql`
+  mutation EditCourse($editCourseInput: EditCourseInput!) {
+    editCourse(input: $editCourseInput) {
+      id
+      title
+      tagline
+      description
+      categories
+      status
+    }
+  }
+`;

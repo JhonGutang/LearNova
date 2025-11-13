@@ -2,6 +2,7 @@ import {
   Course,
   CourseInProgress,
   CourseInput,
+  EditCourseInput,
 } from "../../../generated/graphql";
 import {
   convertCourseDataToCamelCase,
@@ -17,6 +18,7 @@ type CreateCourseData = CourseInput & { creator_id: number };
 
 export interface CourseServiceInterface {
   create(courseData: CreateCourseData): Promise<Course>;
+  edit(courseData: EditCourseInput, creatorId: number): Promise<Course>
   course(userId: number, courseId: number, title: string, role: string): Promise<Course | undefined>;
   coursesForStudents(studentId?: number): Promise<Course[]>;
   creatorCourses(creatorId: number): Promise<Course[]>;
@@ -174,6 +176,15 @@ export class CourseService implements CourseServiceInterface {
     }
     const newCourse = await this.courseRepository.createCourse(courseData);
     return convertCourseDataToCamelCase(newCourse);
+  }
+
+  async edit(courseData: EditCourseInput, creatorId: number): Promise<Course> {
+    const updatedCourse = await this.courseRepository.editCourse(courseData, creatorId);
+    const camelCourse = convertCourseDataToCamelCase(updatedCourse);
+    if (updatedCourse.categories) {
+      (camelCourse as any).categories = flattenCategories(updatedCourse.categories);
+    }
+    return camelCourse;
   }
 
   async enroll(courseId: number, studentId: number): Promise<boolean> {

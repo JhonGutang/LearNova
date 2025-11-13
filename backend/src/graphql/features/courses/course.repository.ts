@@ -1,7 +1,7 @@
 // features/course/course.repository.ts
 
 import { PrismaClient } from "@prisma/client";
-import { CourseInput } from "../../../generated/graphql";
+import { CourseInput, EditCourseInput } from "../../../generated/graphql";
 import { Course } from "../../../generated/graphql";
 import { buildCreateCourseQuery, buildFetchAllCoursesQuery, buildFindCourseOrEnrolledCourseQuery, buildFindStudentEnrolledCoursesWithProgressQuery, buildRandomCoursesNotEnrolledQuery, buildSearchCoursesWithEnrollmentQuery } from "./course.query-builder";
 import { Enrolled_Course } from "../../../../generated/prisma";
@@ -19,6 +19,7 @@ interface CourseRepositoryInterface {
   countTotalNumberOfParticipants(courseId: number): Promise<number | null>
   createEnrollment(courseId: number, studentId: number): Promise<void>;
   createCourse(courseData: CreateCourseData): Promise<Course>;
+  editCourse(courseData: EditCourseInput, creatorId: number): Promise<Course>;
   randomCoursesNotEnrolled(studentId: number): Promise<Course[]>;
   modifyCourseStatus(courseId: number, creatorId: number): Promise<Boolean>;
 }
@@ -46,6 +47,7 @@ export class CourseRepository implements CourseRepositoryInterface {
         id: true,
         title: true,
         tagline: true,
+        status: true,
         categories: {
           select: {
             category: {
@@ -137,6 +139,42 @@ export class CourseRepository implements CourseRepositoryInterface {
     const createQuery = buildCreateCourseQuery(courseData);
     const newCourse = await this.prisma.course.create(createQuery);
     return newCourse;
+  }
+  
+  async editCourse(courseData: EditCourseInput, creatorId: number): Promise<Course> {
+    const { courseId, ...updates } = courseData;
+    const cleanedUpdates = Object.fromEntries(
+      Object.entries(updates).filter(([_, v]) => v !== undefined && v !== null)
+    );
+
+    if (Object.keys(cleanedUpdates).length === 0) {
+      const course = await this.prisma.course.findFirst({
+        where: {
+          id: courseId,
+          creator_id: creatorId,
+        },
+        include: { categories: { select: { category: { select: { name: true } } } } },
+      });
+      if (!course) {
+        throw new Error('Course not found');
+      }
+      return course as Course;
+    }
+
+    const updatedCourse = await this.prisma.course.update({
+      where: {
+        id: courseId,
+      },
+      data: {
+        ...cleanedUpdates,
+      },
+      include: { categories: { select: { category: { select: { name: true } } } } }
+    });
+
+    if (updatedCourse.creator_id !== creatorId) {
+      throw new Error("Unauthorized: Only the course creator can edit this course");
+    }
+    return updatedCourse as Course;
   }
 
   async createEnrollment(courseId: number, studentId: number): Promise<void> {

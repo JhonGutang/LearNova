@@ -7,6 +7,7 @@ export const GET_CREATOR_COURSES = gql`
       title
       tagline
       categories
+      status
       totalNumberOfParticipants
     }
   }

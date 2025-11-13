@@ -56,6 +56,21 @@ export function useCourseById(courseId: number | null, title: string) {
         }
     };
 
+    const updateCourse = (updatedFields: Partial<CourseWithLessons>) => {
+        setCourseWithLessons((prev) => {
+            if (!prev) {
+                return prev;
+            }
+            const nextCourse = { ...prev };
+            (Object.entries(updatedFields) as [keyof CourseWithLessons, unknown][]).forEach(([key, value]) => {
+                if (value !== undefined) {
+                    (nextCourse as Record<string, unknown>)[key as string] = value;
+                }
+            });
+            return nextCourse;
+        });
+    };
+
     return { 
         course: courseWithLessons || null, 
         loading, 
@@ -64,6 +79,7 @@ export function useCourseById(courseId: number | null, title: string) {
         addNewLesson,
         publishCourse,
         publishing,
-        publishError
+        publishError,
+        updateCourse
     };
 }

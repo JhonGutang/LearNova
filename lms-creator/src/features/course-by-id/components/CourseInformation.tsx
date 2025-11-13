@@ -2,13 +2,17 @@ import { Button } from '@/src/shadcn/components/ui/button';
 import { Course } from '@/src/types/backend-data';
 import { Pencil } from 'lucide-react';
 import React from 'react';
+import EditCourseModal from './EditCourseModal';
 
 interface CourseInformationProps {
     course: Course
     publishCourse: (courseId: number) => void
+    onCourseUpdated: (updatedCourse: Partial<Course>) => void
 }
 
-const CourseInformation: React.FC<CourseInformationProps> = ({ course, publishCourse }) => {
+const CourseInformation: React.FC<CourseInformationProps> = ({ course, publishCourse, onCourseUpdated }) => {
+    const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
+
     return (
         <div className="basis-2/5 flex-shrink-0 flex-grow-0 p-10 h-full border-r-2 border-gray-200">
             <div className='flex items-center gap-2 text-2xl'>
@@ -17,6 +21,7 @@ const CourseInformation: React.FC<CourseInformationProps> = ({ course, publishCo
                     type="button"
                     className="ml-2 p-1 rounded hover:bg-gray-100 cursor-pointer"
                     aria-label="Edit title"
+                    onClick={() => setIsEditModalOpen(true)}
                 >
                     <Pencil className="w-4 h-4 text-gray-500" />
                 </button>
@@ -40,6 +45,7 @@ const CourseInformation: React.FC<CourseInformationProps> = ({ course, publishCo
                     type="button"
                     className="p-1 rounded hover:bg-gray-100 cursor-pointer"
                     aria-label="Edit description"
+                    onClick={() => setIsEditModalOpen(true)}
                 >
                     <Pencil className="w-4 h-4 text-gray-500" />
                 </button>
@@ -70,11 +76,20 @@ const CourseInformation: React.FC<CourseInformationProps> = ({ course, publishCo
                     </div>
                 </div>
             </div>
-            <div className="mt-5 w-full flex">
+            <div className="mt-5 w-full flex flex-col gap-2">
                 <Button onClick={() => publishCourse(Number(course.id))} className="cursor-pointer w-full bg-blue-500 hover:bg-blue-600 transition-colors duration-150">
-                    {course.status === "PUBLISHED" ? "UNPUBLISHED" : "Publish"}
+                    {course.status === "PUBLISHED" ? "Unpublished" : "Publish"}
+                </Button>
+                <Button className='bg-blue-500  hover:bg-blue-600 cursor-pointer' onClick={() => setIsEditModalOpen(true)}>
+                    Edit Course
                 </Button>
             </div>
+            <EditCourseModal
+                course={course}
+                open={isEditModalOpen}
+                onOpenChange={setIsEditModalOpen}
+                onCourseUpdated={onCourseUpdated}
+            />
         </div>
     );
 };

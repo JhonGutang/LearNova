@@ -2,42 +2,24 @@
 
 import { useFetchCourses } from "./useFetchCourses";
 import React from "react";
-import { Button } from "@/src/shadcn/components/ui/button";
-import { Loader2, Plus } from "lucide-react";
-import { useRedirectLink } from "@/src/shadcn/hooks/useRedirectLink";
+import { Loader2 } from "lucide-react";
 import TeacherHomeLayout from "@/src/layout/TeacherHomeLayout";
 import { navItems } from "@/constants/navigationItems";
 import ErrorMessage from "@/src/shared/ErrorMessage";
 import CardView from "@/src/shared/CardView";
-import ListView from "@/src/shared/ListView";
 import CreateCourseForm from "../create-course/CreateCourseFormDialog";
 import { Course } from "@/src/types/backend-data";
 
 interface CoursesHeaderProps {
-  view: "card" | "list";
-  setView: (view: "card" | "list") => void;
-  addCourse: (newCourse: Course) => void 
+  addCourse: (newCourse: Course) => void;
 }
 
-const CourseHeader: React.FC<CoursesHeaderProps> = ({ view, setView, addCourse }) => {
-  const { redirect } = useRedirectLink();
+const CourseHeader: React.FC<CoursesHeaderProps> = ({ addCourse }) => {
   return (
     <div className="flex items-center justify-between mb-4">
       <h2 className="text-2xl font-bold">Courses</h2>
-      <div className="flex gap-2">
+      <div className="flex gap-2 items-center">
         <CreateCourseForm addCourse={addCourse}/>
-        <Button
-          variant={view === "card" ? "default" : "outline"}
-          onClick={() => setView("card")}
-        >
-          Card view
-        </Button>
-        <Button
-          variant={view === "list" ? "default" : "outline"}
-          onClick={() => setView("list")}
-        >
-          List view
-        </Button>
       </div>
     </div>
   );
@@ -45,7 +27,6 @@ const CourseHeader: React.FC<CoursesHeaderProps> = ({ view, setView, addCourse }
 
 const Courses: React.FC = () => {
   const { courses, loading, error, addNewCourse } = useFetchCourses();
-  const [view, setView] = React.useState<"card" | "list">("card");
 
   if (loading) {
     return (
@@ -75,12 +56,8 @@ const Courses: React.FC = () => {
   return (
     <TeacherHomeLayout navItems={navItems} pageTitle="Courses">
       <main className="p-4">
-        <CourseHeader view={view} setView={setView} addCourse={addNewCourse}/>
-        {view === "card" ? (
-          <CardView data={courses} />
-        ) : (
-          <ListView data={courses} />
-        )}
+        <CourseHeader addCourse={addNewCourse}/>
+        <CardView data={courses} />
       </main>
     </TeacherHomeLayout>
   );

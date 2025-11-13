@@ -138,7 +138,7 @@ const CreateCourseForm: React.FC<CreateCourseFormProps> = ({addCourse}) => {
                 </ErrorMessage>
               )}
             </div>
-            <Button className="w-full" type="submit">Create Course</Button>
+            <Button className="cursor-pointer w-full bg-blue-400 hover:bg-blue-500" type="submit">Create Course</Button>
           </form>
         </div>
       </DialogContent>

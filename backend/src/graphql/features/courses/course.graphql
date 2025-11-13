@@ -34,6 +34,14 @@ input CourseInput {
   categories: [String!]!
 }
 
+input EditCourseInput {
+  courseId: Int!
+  title: String
+  tagline: String
+  description: String
+  categories: [String]
+}
+
 
 extend type Query {
   courses: [Course!]!
@@ -46,4 +54,5 @@ extend type Mutation {
   createCourse(input: CourseInput!): Course!
   enrollCourse(courseId: Int): BaseResponse
   publishCourse(courseId: Int): BaseResponse
+  editCourse(input: EditCourseInput): Course!
 }
