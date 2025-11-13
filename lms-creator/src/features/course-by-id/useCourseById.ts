@@ -1,5 +1,5 @@
 import { CourseWithLessons, Lesson } from "@/src/types/backend-data";
-import { GET_COURSE_BY_ID, PUBLISH_COURSE } from "./query";
+import { GET_COURSE_BY_ID, PUBLISH_COURSE, EDIT_LESSONS } from "./query";
 import * as ApolloReact from "@apollo/client/react";
 import { useState, useEffect } from "react";
 
@@ -12,6 +12,16 @@ interface PublishCourseResponse {
         status: string;
         message: string;
     };
+}
+
+interface EditLessonLessonInput {
+    lessonId: number;
+    title: string;
+    description: string;
+}
+
+interface EditLessonsResponse {
+    editLesson: Lesson[];
 }
 
 export function useCourseById(courseId: number | null, title: string) {
@@ -42,6 +52,7 @@ export function useCourseById(courseId: number | null, title: string) {
     // Implement the PUBLISH_COURSE mutation here
     const [publishCourseMutation, { loading: publishing, error: publishError }] =
         ApolloReact.useMutation<PublishCourseResponse>(PUBLISH_COURSE);
+    
     const publishCourse = async (courseIdToPublish: number) => {
         try {
             const { data } = await publishCourseMutation({
@@ -51,6 +62,57 @@ export function useCourseById(courseId: number | null, title: string) {
                 refetch();
             }
             return data?.publishCourse;
+        } catch (err) {
+            throw err;
+        }
+    };
+
+    // Implement the EDIT_LESSONS mutation here
+    const [editLessonsMutation, { loading: updatingLessons, error: editLessonsError }] =
+        ApolloReact.useMutation<EditLessonsResponse>(EDIT_LESSONS);
+
+    const editLessons = async (lessons: EditLessonLessonInput[]) => {
+        if (!courseId) {
+            throw new Error("Course ID is required to edit lessons");
+        }
+
+        // Make sure lessonId is always a number
+        const lessonsWithNumberId = lessons.map((lesson) => ({
+            ...lesson,
+            lessonId: typeof lesson.lessonId === "string" ? Number(lesson.lessonId) : lesson.lessonId,
+        }));
+
+        try {
+            const { data } = await editLessonsMutation({
+                variables: {
+                    lessons: {
+                        courseId,
+                        lessons: lessonsWithNumberId,
+                    },
+                },
+            });
+
+            if (data && data.editLesson) {
+                // Update local state with the edited lessons
+                setCourseWithLessons((prev) => {
+                    if (!prev) return prev;
+
+                    const updatedLessons = prev.lessons?.map((lesson) => {
+                        const editedLesson = data.editLesson.find((l) => l.id === lesson.id);
+                        return editedLesson || lesson;
+                    });
+
+                    return {
+                        ...prev,
+                        lessons: updatedLessons,
+                    };
+                });
+
+                // Optionally refetch to ensure data consistency
+                await refetch();
+            }
+
+            return data?.editLesson;
         } catch (err) {
             throw err;
         }
@@ -80,6 +142,9 @@ export function useCourseById(courseId: number | null, title: string) {
         publishCourse,
         publishing,
         publishError,
-        updateCourse
+        updateCourse,
+        editLessons,
+        updatingLessons,
+        editLessonsError,
     };
 }

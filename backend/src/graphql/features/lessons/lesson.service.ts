@@ -1,6 +1,7 @@
 import prisma from "../../../config/prisma";
-import { Lesson, LessonInput } from "../../../generated/graphql";
+import { EditLessonInput, Lesson, LessonInput } from "../../../generated/graphql";
 import { LessonServiceInterface } from "../../../interfaces/lesson.interface";
+import { LessonRepository } from "./lesson.repository";
 
 function convertLessonIdToString(lesson: any): Lesson {
     return {
@@ -10,6 +11,13 @@ function convertLessonIdToString(lesson: any): Lesson {
 }
 
 export class LessonService implements LessonServiceInterface {
+    private lessonRepository: LessonRepository;
+
+    constructor() {
+        // Inject the repository with the shared prisma instance
+        this.lessonRepository = new LessonRepository(prisma);
+    }
+
     // Only select this data: id, title, description
     async create(lessonData: LessonInput): Promise<Lesson> {
         try {
@@ -33,5 +41,14 @@ export class LessonService implements LessonServiceInterface {
             console.error("Error creating lesson:", error);
             throw new Error("Failed to create lesson");
         }
+    }
+
+    async edit(lesson: EditLessonInput, creatorId: number): Promise<Lesson[]> {
+        if (!creatorId) {
+            throw new Error(
+                "creatorId is required to edit lessons. Make sure to pass the logged-in creator's ID to lessonService.edit()."
+            );
+        }
+        return this.lessonRepository.updateLessonsWithAuthorization(lesson);
     }
 }

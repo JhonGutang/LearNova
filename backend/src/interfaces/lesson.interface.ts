@@ -1,4 +1,4 @@
-import { Lesson } from "../generated/graphql";
+import { EditLessonInput, Lesson } from "../generated/graphql";
 
 export interface LessonPayload {
     course_id: number;
@@ -7,5 +7,6 @@ export interface LessonPayload {
 }
 
 export interface LessonServiceInterface {
-    create(lessonData: LessonPayload): Promise<Lesson>; 
+    create(lessonData: LessonPayload): Promise<Lesson>;
+    edit(lessons: EditLessonInput, creatorId: number): Promise<Lesson[]>;
 }

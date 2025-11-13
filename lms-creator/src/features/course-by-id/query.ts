@@ -41,3 +41,13 @@ export const EDIT_COURSE = gql`
     }
   }
 `;
+
+export const EDIT_LESSONS = gql`
+  mutation EditLesson($lessons: EditLessonInput!) {
+    editLesson(lessons: $lessons) {
+      id
+      title
+      description
+    }
+  }
+`;

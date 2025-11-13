@@ -18,13 +18,24 @@ enum LessonProgressStatus {
   FINISHED
 }
 
-
 input LessonInput {
-    course_id: Int!,
-    title: String!,
-    description: String!,
+  course_id: Int!
+  title: String!
+  description: String!
+}
+
+input EditLessonLessonInput {
+  lessonId: Int!
+  title: String!
+  description: String!
+}
+
+input EditLessonInput {
+  courseId: Int!
+  lessons: [EditLessonLessonInput!]!
 }
 
 type Mutation {
-    createLesson(input: LessonInput!): Lesson!
+  createLesson(input: LessonInput!): Lesson!
+  editLesson(lessons: EditLessonInput!): [Lesson]
 }

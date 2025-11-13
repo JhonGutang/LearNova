@@ -75,6 +75,9 @@ export class CourseRepository implements CourseRepositoryInterface {
             title: true,
             description: true,
           },
+          orderBy: {
+            id: 'asc'
+          }
         },
         categories: {
           select: {
@@ -86,6 +89,9 @@ export class CourseRepository implements CourseRepositoryInterface {
           },
         },
       },
+      orderBy: {
+        id: 'asc'
+      }
     });
   }
 

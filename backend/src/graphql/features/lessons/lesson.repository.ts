@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { LessonProgress } from "../../../generated/graphql";
+import { EditLessonInput, Lesson, LessonProgress } from "../../../generated/graphql";
 
 interface LessonRepositoryInterface {
   createLessonProgress(
@@ -21,6 +21,12 @@ interface LessonRepositoryInterface {
     progressId: number,
     status: string
   ): Promise<boolean>;
+
+  updateLessonsWithAuthorization(
+    input: EditLessonInput,
+    creatorId: number
+  ): Promise<Lesson[]>;
+
 }
 
 export class LessonRepository implements LessonRepositoryInterface {
@@ -94,5 +100,59 @@ export class LessonRepository implements LessonRepositoryInterface {
       data: { status },
     });
     return result !== null;
+  }
+
+  async updateLessonsWithAuthorization(
+    input: EditLessonInput,
+  ): Promise<Lesson[]> {
+    const { courseId, lessons } = input;
+
+    // Fetch all existing lessons indexed by their id for quick lookup
+    const existingLessonsArray = await this.prisma.lesson.findMany({
+      where: { course_id: courseId },
+      select: { id: true, title: true, description: true },
+    });
+    const existingLessons = new Map<number, { id: number; title: string; description: string }>();
+    for (const lesson of existingLessonsArray) {
+      existingLessons.set(Number(lesson.id), lesson);
+    }
+
+    const results: Lesson[] = [];
+
+    for (const inputLesson of lessons) {
+      if (inputLesson.lessonId && existingLessons.has(inputLesson.lessonId)) {
+        // Update this lesson since it exists (by id)
+        const updated = await this.prisma.lesson.update({
+          where: { id: inputLesson.lessonId },
+          data: {
+            title: inputLesson.title,
+            description: inputLesson.description,
+          },
+          select: { id: true, title: true, description: true },
+        });
+        results.push({
+          ...updated,
+          id: String(updated.id),
+        });
+      } else {
+        // Create new lesson (does not exist yet)
+        const created = await this.prisma.lesson.create({
+          data: {
+            course_id: courseId,
+            title: inputLesson.title,
+            description: inputLesson.description,
+          },
+          select: { id: true, title: true, description: true },
+        });
+        results.push({
+          ...created,
+          id: String(created.id),
+        });
+      }
+    }
+
+    // Do NOT delete any lessons as per new requirements
+
+    return results;
   }
 }
