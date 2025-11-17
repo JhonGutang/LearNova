@@ -1,4 +1,4 @@
-import { ChangePasswordInput, LoginInput, ResponseStatus } from "../../../generated/graphql";
+import { ChangePasswordInput, EditableCreatorProfileInput, LoginInput, ResponseStatus } from "../../../generated/graphql";
 import { AuthService } from "./auth.service";
 import prisma from "../../../config/prisma";
 import { MyContext } from "../../../types/context";
@@ -17,7 +17,6 @@ export const resolvers = {
     },
     Mutation: {
         login: async (_: unknown, args: { input: LoginInput }, context: MyContext) => {
-            console.log(process.env.NODE_ENV)
             const isAuthenticated = await authService.authenticateUser(args.input, context);
             if (isAuthenticated) {
                 return {
@@ -28,6 +27,29 @@ export const resolvers = {
                 return {
                     status: ResponseStatus.Error,
                     message: "Invalid credentials"
+                };
+            }
+        },
+        editUser: async (_: unknown, args: { input: EditableCreatorProfileInput }, context: MyContext) => {
+            const { userId, creatorId, role } = context.session || {};
+            if (userId === undefined || creatorId === undefined || !role) {
+                return {
+                    status: ResponseStatus.Error,
+                    message: "Unauthorized: missing required authentication context."
+                };
+            }
+
+            const editSuccess = await authService.editUserInformation(args.input, creatorId, userId);
+
+            if (editSuccess) {
+                return {
+                    status: ResponseStatus.Success,
+                    message: "User profile updated successfully."
+                };
+            } else {
+                return {
+                    status: ResponseStatus.Error,
+                    message: "Failed to update user profile. Please check your input and try again."
                 };
             }
         },

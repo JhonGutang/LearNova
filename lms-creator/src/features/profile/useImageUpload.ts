@@ -4,8 +4,8 @@ const DEFAULT_PROFILE_IMAGE_URL =
   "https://ui-avatars.com/api/?name=John+Doe&background=random";
 
 type UseImageUploadResult = {
-  imageUrl: string;
-  setImageUrl: (url: string) => void;
+  imageUrl: string | null;
+  setImageUrl: (url: string | null) => void;
   fileError: string | null;
   fileInputRef: MutableRefObject<HTMLInputElement | null>;
   handleImageClick: () => void;
@@ -13,9 +13,9 @@ type UseImageUploadResult = {
 };
 
 export function useImageUpload(
-  defaultUrl: string = DEFAULT_PROFILE_IMAGE_URL
+  defaultUrl?: string | null
 ): UseImageUploadResult {
-  const [imageUrl, setImageUrl] = useState<string>(defaultUrl);
+  const [imageUrl, setImageUrl] = useState<string | null>(defaultUrl ?? null);
   const [fileError, setFileError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -46,8 +46,11 @@ export function useImageUpload(
     }
   };
 
+  // Always resort to default if imageUrl is null
+  const currentImageUrl = imageUrl ?? (defaultUrl ?? DEFAULT_PROFILE_IMAGE_URL);
+
   return {
-    imageUrl,
+    imageUrl: currentImageUrl,
     setImageUrl,
     fileError,
     fileInputRef,

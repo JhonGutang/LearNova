@@ -2,14 +2,24 @@
 import React from "react";
 import { useImageUpload } from "./useImageUpload";
 
-const ProfilePreview: React.FC = () => {
+interface ProfilePreviewProps {
+  image?: string | null;
+  firstName?: string;
+  lastName?: string;
+}
+
+const ProfilePreview: React.FC<ProfilePreviewProps> = ({
+  image,
+  firstName = "",
+  lastName = "",
+}) => {
   const {
     imageUrl,
     fileError,
     fileInputRef,
     handleImageClick,
     handleFileChange,
-  } = useImageUpload();
+  } = useImageUpload(image);
 
   return (
     <div className="border rounded-lg p-6 flex flex-col items-center bg-white shadow">
@@ -21,7 +31,7 @@ const ProfilePreview: React.FC = () => {
         role="button"
       >
         <img
-          src={imageUrl}
+          src={imageUrl || "/placeholder-avatar.png"}
           alt="Profile Preview"
           className="object-cover w-full h-full transition-opacity"
         />
@@ -36,7 +46,9 @@ const ProfilePreview: React.FC = () => {
           onChange={handleFileChange}
         />
       </div>
-      <div className="text-lg font-semibold text-gray-800">John Doe</div>
+      <div className="text-lg font-semibold text-gray-800">
+        {(firstName || lastName) ? `${firstName} ${lastName}`.trim() : "User"}
+      </div>
       {fileError && (
         <div className="text-xs text-red-500 mt-2">{fileError}</div>
       )}
