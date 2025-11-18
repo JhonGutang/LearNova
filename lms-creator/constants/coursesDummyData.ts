@@ -1,4 +1,4 @@
-import { Lesson } from "@/src/types/backend-data";
+import { EnrolleeRating, Lesson } from "@/src/types/backend-data";
 
 export const dummyLessons: Lesson[] = [
   {
@@ -40,4 +40,12 @@ export const CATEGORIES = [
   "Language",
   "Technology",
   "Other",
+];
+
+export const dummyPieChartRatings: EnrolleeRating[] = [
+  { rate: 5, count: 98 },
+  { rate: 4, count: 75 },
+  { rate: 3, count: 52 },
+  { rate: 2, count: 25 },
+  { rate: 1, count: 10 },
 ];

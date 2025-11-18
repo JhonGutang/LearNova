@@ -41,3 +41,21 @@ export interface CreateLessonFormData extends Omit<Lesson, 'progressLevel' | "id
 export interface CreateLessonResponse {
   createLesson: Lesson
 }
+
+export type BarChart = {
+  id: number;
+  title: string;
+  totalEnrollees: number;
+  completionRate: number;
+  rateAverage?: number;
+};
+
+export type StatCards = {
+  totalCourses: number;
+  totalEnrollees: number;
+};
+
+export type EnrolleeRating = {
+  rate: number;
+  count: number;
+};

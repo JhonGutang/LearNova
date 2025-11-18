@@ -8,8 +8,9 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import React from 'react';
+import { BarChart } from '@/src/types/backend-data';
 
-// Register Chart.js components for bar charts
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -19,53 +20,23 @@ ChartJS.register(
   Legend
 );
 
-const courseLabels = [
-  'Introduction to Python',
-  'Advanced Mathematics',
-  'Creative Writing'
-];
+interface StackedBarGraphsProps {
+  barCharts: BarChart[];
+  loading?: boolean;
+  error?: any;
+}
 
-// 1. Only one dataset for course rate comparison
-const rateData = {
-  labels: courseLabels,
-  datasets: [
-    {
-      label: 'Average Rate',
-      data: [4.5, 4.2, 4.7], // choose one dataset only (e.g., A Rate or any aggregated/representative)
-      backgroundColor: 'rgba(54, 162, 235, 0.6)',
-      stack: 'rates'
-    }
-  ]
-};
+function simplifyLabel(title: string) {
+  if (!title) return "";
+  const words = title.split(' ');
+  const twoWords = words.slice(0, 2).join(' ');
+  if (twoWords.length <= 20) {
+    return twoWords + (words.length > 2 ? "..." : "");
+  }
+  return title.slice(0, 20) + (title.length > 20 ? "..." : "");
+}
 
-// 2. Only one dataset for total enrollees (e.g., most recent year)
-const enrolleesData = {
-  labels: courseLabels,
-  datasets: [
-    {
-      label: '2024 Enrollees',
-      data: [150, 130, 160],
-      backgroundColor: 'rgba(153, 102, 255, 0.6)',
-      stack: 'enrollees'
-    }
-  ]
-};
-
-// 3. Only one dataset for completion count (e.g., Completed)
-const completionRateData = {
-  labels: courseLabels,
-  datasets: [
-    {
-      label: 'Completed',
-      data: [110, 90, 135],
-      backgroundColor: 'rgba(40, 167, 69, 0.7)',
-      stack: 'completion'
-    }
-  ]
-};
-
-// Generic options for stacked bar charts (stacked property can stay for consistency even if only one dataset)
-const getOptions = (chartTitle: string) => ({
+const getOptions = (chartTitle: string, fullTitles: string[]) => ({
   plugins: {
     title: {
       display: true,
@@ -74,6 +45,21 @@ const getOptions = (chartTitle: string) => ({
     legend: {
       position: 'top' as const,
     },
+    tooltip: {
+      callbacks: {
+        title: function(tooltipItems: any) {
+          if (
+            tooltipItems &&
+            tooltipItems.length > 0 &&
+            typeof tooltipItems[0].dataIndex === 'number'
+          ) {
+            const idx = tooltipItems[0].dataIndex;
+            return fullTitles[idx] || '';
+          }
+          return '';
+        }
+      }
+    }
   },
   responsive: true,
   maintainAspectRatio: false,
@@ -88,23 +74,97 @@ const getOptions = (chartTitle: string) => ({
   },
 });
 
-const StackedBarGraphs = () => {
+const StackedBarGraphs: React.FC<StackedBarGraphsProps> = ({
+  barCharts,
+  loading,
+  error,
+}) => {
+  if (loading) {
+    return (
+      <div className="w-full flex flex-col gap-8">
+        <div className="h-[250px] flex items-center justify-center">Loading...</div>
+        <div className="h-[250px] flex items-center justify-center">Loading...</div>
+        <div className="h-[250px] flex items-center justify-center">Loading...</div>
+      </div>
+    );
+  }
+  if (error) {
+    return (
+      <div className="w-full flex flex-col gap-8">
+        <div className="h-[250px] flex items-center justify-center text-red-500">
+          Error loading data.
+        </div>
+      </div>
+    );
+  }
+
+  const labels = barCharts.map(c => simplifyLabel(c.title));
+  const fullTitles = barCharts.map(c => c.title);
+
+  const enrolleesData = {
+    labels,
+    datasets: [
+      {
+        label: 'Enrollees',
+        data: barCharts.map(c => c.totalEnrollees),
+        backgroundColor: 'rgba(153, 102, 255, 0.6)',
+        stack: 'enrollees',
+      }
+    ]
+  };
+
+  const completionRateData = {
+    labels,
+    datasets: [
+      {
+        label: 'Completion Rate (%)',
+        data: barCharts.map(c => c.completionRate),
+        backgroundColor: 'rgba(40, 167, 69, 0.7)',
+        stack: 'completion',
+      }
+    ]
+  };
+
+  const hasAverageRating = barCharts.some(chart => typeof chart.rateAverage === 'number');
+  let ratingData = undefined;
+  if (hasAverageRating) {
+    ratingData = {
+      labels,
+      datasets: [
+        {
+          label: 'Average Rating',
+          data: barCharts.map(c => c.rateAverage ?? 0),
+          backgroundColor: 'rgba(255, 206, 86, 0.7)',
+          stack: 'rating',
+        }
+      ]
+    };
+  }
+
   return (
     <div className="w-full flex flex-col gap-8">
-      {/* 1. Rate Comparison Bar Graph */}
       <div className="w-full h-[250px]">
-        <Bar data={rateData} options={getOptions('Course Rate Comparison')} />
+        <Bar
+          data={enrolleesData}
+          options={getOptions('Course Total Enrollees', fullTitles)}
+        />
       </div>
-      {/* 2. Total Enrollees Bar Graph */}
       <div className="w-full h-[250px]">
-        <Bar data={enrolleesData} options={getOptions('Course Total Enrollees')} />
+        <Bar
+          data={completionRateData}
+          options={getOptions('Course Completion Rate', fullTitles)}
+        />
       </div>
-      {/* 3. Completion Rate Bar Graph */}
-      <div className="w-full h-[250px]">
-        <Bar data={completionRateData} options={getOptions('Course Completion Rate')} />
-      </div>
+      {hasAverageRating && (
+        <div className="w-full h-[250px]">
+          <Bar
+            data={ratingData!}
+            options={getOptions('Course Average Rating', fullTitles)}
+          />
+        </div>
+      )}
     </div>
   );
-};
+}
 
 export default StackedBarGraphs;

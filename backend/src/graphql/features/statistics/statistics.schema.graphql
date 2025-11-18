@@ -1,0 +1,22 @@
+type BarChart {
+  id: Int!
+  title: String!
+  totalEnrollees: Int!
+  completionRate: Float!
+}
+
+type StatCards {
+  totalCourses: Int!
+  totalEnrollees: Int!
+}
+
+type StatisticData {
+  barCharts: [BarChart!]!
+  statCards: StatCards!
+}
+
+type Query {
+  barCharts: [BarChart!]!
+  statCards: StatCards!
+  statisticData: StatisticData!
+}

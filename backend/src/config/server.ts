@@ -26,10 +26,9 @@ import { resolvers as DashboardPageResolver } from "../graphql/pages/dashboard/d
 import { resolvers as CoursesPageResolver } from "../graphql/pages/courses/courses.resolver";
 import { resolvers as ProgressResolver } from "../graphql/features/progress/progress.resolver";
 import { resolvers as SpecificCoursePageResolver } from "../graphql/pages/specific-course/specific-course.resolver";
+// === Register statistics GraphQL typedefs and resolver
+import { resolvers as StatisticsResolver } from "../graphql/features/statistics/statistics.resolver";
 
-// Load default .env file first
-
-// Then check if we need to override with staging
 const nodeEnv = process.env.NODE_ENV;
 if (nodeEnv === "STAGING") {
   dotenv.config({ path: ".env.staging", override: true });
@@ -96,6 +95,11 @@ const specificCoursePageTypeDefs = readFileSync(
   ),
   "utf8"
 );
+// === Register statistics GraphQL typedef
+const statisticsTypeDefs = readFileSync(
+  join(__dirname, "../graphql/features/statistics/statistics.schema.graphql"),
+  "utf8"
+);
 
 const typeDefs = [
   rootTypeDefs,
@@ -111,6 +115,7 @@ const typeDefs = [
   coursesPageTypeDefs,
   progressTypeDefs,
   specificCoursePageTypeDefs,
+  statisticsTypeDefs, // register statistics typedefs here
 ];
 const resolvers = [
   courseResolvers,
@@ -125,9 +130,8 @@ const resolvers = [
   CoursesPageResolver,
   ProgressResolver,
   SpecificCoursePageResolver,
+  StatisticsResolver, // register statistics resolver here
 ];
-
-
 
 const server = new ApolloServer({
   typeDefs,
