@@ -1,10 +1,10 @@
-import DashboardContainer from "@/src/features/dashboard/Dashboard.container";
+import Dashboard from "@/src/features/dashboard/Dashboard";
 import React from "react";
 
 export default function DashboardPage() {
   return (
     <main>
-        <DashboardContainer/>
+        <Dashboard/>
     </main>
   );
 }
