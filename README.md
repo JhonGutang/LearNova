@@ -37,18 +37,18 @@ LearNova is a comprehensive learning management system that empowers educators t
 ### Prerequisites
 - Node.js (v18 or higher)
 - PostgreSQL database
-- npm or yarn package manager
+- pnpm package manager ([see install guide](https://pnpm.io/installation))
 
 ### Installation Steps
 
-1. **Navigate to backend directory**
+1. **Install all dependencies for every package using pnpm workspaces**
    ```bash
-   cd backend
+   pnpm install -r
    ```
 
-2. **Install dependencies**
+2. **Navigate to backend directory**
    ```bash
-   npm install
+   cd packages/backend
    ```
 
 3. **Environment Configuration**
@@ -73,16 +73,16 @@ LearNova is a comprehensive learning management system that empowers educators t
 
 5. **Start the development server**
    ```bash
-   npm run dev
+   pnpm --filter backend dev
    ```
 
 The GraphQL API will be available at `http://localhost:8000/graphql` with Apollo Studio interface.
 
 ### Available Scripts
-- `npm run dev` - Start development server with hot reload
-- `npm run build` - Build the application for production
-- `npm run prod` - Start production server
-- `npm run codegen` - Generate GraphQL types
+- `pnpm dev` - Start development server with hot reload
+- `pnpm run build` - Build the application for production
+- `pnpm run prod` - Start production server
+- `pnpm run codegen` - Generate GraphQL types
 
 ## Frontend Setup Guide
 
@@ -92,7 +92,7 @@ The project includes two separate frontend applications:
 
 1. **Navigate to creator directory**
    ```bash
-   cd lms-creator
+   cd packages/lms-creator
    ```
 
 2. **Install dependencies**
@@ -108,7 +108,7 @@ The project includes two separate frontend applications:
 
 4. **Start the development server**
    ```bash
-   npm run dev
+   pnpm --filter lms-creator dev
    ```
 
 The creator interface will be available at `http://localhost:3000`
@@ -117,7 +117,7 @@ The creator interface will be available at `http://localhost:3000`
 
 1. **Navigate to student directory**
    ```bash
-   cd lms-student
+   cd packages/lms-student
    ```
 
 2. **Install dependencies**
@@ -133,7 +133,7 @@ The creator interface will be available at `http://localhost:3000`
 
 4. **Start the development server**
    ```bash
-   npm run dev
+   pnpm --filter lms-student dev
    ```
 
 The student interface will be available at `http://localhost:3001`
@@ -160,8 +160,16 @@ The system uses PostgreSQL with the following main entities:
 
 ## Development Workflow
 
-1. **Start the backend server first** (required for frontend development)
-2. **Start both frontend applications** in separate terminals
+1. **Install dependencies for all packages (if not yet done):**
+   ```bash
+   pnpm install -r
+   ```
+2. **Start the backend, creator, and student apps in three terminals:**
+   ```bash
+   pnpm --filter backend dev
+   pnpm --filter lms-creator dev
+   pnpm --filter lms-student dev
+   ```
 3. **Access Apollo Studio** at `http://localhost:3000/graphql` for API testing
 4. **Use the creator interface** to create courses and content
 5. **Use the student interface** to enroll in courses and track progress
@@ -170,24 +178,27 @@ The system uses PostgreSQL with the following main entities:
 
 ```
 learning-management-system/
-├── backend/                 # GraphQL API server
-│   ├── src/
-│   │   ├── features/       # Feature modules (auth, courses, etc.)
-│   │   ├── config/         # Configuration files
-│   │   └── types/          # TypeScript type definitions
-│   ├── prisma/             # Database schema and migrations
-│   └── generated/          # Generated Prisma client
-├── lms-creator/            # Course creator frontend
-│   └── src/
-│       ├── app/            # Next.js app router pages
-│       ├── features/       # Feature components
-│       └── components/     # Reusable UI components
-├── lms-student/            # Student learning frontend
-│   └── src/
-│       ├── app/            # Next.js app router pages
-│       ├── features/       # Feature components
-│       └── components/     # Reusable UI components
-└── README.md
+├── packages/
+│   ├── backend/                 # GraphQL API server
+│   │   ├── src/
+│   │   │   ├── features/       # Feature modules (auth, courses, etc.)
+│   │   │   ├── config/         # Configuration files
+│   │   │   └── types/          # TypeScript type definitions
+│   │   ├── prisma/             # Database schema and migrations
+│   │   └── generated/          # Generated Prisma client
+│   ├── lms-creator/            # Course creator frontend
+│   │   └── src/
+│   │       ├── app/            # Next.js app router pages
+│   │       ├── features/       # Feature components
+│   │       └── components/     # Reusable UI components
+│   └── lms-student/            # Student learning frontend
+│       └── src/
+│           ├── app/            # Next.js app router pages
+│           ├── features/       # Feature components
+│           └── components/     # Reusable UI components
+├── README.md
+├── pnpm-workspace.yaml
+└── package.json
 ```
 
 ## Contributing

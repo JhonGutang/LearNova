@@ -1,16 +1,15 @@
 {
-  "scripts": {
-    "install-all-dependencies": "npm install && npm install --prefix backend && npm install --prefix lms-creator && npm install --prefix lms-student",
-
-    "server": "npm run dev --prefix backend",
-    "creator": "npm run dev --prefix lms-creator",
-    "student": "npm run dev --prefix lms-student",
-
-    "start-student": "concurrently \"npm run server\" \"npm run student\"",
-    "start-creator": "concurrently \"npm run server\" \"npm run creator\"",
-    "start-all": "concurrently \"npm run server\" \"npm run creator\" \"npm run student\""
-  },
+  "name": "learning-management-system",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "packages/*"
+  ],
   "devDependencies": {
     "concurrently": "^9.2.1"
+  },
+  "scripts": {
+    "creator-with-backend": "concurrently \"pnpm --filter backend dev\" \"pnpm --filter lms-creator dev\"",
+    "init-backend": "cd packages/backend && npx prisma generate && npm run codegen"
   }
 }
