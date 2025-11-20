@@ -12,6 +12,7 @@ type Course {
   totalNumberOfParticipants: Int
   totalNumberOfLessons: Int
   lessons: [Lesson]
+  isFavorite: Boolean
 }
 
 

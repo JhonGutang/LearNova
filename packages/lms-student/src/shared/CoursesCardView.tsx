@@ -14,6 +14,9 @@ interface CardViewProps {
   isEnrolled?: boolean; 
   onEnrollClick?: () => void;
   onViewClick?: () => void;
+  onFavoriteClick?: () => void;
+  togglingFavorite?: boolean;
+  isFavorite?: boolean;
 }
 
 // Card height constant for consistency
@@ -29,6 +32,9 @@ const CoursesCardView: React.FC<CardViewProps> = ({
   isEnrolled = true,
   onEnrollClick,
   onViewClick,
+  onFavoriteClick,
+  togglingFavorite,
+  isFavorite = false,
   children,
 }) => {
   // For demo: provide standard chips if not provided
@@ -83,6 +89,8 @@ const CoursesCardView: React.FC<CardViewProps> = ({
           type="button"
           tabIndex={0}
           aria-label="Favorite"
+          onClick={onFavoriteClick}
+          disabled={togglingFavorite}
           style={{
             position: "absolute",
             top: 15,
@@ -96,16 +104,23 @@ const CoursesCardView: React.FC<CardViewProps> = ({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            cursor: "pointer",
+            cursor: togglingFavorite ? "not-allowed" : "pointer",
             padding: 0,
+            opacity: togglingFavorite ? 0.6 : 1,
           }}
           className="group"
         >
           <Star
             size={22}
-            className="text-gray-400 group-hover:text-blue-400 transition-colors"
+            className={`transition-colors ${
+              togglingFavorite 
+                ? "text-gray-300" 
+                : isFavorite
+                ? "text-yellow-500 fill-yellow-500"
+                : "text-gray-400 group-hover:text-blue-400 group-hover:fill-blue-400"
+            }`}
             strokeWidth={2}
-            fill="none"
+            fill={isFavorite ? "currentColor" : "none"}
           />
         </button>
       </div>

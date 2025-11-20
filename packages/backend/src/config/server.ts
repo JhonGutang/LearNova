@@ -28,6 +28,7 @@ import { resolvers as ProgressResolver } from "../graphql/features/progress/prog
 import { resolvers as SpecificCoursePageResolver } from "../graphql/pages/specific-course/specific-course.resolver";
 // === Register statistics GraphQL typedefs and resolver
 import { resolvers as StatisticsResolver } from "../graphql/features/statistics/statistics.resolver";
+import { resolvers as FavoriteCourseResolver } from "../graphql/features/favorite-courses/favorite-course.resolver";
 
 const nodeEnv = process.env.NODE_ENV;
 if (nodeEnv === "STAGING") {
@@ -100,6 +101,10 @@ const statisticsTypeDefs = readFileSync(
   join(__dirname, "../graphql/features/statistics/statistics.schema.graphql"),
   "utf8"
 );
+const favoriteCourseTypeDefs = readFileSync(
+  join(__dirname, "../graphql/features/favorite-courses/favorite-course.graphql"),
+  "utf8"
+);
 
 const typeDefs = [
   rootTypeDefs,
@@ -116,6 +121,7 @@ const typeDefs = [
   progressTypeDefs,
   specificCoursePageTypeDefs,
   statisticsTypeDefs, // register statistics typedefs here
+  favoriteCourseTypeDefs,
 ];
 const resolvers = [
   courseResolvers,
@@ -131,6 +137,7 @@ const resolvers = [
   ProgressResolver,
   SpecificCoursePageResolver,
   StatisticsResolver, // register statistics resolver here
+  FavoriteCourseResolver,
 ];
 
 const server = new ApolloServer({

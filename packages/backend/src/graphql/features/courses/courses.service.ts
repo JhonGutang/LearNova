@@ -12,6 +12,8 @@ import {
   flattenCategories,
 } from "../../../utils/courseNormalizer";
 import { CourseRepository } from "./course.repository";
+import { FavoriteCourseRepository } from "../favorite-courses/favorite-course.repository";
+import prisma from "../../../config/prisma";
 
 type CreateCourseData = CourseInput & { creator_id: number };
 
@@ -30,7 +32,11 @@ export interface CourseServiceInterface {
 }
 
 export class CourseService implements CourseServiceInterface {
-  constructor(private courseRepository: CourseRepository) {}
+  private favoriteCourseRepository: FavoriteCourseRepository;
+
+  constructor(private courseRepository: CourseRepository) {
+    this.favoriteCourseRepository = new FavoriteCourseRepository(prisma);
+  }
 
   async coursesForStudents(studentId?: number): Promise<Course[]> {
     const courses = await this.courseRepository.allCourses();
@@ -114,9 +120,15 @@ export class CourseService implements CourseServiceInterface {
 
   async searchCourse(studentId: number, title: string): Promise<Course[]> {
     const courses = await this.courseRepository.findCoursesWithSimilarTitle(studentId, title);
-    return (courses ?? []).map((course) => 
-      normalizeCourseWithEnrollmentInfoOnly(course)
-    ) as Course[];
+    const favoriteCourseIds = await this.favoriteCourseRepository.getFavoriteCourseIds(studentId);
+    
+    return (courses ?? []).map((course) => {
+      const normalizedCourse = normalizeCourseWithEnrollmentInfoOnly(course);
+      return {
+        ...normalizedCourse,
+        isFavorite: favoriteCourseIds.includes(Number(course.id))
+      };
+    }) as Course[];
   }
 
   async getCoursesInProgress(studentId: number) {

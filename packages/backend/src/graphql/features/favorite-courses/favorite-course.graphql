@@ -1,0 +1,19 @@
+type FavoriteCourses {
+  studentId: ID!
+  courses: [Course!]!
+}
+
+type ToggleFavoriteResponse {
+  status: ResponseStatus
+  message: String
+  isFavorite: Boolean
+}
+
+extend type Query {
+  favoriteCourses: FavoriteCourses
+}
+
+extend type Mutation {
+  toggleFavoriteCourse(courseId: Int!): ToggleFavoriteResponse
+}
+

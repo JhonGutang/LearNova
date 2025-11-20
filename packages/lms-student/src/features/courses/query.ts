@@ -13,6 +13,7 @@ export const COURSES_PAGE_QUERY = gql`
           lastName
         }
         createdAt
+        isFavorite
       }
       student {
         id
@@ -37,11 +38,31 @@ export const SEARCH_COURSE_QUERY = gql`
         lastName
       }
       createdAt
+      isFavorite
       studentEnrollment {
         enrolledCourseId
         enrolledAt
         progress
       }
+    }
+  }
+`;
+
+export const ADD_FAVORITE_COURSE_MUTATION = gql`
+  mutation AddFavoriteCourse($courseId: Int!) {
+    addFavoriteCourse(courseId: $courseId) {
+      status
+      message
+    }
+  }
+`;
+
+export const TOGGLE_FAVORITE_COURSE_MUTATION = gql`
+  mutation ToggleFavoriteCourse($courseId: Int!) {
+    toggleFavoriteCourse(courseId: $courseId) {
+      status
+      message
+      isFavorite
     }
   }
 `;

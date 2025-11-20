@@ -20,6 +20,8 @@ interface CoursesProps {
   error?: any;
   category: "ALL" | "FEATURED" | "ENROLLED";
   onCategoryChange: (category: "ALL" | "FEATURED" | "ENROLLED") => void;
+  onToggleFavorite: (courseId: number, currentIsFavorite: boolean) => void;
+  togglingFavorite?: boolean;
 }
 
 function categoriesEqual(a: string, b: string) {
@@ -32,6 +34,8 @@ const Courses: React.FC<CoursesProps> = ({
   error,
   category,
   onCategoryChange,
+  onToggleFavorite,
+  togglingFavorite,
 }) => {
   const { toSlug, redirect } = useRedirectLink();
   const [search, setSearch] = useState("");
@@ -91,7 +95,7 @@ const Courses: React.FC<CoursesProps> = ({
                 className="w-full"
               />
             </div>
-            <div className="flex items-center gap-3 flex-shrink-0">
+            <div className="flex items-center gap-3 shrink-0">
               {categoryOptions.map((cat) => (
                 <Chip
                   key={cat.value}
@@ -135,6 +139,9 @@ const Courses: React.FC<CoursesProps> = ({
                     onEnrollClick={
                       course.studentEnrollment ? undefined : goToCourse
                     }
+                    onFavoriteClick={() => onToggleFavorite(Number(course.id), (course as any).isFavorite || false)}
+                    togglingFavorite={togglingFavorite}
+                    isFavorite={(course as any).isFavorite}
                   />
                 );
               })}

@@ -2,13 +2,14 @@
 import React, { useState, useCallback } from "react";
 import SidebarLayout from "@/shared/layout/Sidebar";
 import Courses from "./components/Courses";
-import { useCourses } from "./useCourses";
+import { useCourses, useToggleFavoriteCourse } from "./useCourses";
 
 export const CoursesLayout = () => {
   const [category, setCategory] = useState<"ALL" | "FEATURED" | "ENROLLED">(
     "ALL"
   );
   const { coursesPageData, loading, error } = useCourses(category);
+  const { toggleFavoriteCourse, loading: togglingFavorite } = useToggleFavoriteCourse();
 
   const handleCategoryChange = useCallback(
     (newCategory: "ALL" | "FEATURED" | "ENROLLED") => setCategory(newCategory),
@@ -23,6 +24,8 @@ export const CoursesLayout = () => {
         error={error}
         category={category}
         onCategoryChange={handleCategoryChange}
+        onToggleFavorite={toggleFavoriteCourse}
+        togglingFavorite={togglingFavorite}
       />
     </SidebarLayout>
   );

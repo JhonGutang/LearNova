@@ -18,6 +18,8 @@
   - Reaction is a join table for Student and Post (tracks like/dislike, unique per student/post).
   - Comment belongs to one Student and one Post.
   - Student can have many Reactions and Comments.
+  - Student can favorite many Courses via Favorite_Course (many-to-many).
+  - Favorite_Course is a join table for Student and Course.
 
   See each model's relation fields for details.
 */
@@ -68,6 +70,7 @@ model Student {
   posts               Post[]
   reactions           Reaction[]
   comments            Comment[]
+  favoriteCourses     Favorite_Course[]
 }
 
 model Level_Threshold {
@@ -143,6 +146,7 @@ model Course {
   lessons     Lesson[]
   creator     Creator           @relation(fields: [creator_id], references: [id])
   studentsEnrolled Enrolled_Course[]
+  favoritedBy Favorite_Course[]
 }
 
 model Category {
@@ -223,4 +227,16 @@ model Comment {
 
   post       Post     @relation(fields: [post_id], references: [id])
   student    Student  @relation(fields: [student_id], references: [id])
+}
+
+model Favorite_Course {
+  id         Int      @id @default(autoincrement())
+  student_id Int
+  course_id  Int
+  created_at DateTime @default(now())
+
+  student    Student  @relation(fields: [student_id], references: [id])
+  course     Course   @relation(fields: [course_id], references: [id])
+
+  @@unique([student_id, course_id])
 }
