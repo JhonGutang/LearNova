@@ -1,6 +1,6 @@
 // features/course/course.repository.ts
 
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../../../../generated/prisma";
 import { CourseInput, EditCourseInput } from "../../../generated/graphql";
 import { Course } from "../../../generated/graphql";
 import { buildCreateCourseQuery, buildFetchAllCoursesQuery, buildFindCourseOrEnrolledCourseQuery, buildFindStudentEnrolledCoursesWithProgressQuery, buildRandomCoursesNotEnrolledQuery, buildSearchCoursesWithEnrollmentQuery } from "./course.query-builder";

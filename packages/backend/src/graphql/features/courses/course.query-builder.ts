@@ -6,6 +6,9 @@ type CreateCourseData = CourseInput & { creator_id: number };
 // Existing Query Builders
 export const buildFetchAllCoursesQuery = () => {
   return {
+    where: {
+      status: 'PUBLISHED',
+    },
     select: {
       id: true,
       title: true,

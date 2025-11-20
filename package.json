@@ -10,6 +10,7 @@
   },
   "scripts": {
     "creator-with-backend": "concurrently \"pnpm --filter backend dev\" \"pnpm --filter lms-creator dev\"",
+    "student-with-backend": "concurrently \"pnpm --filter backend dev\" \"pnpm --filter lms-student dev\"",
     "init-backend": "cd packages/backend && npx prisma generate && npm run codegen"
   }
 }

@@ -1,7 +1,7 @@
 import { CourseCategory, CoursesPage } from "../../../generated/graphql";
 import { CourseService } from "../../features/courses/courses.service";
 import { formatStudentProfile } from "../../../utils/studentProfileFormatter";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../../../../generated/prisma";
 
 interface CoursesServiceInterface {
     getData(category: CourseCategory, studentId: number): Promise<CoursesPage>;
